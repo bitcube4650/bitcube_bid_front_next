@@ -1,8 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from "axios"
 
+//todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
+
 function LoginWrap(props) {
+    {/* input value 처리 */}
     const [value, setValue] = useState({});
     function onChangeInputValue(e) {
         setValue({
@@ -11,6 +15,8 @@ function LoginWrap(props) {
         });
     }
 
+    const navigate = useNavigate();
+
     async function onLogin() {
         try {
             const response = await axios.post('/login', {
@@ -18,7 +24,15 @@ function LoginWrap(props) {
                 loginPw: value.password
             });
             console.log(response);
+
+            if(response.status == 200) {
+                sessionStorage.setItem("loginInfo", JSON.stringify(response.data));
+                navigate("/main");
+            } else {
+                alert(response.message);    //todo: modal 표시 처리........
+            }
         } catch (error) {
+            alert("아이디 또는 비밀번호를 확인해 주십시오.");    //todo: modal 표시 처리........
             console.log(error);
         }
     }
