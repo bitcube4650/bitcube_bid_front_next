@@ -6,6 +6,7 @@ import NotFound from './views/NotFound';
 import Layout from './components/layout/Layout';
 import './css/common.css';
 import './fontawesome-pro-6.1.1-web/css/all.min.css';
+import '.bootstrap/3.3.2/bootstrap.min.css'
 
 const App = () => {
 	return (
