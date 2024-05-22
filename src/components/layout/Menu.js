@@ -29,7 +29,7 @@ const Menu = () => {
                         </ul>
                     </div>
                 </li>
-                <li>         
+                <li>
                     <router-link to=""><span><i class="fa-light fa-bullhorn"></i></span>공지</router-link>
                     <div class="depth2Lnb">
                         <ul>
