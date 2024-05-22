@@ -5,8 +5,10 @@ import Main from './views/Main';
 import Notice from './modules/notice/views/Notice';
 import NotFound from './views/NotFound';
 import Layout from './components/layout/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/common.css';
 import './fontawesome-pro-6.1.1-web/css/all.min.css';
+
 
 const App = () => {
 	return (
