@@ -7,12 +7,9 @@ const CustList = () => {
 	const url = useLocation().pathname;
 
 	let isApproval = false;								// 업체 승인 화면 여부
-	let title = ''
 	if(url.indexOf('approval') > -1) {
-		title = '업체승인'
 		isApproval = true;
 	} else {
-		title = '업체관리'
 		isApproval = false
 	}
 
@@ -61,11 +58,20 @@ const CustList = () => {
 						<td>{data.custType1}</td>
 						<td>{data.regnum}</td>
 						<td>{data.presName}</td>
-
-						<td style={isApproval ? {display : "none"} : {}}>{data.certYn}</td>
-						<td style={isApproval ? {} : {display : "none"}}>{data.userName}</td>
-						<td className={isApproval ? 'end' : ''}>{data.createDate}</td>
-						<td style={isApproval ? {display : "none"} : {}}><a title="조회" className="btnStyle btnSecondary btnSm" data-toggle="modal" data-target="#custUserPop">조회</a></td>
+						{!isApproval ?
+						// 업체 관리 리스트
+						<>
+						<td>{data.certYn}</td>
+						<td>{data.createDate}</td>
+						<td className="end"><a title="조회" className="btnStyle btnSecondary btnSm" data-toggle="modal" data-target="#custUserPop">조회</a></td>
+						</>
+						:
+						// 업체승인 리스트
+						<>
+						<td>{data.userName}</td>
+						<td className="end">{data.createDate}</td>
+						</>
+						}
 					</tr>
 				))}
 			</tbody>
@@ -77,26 +83,15 @@ const CustList = () => {
 			<div className="conHeader">
 				<ul className="conHeaderCate">
 					<li>업체정보</li>
-					<li>{title}</li>
+					<li>{isApproval ? '업체 승인' : '업체 관리'}</li>
 				</ul>
 			</div>
 			<div className="contents">
 				<div className="conTopBox">
 					{/* 업체 관리 */}
-					<ul className="dList"style={isApproval ? {display : "none"} : {}}>
-						<li>
-							<div>
-								아래는 시스템에서 관리되는 업체 목록 입니다. 업체명을 클릭하면 상세내용을 확인 하실 수 있습니다.
-							</div>
-						</li>
-						<li>
-							<div>
-								업체를 등록/수정하시면 이력이 남습니다. 주의해서 작성해 주십시오.
-							</div>
-						</li>
-					</ul>
-					{/* 업체 승인 */}
-					<ul className="dList"style={isApproval ? {} : {display : "none"}}>
+					{isApproval ? 
+					    // 승인 업체
+						<ul className="dList">
 						<li>
 							<div>
 							아래는 가입 신청한 업체 목록 입니다. 업체명을 클릭하여 상세내용을 확인 후 승인 처리 하십시오 (가입 승인은 최대 3일을 넘지 않도록 합니다)
@@ -107,7 +102,22 @@ const CustList = () => {
 							가입 승인이 완료되면 업체 관리자에게 이메일로 통보 됩니다.
 							</div>
 						</li>
-					</ul>
+						</ul>
+					:
+						// 업체 관리
+						<ul className="dList">
+							<li>
+								<div>
+									아래는 시스템에서 관리되는 업체 목록 입니다. 업체명을 클릭하면 상세내용을 확인 하실 수 있습니다.
+								</div>
+							</li>
+							<li>
+								<div>
+									업체를 등록/수정하시면 이력이 남습니다. 주의해서 작성해 주십시오.
+								</div>
+							</li>
+						</ul>
+					}
 				</div>					
 				<div className="searchBox mt20">
 					<div className="flex align-items-center">
@@ -116,14 +126,18 @@ const CustList = () => {
 							<input type="text" className="inputStyle" name="srcCustNm" value={srcData.srcCustNm} onChange={handleChange} />
 						</div>
 						{/* 업체 승인 화면에서는 조회조건 '상태' 미 조회 */}
-						<div className="sbTit mr30 ml50" style={isApproval ? {display : "none"} : {}}>상태</div>
-						<div className="width120px" style={isApproval ? {display : "none"} : {}}>
-							<select className="selectStyle" name="srcState" value={srcData.srcState} onChange={handleChange}>
-								<option value="">전체</option>
-								<option value="Y">정상</option>
-								<option value="D">삭제</option>
-							</select>
-						</div>
+						{isApproval &&
+							<>
+							<div className="sbTit mr30 ml50">상태</div>
+							<div className="width120px">
+								<select className="selectStyle" name="srcState" value={srcData.srcState} onChange={handleChange}>
+									<option value="">전체</option>
+									<option value="Y">정상</option>
+									<option value="D">삭제</option>
+								</select>
+							</div>
+							</>
+						}
 						<div className="sbTit mr30 ml50">업체유형</div>
 						<div className="flex align-items-center">
 							<input type="text" placeholder="우측 검색 버튼을 클릭해 주세요" className="inputStyle width280px readonly" readOnly/>
@@ -146,9 +160,11 @@ const CustList = () => {
 					</div>
 
 					{/* 감사 사용자 / 각사 관리자만 업체 등록 가능 */}
-					<div class="flex-shrink0" style={isApproval ? {display : "none"} : {}}>
-						<Link to="/company/partner/management/save" title="업체 등록"  className="btnStyle btnPrimary"> 업체등록 </Link>
-					</div>
+					{!isApproval &&
+						<div class="flex-shrink0">
+							<Link to="/company/partner/management/save" title="업체 등록"  className="btnStyle btnPrimary"> 업체등록 </Link>
+						</div>
+					}
 				</div>
 				<table className="tblSkin1 mt10">
 					<colgroup>
@@ -158,7 +174,9 @@ const CustList = () => {
 						<col style={{width : "8%"}} />
 						<col style={{width : "8%"}} />
 						<col style={{width : "10%"}} />
-						<col style={isApproval ? {display : "none"} : {width : "8%"}} />
+						{!isApproval &&
+						<col style={{width : "8%"}} />	
+						}
 					</colgroup>
 
 					{/* 업체 승인 헤더 : [업체명, 업체유형, 사업자등록번호, 대표이사, 담당자, 요청일시]
@@ -169,10 +187,20 @@ const CustList = () => {
 							<th>업체유형</th>
 							<th>사업자등록번호</th>
 							<th>대표이사</th>
-							<th style={isApproval ? {display : "none"} : {}}>상태</th>
-							<th style={isApproval ? {} : {display : "none"}}>담당자명</th>
-							<th className={isApproval ? 'end' : ''}>{isApproval ? '요청일시' : '등록일시'}</th>
-							<th className="end" style={isApproval ? {display : "none"} : {}}>사용자현황</th>
+							{!isApproval ?
+							// 업체 관리 리스트
+							<>
+							<th>상태</th>
+							<th>등록일시</th>
+							<th className="end">사용자현황</th>
+							</>
+							:
+							// 업체승인 리스트
+							<>
+							<th>담당자명</th>
+							<th className="end">요청일시</th>
+							</>
+							}
 						</tr>
 					</thead>
 					<List dataArr={dataArr} />

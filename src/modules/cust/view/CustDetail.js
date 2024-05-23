@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import CustInfo from '../components/CustInfo'
-import CustInfoLevel from '../components/CustInfoLevel'
-import CustInfoAdmin from '../components/CustInfoAdmin'
 
 const CustDetail = () => {
 	const url = useLocation().pathname;
@@ -24,7 +22,6 @@ const CustDetail = () => {
 
 	// 업체 정보
 	const [data, setData] = useState({});
-
 
 	// 업체 상세 정보 조회
 	const fnInit = useCallback(async() => {
@@ -117,20 +114,22 @@ const CustDetail = () => {
 		{/* contents */}
 		<div className="contents">
 			<div className="formWidth">
-				<CustInfo data={data} />
-				<div style={isApproval ? {display: "none"} : {}}>
-					<CustInfoLevel data={data} />
-				</div>
-				<CustInfoAdmin data={data} />
+				<CustInfo isApproval={isApproval} data={data} />
 			</div>
 			<div className="text-center mt50">
 				<button onClick={goBack} className="btnStyle btnOutlineRed" title="취소">취소</button>
 				{/* <!-- 감사 사용자 / 각사 관리자만 업체 승인/반려/수정/삭제 처리 가능 */}
-				<button className="btnStyle btnRed" title="삭제" style={isApproval ? {display: "none"} : {}} onClick={fnDelete}>삭제</button>
-				<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정" style={isApproval ? {display: "none"} : {}}>수정 이동</Link>
-
-				<button className="btnStyle btnRed" title="반려" style={isApproval ? {} : {display: "none"}} onClick={fnRefuse}>반려</button>
-				<button className="btnStyle btnPrimary" title="승인" style={isApproval ? {} : {display: "none"}} onClick={fnApproval}>승인</button>
+				{!isApproval ?
+				<>
+					<button className="btnStyle btnRed" title="삭제" onClick={fnDelete}>삭제</button>
+					<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정">수정 이동</Link>
+				</>
+				:
+				<>
+					<button className="btnStyle btnRed" title="반려" onClick={fnRefuse}>반려</button>
+					<button className="btnStyle btnPrimary" title="승인" onClick={fnApproval}>승인</button>
+				</>
+				}
 			</div>
 		</div>
 	</div>
