@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import CustInfo from '../components/CustInfo'
 import CustInfoLevel from '../components/CustInfoLevel'
@@ -127,7 +127,7 @@ const CustDetail = () => {
 				<button onClick={goBack} className="btnStyle btnOutlineRed" title="취소">취소</button>
 				{/* <!-- 감사 사용자 / 각사 관리자만 업체 승인/반려/수정/삭제 처리 가능 */}
 				<button className="btnStyle btnRed" title="삭제" style={isApproval ? {display: "none"} : {}} onClick={fnDelete}>삭제</button>
-				<button className="btnStyle btnPrimary" title="수정" style={isApproval ? {display: "none"} : {}}>수정 이동</button>
+				<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정" style={isApproval ? {display: "none"} : {}}>수정 이동</Link>
 
 				<button className="btnStyle btnRed" title="반려" style={isApproval ? {} : {display: "none"}} onClick={fnRefuse}>반려</button>
 				<button className="btnStyle btnPrimary" title="승인" style={isApproval ? {} : {display: "none"}} onClick={fnApproval}>승인</button>

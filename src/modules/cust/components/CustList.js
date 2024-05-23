@@ -147,7 +147,7 @@ const CustList = () => {
 
 					{/* 감사 사용자 / 각사 관리자만 업체 등록 가능 */}
 					<div class="flex-shrink0" style={isApproval ? {display : "none"} : {}}>
-						<Link to="/company/partner/management/create" title="업체 등록"  className="btnStyle btnPrimary"> 업체등록 </Link>
+						<Link to="/company/partner/management/save" title="업체 등록"  className="btnStyle btnPrimary"> 업체등록 </Link>
 					</div>
 				</div>
 				<table className="tblSkin1 mt10">

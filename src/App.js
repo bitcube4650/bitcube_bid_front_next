@@ -10,7 +10,7 @@ import './css/common.css';
 import './fontawesome-pro-6.1.1-web/css/all.min.css';
 import CustList from './modules/cust/view/CustList';
 import CustDetail from './modules/cust/view/CustDetail';
-import CustSave from './modules/cust/view/CustSave';
+import SaveCust from './modules/cust/view/SaveCust';
 
 const App = () => {
 	return (
@@ -27,6 +27,8 @@ const App = () => {
 						<Route path="/company/partner/management" element={<CustList />}></Route>
 						<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>
 						<Route path="/company/partner/management/:custCode" element={<CustDetail />}></Route>
+						<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
+						<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
 					</Route>
 					{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
 					<Route path="*" element={<NotFound />}></Route>
