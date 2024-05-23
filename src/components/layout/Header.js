@@ -7,7 +7,7 @@ const Header = () => {
         <div class="header">
             <div class="headerLeft">
                 <a href="/main" class="headerLogo" title="메인 페이지로 이동">
-                    <img src="../../images/logo.png" class="img-responsive" alt="로고" />
+                    <img src="../../images/bitcube_logo.png" class="img-responsive" alt="로고" style={{width: "150px"}}/>
                     <span>e-Bidding System</span>
                 </a>
                 <p>편하고 빠른 전자입찰시스템</p>
