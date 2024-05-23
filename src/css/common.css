@@ -364,7 +364,9 @@ input, select {vertical-align:top; margin-top:0 !important}
 .conLeft > li.active .depth2Lnb {display:block}
 .depth2Lnb > ul > li > a {display:flex; align-items:center; width:100%; height:44px; font-size:20px; font-weight:400; color:#555; padding-left:61px}
 .depth2Lnb > ul > li.active > a, .depth2Lnb > ul > li > a:hover {font-weight:500; color:#004B9E}
-
+.depth2Lnb_active {display: block !important; background:#004B9E12; padding:15px 0}
+.depth2Lnb_active > ul > li > a {display:flex; align-items:center; width:100%; height:44px; font-size:20px; font-weight:400; color:#555; padding-left:61px}
+.depth2Lnb_active > ul > li.active > a, .depth2Lnb > ul > li > a:hover {font-weight:500; color:#004B9E}
 
 /* conRight */
 .conRightWrap {width:calc(100% - 330px)}

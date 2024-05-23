@@ -23,15 +23,12 @@ const Notice = () => {
     
     async function onSearch(page) {
         try {
-            console.log("!! notice onSearch !!");
-
             searchParams.page       = page;
             searchParams.title      = value.title;
             searchParams.content    = value.content;
             searchParams.userName   = value.userName;
 
             const response = await axios.post("/api/v1/notice/noticeList", searchParams);
-            console.log(response);
             setNoticeList(response.data.content);
         } catch (error) {
             console.log(error);
