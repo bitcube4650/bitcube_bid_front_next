@@ -7,7 +7,7 @@ const Header = () => {
         <div class="header">
             <div class="headerLeft">
                 <router-link to="/" class="headerLogo" title="메인 페이지로 이동">
-                    <img src="imgUrl" class="img-responsive" alt="일진그룹 로고" />
+                    <img src="../../images/logo.png" class="img-responsive" alt="로고" />
                     <span>e-Bidding System</span>
                 </router-link>
                 <p>편하고 빠른 전자입찰시스템</p>
