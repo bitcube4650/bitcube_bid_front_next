@@ -38,14 +38,14 @@ const Menu = () => {
                 <div>낙찰 (12개월)<a href="#!" click="moveBiddingPage('completed')" className="myStateNum" title="전자입찰 페이지로 이동"><span>0</span>건</a></div>
             </div>
             <ul className="conLeft">
-                <li><a href="/main"><span><i className="fa-light fa-desktop"></i></span>메인</a></li>
-                <li className={(path === ('/bid/progress' || '/bid/status' || '/bid/partnerStatus' || '/bid/complete' || '/bid/partnerComplete' || '/bid/history')? 'active' : '')}>         
+                <li className={(path === '/main'? 'active' : '')}><a href="/main"><span><i className="fa-light fa-desktop"></i></span>메인</a></li>
+                <li className={(path === ('/bid/progress' || '/bid/status' || '/bid/partnerStatus' || '/bid/complete' || '/bid/partnerComplete' || '/bid/history')? 'active' : '')}>
                     <a id="ebid" href="#!" onClick={onClickMenu} ><span><i className="fa-light fa-file-contract"></i></span>전자입찰</a>
                     <div className={(targetId === "ebid" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
-                            <li><a href="/bid/progress">입찰계획</a></li>
-                            <li><a click="clickBidStatus">입찰진행</a></li>
-                            <li><a click="clickBidComplete">입찰완료</a></li>
+                            <li className={(path === ('/bid/progress') ? 'active' : '')}><a href="/bid/progress">입찰계획</a></li>
+                            <li className={(path === ('/bid/status') ? 'active' : '')}><a click="clickBidStatus">입찰진행</a></li>
+                            <li className={(path === ('/bid/complete') ? 'active' : '')}><a click="clickBidComplete">입찰완료</a></li>
                         </ul>
                     </div>
                 </li>
@@ -54,7 +54,7 @@ const Menu = () => {
                     <div className={(targetId === "notice" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
                             <li className={(path === ('/notice') ? 'active' : '')}><a href="/notice">공지사항</a></li>
-                            <li><a click="clickFaq">FAQ</a></li>
+                            <li className={(path === ('notice/faq/admin' || '/notice/faq/user') ? 'active' : '')}><a click="clickFaq">FAQ</a></li>
                             <li><a href="company == 'cust'? '/installFile/전자입찰_매뉴얼_업체.pdf' : '/installFile/전자입찰_매뉴얼_본사.pdf'" download="전자입찰_메뉴얼.pdf">메뉴얼</a></li>
                         </ul>
                     </div>
@@ -63,8 +63,8 @@ const Menu = () => {
                     <a id="company" href="#!" onClick={onClickMenu}><span><i className="fa-light fa-buildings"></i></span>업체정보</a>
                     <div className={(targetId === "company" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
-                            <li><a href="/company/partner/approval">업체승인</a></li>
-                            <li><a href="/company/partner/management">업체관리</a></li>
+                            <li className={(path === ('/company/partner/approval') ? 'active' : '')}><a href="/company/partner/approval">업체승인</a></li>
+                            <li className={(path === ('/company/partner/management') ? 'active' : '')}><a href="/company/partner/management">업체관리</a></li>
                         </ul>
                     </div>
                 </li>
@@ -72,10 +72,10 @@ const Menu = () => {
                     <a id="statistics" href="#!" onClick={onClickMenu}><span><i className="fa-light fa-chart-pie-simple"></i></span>통계</a>
                     <div className={(targetId === "statistics" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
-                            <li><a href="/statistics/performance/company">회사별 입찰실적</a></li>
-                            <li><a href="/statistics/performance/detail">입찰실적 상세내역</a></li>
-                            <li><a href="/statistics/status">입찰현황</a></li>
-                            <li><a href="/statistics/detail">입찰 상세내역</a></li>
+                            <li className={(path === ('/statistics/performance/company') ? 'active' : '')}><a href="/statistics/performance/company">회사별 입찰실적</a></li>
+                            <li className={(path === ('/statistics/performance/detail') ? 'active' : '')}><a href="/statistics/performance/detail">입찰실적 상세내역</a></li>
+                            <li className={(path === ('/statistics/status') ? 'active' : '')}><a href="/statistics/status">입찰현황</a></li>
+                            <li className={(path === ('/statistics/detail') ? 'active' : '')}><a href="/statistics/detail">입찰 상세내역</a></li>
                         </ul>
                     </div>
                 </li>
@@ -83,8 +83,8 @@ const Menu = () => {
                     <a id="info" href="#!" onClick={onClickMenu}><span><i className="fa-light fa-memo-circle-info"></i></span>정보관리</a>
                     <div className={(targetId === "info" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
-                            <li><a href="/info/group/user">사용자관리</a></li>
-                            <li><a href="/info/group/item">품목관리</a></li>
+                            <li className={(path === ('/info/group/user') ? 'active' : '')}><a href="/info/group/user">사용자관리</a></li>
+                            <li className={(path === ('/info/group/item') ? 'active' : '')}><a href="/info/group/item">품목관리</a></li>
                         </ul>
                     </div>
                 </li>

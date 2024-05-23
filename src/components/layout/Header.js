@@ -6,10 +6,10 @@ const Header = () => {
     return (
         <div class="header">
             <div class="headerLeft">
-                <router-link to="/" class="headerLogo" title="메인 페이지로 이동">
+                <a href="/main" class="headerLogo" title="메인 페이지로 이동">
                     <img src="../../images/logo.png" class="img-responsive" alt="로고" />
                     <span>e-Bidding System</span>
-                </router-link>
+                </a>
                 <p>편하고 빠른 전자입찰시스템</p>
             </div>
             <div v-if="this.$store.state.loginInfo !== null && this.$store.state.token !== ''" class="headerRight">
