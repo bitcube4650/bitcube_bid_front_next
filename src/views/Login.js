@@ -3,7 +3,7 @@ import LoginWrap from '../components/login/LoginWrap';
 import LoginFooter from '../components/login/LoginFooter';
 
 const Login = () => {
-    const logoUrl = "/images/loginLogo_iljin.svg";
+    const logoUrl = "../../images/bitcube_logo_black.png";
 
     return (
         <div>
@@ -14,6 +14,7 @@ const Login = () => {
                 </div>
             </div>
         </div>
+        
     );
 };
 

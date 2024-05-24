@@ -4,7 +4,7 @@ function LoginFooter(props) {
     return (
         <div class="loginFooter">
             <div class="inner">
-                <div class="loginFootLeft"><img src={props.logoUrl} class="img-responsive" alt="일진그룹 로고" /></div>
+                {/* <div class="loginFootLeft"><img src={props.logoUrl} class="img-responsive" alt="일진그룹 로고" /></div> */}
                 <div class="loginFootCenter">
                 <a href="#"  click="clickCertificate" title="공동인증서">공동인증서</a>
                 <a href="#" data-toggle="modal" data-target="#regProcess" title="업체등록절차">업체등록절차</a>

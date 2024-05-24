@@ -536,3 +536,6 @@ input, select {vertical-align:top; margin-top:0 !important}
 @media screen and (max-width:1700px) {
 	.mcl_right {max-width:650px}
 }
+
+/* modal - swal2 */
+.swal2-icon{margin: 40px auto  0px !important}
