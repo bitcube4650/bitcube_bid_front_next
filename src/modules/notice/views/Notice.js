@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
+import { Link } from "react-router-dom";
+import axios from 'axios';
+import Pagination from '../../../components/Pagination';
+import ListSizeSelect from '../../../components/ListSizeSelect';
 import NoticeList from '../components/NoticeList';
 
 const Notice = () => {
@@ -10,9 +13,10 @@ const Notice = () => {
             ...value,
             [e.target.name]: e.target.value
         });
-    }
+    };
 
-    const [noticeList, setNoticeList] = useState([]);
+    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const [noticeList, setNoticeList] = useState({});
     const searchParams = {
         size: '10'
     };
@@ -21,17 +25,18 @@ const Notice = () => {
         onSearch(0);
     }, []);
     
-    async function onSearch(page) {
+    async function onSearch(page, size) {
         try {
-            searchParams.page       = page;
+            if(page){searchParams.page = page};
+            if(size){searchParams.size = size};
             searchParams.title      = value.title;
             searchParams.content    = value.content;
             searchParams.userName   = value.userName;
 
             const response = await axios.post("/api/v1/notice/noticeList", searchParams);
-            setNoticeList(response.data.content);
+            setNoticeList(response.data);
         } catch (error) {
-            console.log(error);
+            console.log(error); //todo
         }
     }
 
@@ -68,18 +73,15 @@ const Notice = () => {
                     </div>
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
-                    <div className="width100">
+                <div className="width100">
                         전체 : <span className="textMainColor"><strong>{ noticeList.totalElements ? noticeList.totalElements.toLocaleString() : 0 }</strong></span>건
-                        <select name="" change="onSearch(0)" v-model="searchParams.size" className="selectStyle maxWidth140px ml20">
-                            <option value="10">10개씩 보기</option>
-                            <option value="20">20개씩 보기</option>
-                            <option value="30">30개씩 보기</option>
-                            <option value="50">50개씩 보기</option>
-                        </select>
+                        <ListSizeSelect onSearch={onSearch} />
                     </div>
-                    <div v-if="insertButton">
-                        <router-link to="{ path: '/notice/noticeUpdateInsert', query: { updateInsert: 'insert' } }" className="btnStyle btnPrimary" title="공지등록">공지등록</router-link>
+                    {loginInfo.userAuth == '1' || loginInfo.userAuth == '2'?
+                    <div>
+                        <Link to="/noticeUpdateInsert" className="btnStyle btnPrimary" title="공지등록">공지등록</Link>
                     </div>
+                    :""}
                 </div>
                 <table className="tblSkin1 mt10">
                     <colgroup>
@@ -101,18 +103,16 @@ const Notice = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {noticeList.map((notice) => <NoticeList key={notice.bno} notice={notice} />)}
-                        
-                        {/*
-                        <tr v-if="listPage.content == undefined || listPage.content == null || listPage.content.length == 0">
-                            <td className="end" colspan="6">조회된 데이터가 없습니다.</td>
-                        </tr>
-                        */}
+                        { noticeList.content?.map((notice) => <NoticeList key={notice.bno} notice={notice} />) }
+                        { noticeList.content == null?
+                            <tr>
+                                <td className="end" colspan="6">조회된 데이터가 없습니다.</td>
+                            </tr>:"" }
                     </tbody>
                 </table>
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <pagination searchFunc="search" page="listPage"/>
+                        <Pagination onSearch={onSearch} list={noticeList} />
                     </div>
                 </div>
             </div>

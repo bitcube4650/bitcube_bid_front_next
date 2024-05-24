@@ -11,21 +11,11 @@ const Main = () => {
     const partnerInfo = {};
     const val = {};
 
-    async function onTest() {
-        try {
-            const response = await axios.post("/api/v1/bid/progresslist", {
-            });
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     return (
         <div class="conRight">
             <div class="conHeader" style={{padding: '23px 30px 20px 30px'}}>
                 <ul class="conHeaderCate">
-                    <li onClick={onTest}>메인</li>
+                    <li>메인</li>
                 </ul>
             </div>
             <div class="contents">
