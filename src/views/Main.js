@@ -55,21 +55,25 @@ const Main = () => {
                             <div class="cooperativ">
                                 <a href="/company/partner/approval" title="미승인 업체 페이지로 이동">
                                     <span class="cooperativ_tit">미승인 업체</span>
-                                    <span class="cooperativ_num">{ partnerInfo.request }</span>
+                                    <span class="cooperativ_num">{ partnerInfo.request }0</span>
                                 </a>
                                 <a href="/company/partner/management" title="승인 업체 (인증서 제출) 페이지로 이동">
                                     <span class="cooperativ_tit">승인 업체</span>
-                                    <span class="cooperativ_num">{ partnerInfo.approval }</span>
+                                    <span class="cooperativ_num">{ partnerInfo.approval }0</span>
                                 </a>
                                 <a href="/company/partner/management?certYn=D" title="삭제 업체 페이지로 이동">
                                     <span class="cooperativ_tit">삭제 업체</span>
-                                    <span class="cooperativ_num">{ partnerInfo.deletion }</span>
+                                    <span class="cooperativ_num">{ partnerInfo.deletion }0</span>
                                 </a>
                             </div>
                         </div>
                         <div class="mainConBox" style={{height: '381.41px'}}>
                             <h2 class="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" class="mainConBoxMore">더보기<i class="fa-solid fa-circle-plus"></i></a></h2>
                             <div class="notiList">
+                                <a href='#!'>
+                                    <span>메인 샘플 공지사항</span>
+                                    <span>1991-09-03</span>
+                                </a>
                                 <a v-for="(val, idx) in listPage.content" click="setDetailData(val)" data-toggle="modal" data-target="#notiModal" title="해당 게시글 자세히 보기">
                                     <span class="notiTit"><span v-if="val.bco == 'ALL'">[공통] </span>{ val.btitle }</span>
                                     <span class="notiDate">{ val.bdate }</span>
