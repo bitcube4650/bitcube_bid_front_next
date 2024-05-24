@@ -24,7 +24,7 @@ const Pagination = ({ onChangeSrcData, list }) => {
 		}
 		onChangeSrcData(e);
 	}
-
+	
     return (
         <div className="pagination1 text-center">
 			<a href="#" onClick={() => onPage(curr==0?list.number:(curr-1)*5)} title="이전 페이지그룹 이동">

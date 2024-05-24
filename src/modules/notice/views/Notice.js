@@ -79,11 +79,10 @@ const Notice = () => {
                             <option value="50">50개씩 보기</option>
                         </select>
                     </div>
-                    {loginInfo.userAuth == '1' || loginInfo.userAuth == '2'?
+                    { (loginInfo.userAuth == '1' || loginInfo.userAuth == '2') &&
                     <div>
                         <a onClick={ onNoticeEdit } className="btnStyle btnPrimary" title="공지등록">공지등록</a>
-                    </div>
-                    :""}
+                    </div> }
                 </div>
                 <table className="tblSkin1 mt10">
                     <colgroup>
@@ -106,10 +105,10 @@ const Notice = () => {
                     </thead>
                     <tbody>
                         { noticeList.content?.map((notice) => <NoticeList key={notice.bno} notice={notice} />) }
-                        { noticeList.content == null?
+                        { noticeList.content == null &&
                             <tr>
                                 <td className="end" colspan="6">조회된 데이터가 없습니다.</td>
-                            </tr>:"" }
+                            </tr> }
                     </tbody>
                 </table>
                 <div className="row mt40">
