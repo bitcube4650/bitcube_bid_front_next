@@ -22,12 +22,9 @@ const Notice = () => {
             [e.target.name]: e.target.value
         });
     }
-    
+
     const onSearch = useCallback(async() => {
         try {
-            console.log("!!")
-            console.log(srcData);
-
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data);
         } catch (error) {
