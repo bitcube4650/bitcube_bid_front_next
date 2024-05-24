@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import NoticeList from '../components/NoticeList';
 
 const Notice = () => {
+    const navigate = useNavigate();
+
     //세션 로그인 정보
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
     //조회 결과
@@ -20,20 +22,25 @@ const Notice = () => {
             [e.target.name]: e.target.value
         });
     }
-
-    useEffect(() => {
-        onSearch(0);
-    }, [onSearch]);
     
-    async function onSearch(page) {
+    const onSearch = useCallback(async() => {
         try {
-            if(page){srcData.page = page};
+            console.log("!!")
+            console.log(srcData);
 
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data);
         } catch (error) {
             console.log(error); //todo
         }
+    },[srcData])
+
+    useEffect(() => {
+        onSearch();
+    }, [onSearch]);
+
+    function onNoticeEdit() {
+        navigate('/noticeEdit', {state: {updateInsert: "insert"}});
     }
 
     return (
@@ -59,7 +66,7 @@ const Notice = () => {
                         <div className="width200px">
                             <input type="text" onChange={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxlength="50" />
                         </div>
-                        <a onClick={() => {onSearch(0);}} className="btnStyle btnSearch">검색</a>
+                        <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
@@ -74,7 +81,7 @@ const Notice = () => {
                     </div>
                     {loginInfo.userAuth == '1' || loginInfo.userAuth == '2'?
                     <div>
-                        <Link to="/noticeEdit" className="btnStyle btnPrimary" title="공지등록">공지등록</Link>
+                        <a onClick={ onNoticeEdit } className="btnStyle btnPrimary" title="공지등록">공지등록</a>
                     </div>
                     :""}
                 </div>
@@ -107,7 +114,7 @@ const Notice = () => {
                 </table>
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onSearch={onSearch} list={noticeList} />
+                        <Pagination onChangeSrcData={onChangeSrcData} list={noticeList} />
                     </div>
                 </div>
             </div>
