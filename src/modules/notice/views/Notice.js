@@ -13,8 +13,11 @@ const Notice = () => {
     const [noticeList, setNoticeList] = useState({});
     //조회조건
     const [srcData, setSrcData] = useState({
-        size: 10,
-        page: 0
+        title   : "",
+        content : "",
+        userName: "",
+        size    : 10,
+        page    : 0
     });
     const onChangeSrcData = (e) => {
         setSrcData({
@@ -28,13 +31,13 @@ const Notice = () => {
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data);
         } catch (error) {
-            console.log(error); //todo
+            console.log(error); //todo: modal 표시 처리........
         }
-    },[srcData])
+    },[srcData]);
 
     useEffect(() => {
         onSearch();
-    }, [onSearch]);
+    },[onSearch]);
 
     function onNoticeEdit() {
         navigate('/noticeEdit', {state: {updateInsert: "insert"}});
