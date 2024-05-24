@@ -4,6 +4,7 @@ import Login from './views/Login';
 import Main from './views/Main';
 import Notice from './modules/notice/views/Notice';
 import NoticeDetail from './modules/notice/views/NoticeDetail';
+import NoticeEdit from './modules/notice/views/NoticeEdit';
 import NotFound from './views/NotFound';
 import Layout from './components/layout/Layout';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,6 +25,7 @@ const App = () => {
 						<Route path="/main" element={<Main />}></Route>
 						<Route path="/notice" element={<Notice />}></Route>
 						<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
+						<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
 						<Route path="/company/partner/approval" element={<CustList />}></Route>
 						<Route path="/company/partner/management" element={<CustList />}></Route>
 						<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>

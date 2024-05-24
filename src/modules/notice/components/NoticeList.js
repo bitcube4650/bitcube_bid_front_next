@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 function NoticeList(props) {
+    //todo: 클릭 시 조회수 +1
+
     return (
         <tr>
             <td>{ props.notice.rowNo }</td>
