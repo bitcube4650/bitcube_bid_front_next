@@ -36,13 +36,6 @@ const Notice = () => {
         }
     }
 
-    const onEnterSearch = (e) => {
-        if(e.key === "Enter") {
-            onSearch(0);
-        }
-    }
-    
-
     return (
         <div className="conRight">
             <div className="conHeader">
@@ -56,15 +49,15 @@ const Notice = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">제목</div>
                         <div className="width200px">
-                            <input type="text" onKeyDown={onEnterSearch} onChange={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxlength="300" />
+                            <input type="text" onChange={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxlength="300" />
                         </div>
                         <div className="sbTit mr30 ml50">내용</div>
                         <div className="width200px">
-                            <input type="text" onKeyDown={onEnterSearch} onChange={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxlength="300" />
+                            <input type="text" onChange={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxlength="300" />
                         </div>
                         <div className="sbTit mr30 ml50">등록자</div>
                         <div className="width200px">
-                            <input type="text" onKeyDown={onEnterSearch} onChange={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxlength="50" />
+                            <input type="text" onChange={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxlength="50" />
                         </div>
                         <a onClick={() => {onSearch(0);}} className="btnStyle btnSearch">검색</a>
                     </div>
