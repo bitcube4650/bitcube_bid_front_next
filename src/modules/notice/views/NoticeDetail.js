@@ -1,12 +1,34 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState }from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2'; // 공통 팝업창
 
 const NoticeDetail = () => {
+    const navigate = useNavigate();
     const { bno } = useParams();
-    const dataFromList = {};
-    const val = "";
-    const index = "";
-    const groupList = "";
+    const [dataFromList, setDataFromList] = useState({});
+
+    async function onSelectDetail() {
+        try {
+            let srcData = {bno: bno};
+            const response = await axios.post('/api/v1/notice/noticeList', srcData);
+
+            if(response.status == 200) {
+                setDataFromList(response.data.content[0]);
+            } else {
+                Swal.fire(response.message, '', 'error');
+                navigate("/notice");
+            }
+        } catch (error) {
+            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            console.log(error);
+            //navigate("/notice");
+        }
+    };
+
+    useEffect(() => {
+        onSelectDetail();
+    });
 
     return (
         <div className="conRight">
@@ -26,11 +48,11 @@ const NoticeDetail = () => {
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">공지대상</div>
                         <div className="flex width100">
-                            <input type="radio" name="bm2" v-model="dataFromList.bco" value="ALL" id="bm2_1" className="radioStyle" disabled="dataFromList.bco == 'ALL' ? false : true" />
-                            <label for="bm2_1" className="dataFromList.bco == 'ALL' ? '' : 'dimmed'">공통</label>
+                            <input type="radio" name="bm2" value="ALL" id="bm2_1" className="radioStyle" checked={ dataFromList.bco == "ALL" } disabled={ dataFromList.bco != 'ALL' && 'true' } />
+                            <label for="bm2_1" className={ dataFromList.bco != 'ALL' && 'dimmed' }>공통</label>
                             <div>
-                                <input type="radio" name= "bm2" v-model="dataFromList.bco" value="CUST" id="bm2_2" className="radioStyle" disabled="dataFromList.bco == 'CUST' ? false : true" />
-                                <label for="bm2_2" className="dataFromList.bco == 'CUST' ? '' : 'dimmed'">계열사</label>
+                                <input type="radio" name= "bm2" value="CUST" id="bm2_2" className="radioStyle" checked={ dataFromList.bco == "CUST" } disabled={ dataFromList.bco != 'CUST' && 'true' } />
+                                <label for="bm2_2" className={ dataFromList.bco != 'CUST' && 'dimmed' }>계열사</label>
                                 <p className="mt5 ml30" v-if="dataFromList.bco == 'CUST'">
                                     <span v-for="(val, index) in groupList" key="index">
                                         {/* val.interrelated.interrelatedNm }{ index < groupList.length - 1 ? ', ' : '' */}
