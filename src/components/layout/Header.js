@@ -19,21 +19,21 @@ const Header = () => {
     };
 
     return (
-        <div class="header">
-            <div class="headerLeft">
-                <a href="/main" class="headerLogo" title="메인 페이지로 이동" >
-                    <img src="../../images/bitcube_logo.png" class="img-responsive" alt="로고" style={{width: "150px"}}/>
+        <div className="header">
+            <div className="headerLeft">
+                <a href="/main" className="headerLogo" title="메인 페이지로 이동" >
+                    <img src="../../images/bitcube_logo.png" className="img-responsive" alt="로고" style={{width: "150px"}}/>
                     <span>e-Bidding System</span>
                 </a>
                 <a href='#!' onClick={() => fnTest()}><p>편하고 빠른 전자입찰시스템</p></a>
             </div>
-            <div v-if="this.$store.state.loginInfo !== null && this.$store.state.token !== ''" class="headerRight">
-                <div class="profileDropWrap">
-                    <a class="profileDrop"><i class="fa-solid fa-circle-user"> 비트큐브</i>님<i class="fa-solid fa-sort-down"></i></a>
-                    <div class="profileDropMenu">
-                        <a click="changeStatus('info')" data-toggle="modal" title="개인정보 수정"><i class="fa-light fa-gear"></i>개인정보 수정</a>
-                        <a click="changeStatus('pwd')" data-toggle="modal" title="비밀번호 변경"><i class="fa-light fa-lock-keyhole"></i>비밀번호 변경</a>
-                        <a data-toggle="modal" data-target="#logout" title="로그아웃"><i class="fa-light fa-arrow-right-from-bracket"></i>로그아웃</a>
+            <div v-if="this.$store.state.loginInfo !== null && this.$store.state.token !== ''" className="headerRight">
+                <div className="profileDropWrap">
+                    <a className="profileDrop"><i className="fa-solid fa-circle-user"> 비트큐브</i>님<i className="fa-solid fa-sort-down"></i></a>
+                    <div className="profileDropMenu">
+                        <a click="changeStatus('info')" data-toggle="modal" title="개인정보 수정"><i className="fa-light fa-gear"></i>개인정보 수정</a>
+                        <a click="changeStatus('pwd')" data-toggle="modal" title="비밀번호 변경"><i className="fa-light fa-lock-keyhole"></i>비밀번호 변경</a>
+                        <a data-toggle="modal" data-target="#logout" title="로그아웃"><i className="fa-light fa-arrow-right-from-bracket"></i>로그아웃</a>
                     </div>
                 </div>
             </div> 

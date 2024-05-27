@@ -9,9 +9,9 @@ const Layout = () => {
     return (
         <div id="wrap">
                 <Header />
-                <div class="contentWrap">
+                <div className="contentWrap">
                     <Menu />
-                    <div class="conRightWrap">
+                    <div className="conRightWrap">
                         <Outlet />
                         <Footer />
                     </div>

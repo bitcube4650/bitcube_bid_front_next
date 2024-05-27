@@ -34,7 +34,7 @@ const Pagination = ({ onChangeSrcData, list }) => {
 				<i className="fa-light fa-chevron-left"></i>
 			</a>
 			
-			{ list.empty && <a href="#" onClick={() => {onPage(0);}} title="1페이지로 이동" class="number active" >1</a> }
+			{ list.empty && <a href="#" onClick={() => {onPage(0);}} title="1페이지로 이동" className="number active" >1</a> }
 
 			{list.empty == false && pageMap.map((idx) => (
 				<a href="#" onClick={() => {onPage(curr*5+idx-1);}} title={idx + "페이지로 이동"}
