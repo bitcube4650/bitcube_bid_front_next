@@ -133,16 +133,20 @@ const CustDetail = () => {
 			</div>
 			<div className="text-center mt50">
 				<button onClick={onMoveList} className="btnStyle btnOutlineRed" title="취소">취소</button>
-				{/* <!-- 감사 사용자 / 각사 관리자만 업체 승인/반려/수정/삭제 처리 가능 */}
+				{custInfo.certYn != 'D' &&
+				<>
+				{/* 감사 사용자 / 각사 관리자만 업체 승인/반려/수정/삭제 처리 가능 */}
 				{!isApproval ?
-				<>
-					<button className="btnStyle btnRed" title="삭제" onClick={onDelete}>삭제</button>
-					<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정">수정 이동</Link>
-				</>
-				:
-				<>
-					<button className="btnStyle btnRed" title="반려" onClick={onRefuse}>반려</button>
-					<button className="btnStyle btnPrimary" title="승인" onClick={onApproval}>승인</button>
+					<>
+						<button className="btnStyle btnRed" title="삭제" onClick={onDelete}>삭제</button>
+						<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정">수정 이동</Link>
+					</>
+					:
+					<>
+						<button className="btnStyle btnRed" title="반려" onClick={onRefuse}>반려</button>
+						<button className="btnStyle btnPrimary" title="승인" onClick={onApproval}>승인</button>
+					</>
+				}
 				</>
 				}
 			</div>
