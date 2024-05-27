@@ -7,8 +7,8 @@ const Login = () => {
 
     return (
         <div>
-            <div class="loginBg">
-                <div class="inner">
+            <div className="loginBg">
+                <div className="inner">
                     <LoginWrap logoUrl={logoUrl}/>
                     <LoginFooter logoUrl={logoUrl}/>
                 </div>
