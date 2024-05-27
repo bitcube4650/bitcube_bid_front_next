@@ -29,6 +29,7 @@ const App = () => {
 						<Route path="/notice" element={<Notice />}></Route>
 						<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
 						<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
+						<Route path="/noticeEdit/:bno" element={<NoticeEdit />}></Route>
 						<Route path="/company/partner/approval" element={<CustList />}></Route>
 						<Route path="/company/partner/management" element={<CustList />}></Route>
 						<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>
