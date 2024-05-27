@@ -19,16 +19,18 @@ const Notice = () => {
         userName: "",
         size    : 10,
         page    : 0,
-        isEnter : false
+        isEnter : true
     });
 
     const onChangeSrcData = (e) => {
-        if (e.key === 'Enter'){
+        if (e.key === 'Enter' || e.target.className.indexOf('btnSearch') > -1 || e.target.name.indexOf('size') > -1){
+            let params = {...srcData, isEnter: true};
+            if(e.target.name.indexOf('size') > -1){
+                params = {...params, [e.target.name]: e.target.value}
+            }
             setSrcData({
-                ...srcData,
-                isEnter: true
+                ...params
             });
-
         }else{
             setSrcData({
                 ...srcData,
@@ -70,15 +72,15 @@ const Notice = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">제목</div>
                         <div className="width200px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxlength="300" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxLength="300" />
                         </div>
                         <div className="sbTit mr30 ml50">내용</div>
                         <div className="width200px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxlength="300" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxLength="300" />
                         </div>
                         <div className="sbTit mr30 ml50">등록자</div>
                         <div className="width200px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxlength="50" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="50" />
                         </div>
                         <a onClick={onChangeSrcData} className="btnStyle btnSearch">검색</a>
                     </div>
@@ -121,7 +123,7 @@ const Notice = () => {
                         { noticeList.content?.map((notice) => <NoticeList key={notice.bno} notice={notice} />) }
                         { noticeList.content == null &&
                             <tr>
-                                <td className="end" colspan="6">조회된 데이터가 없습니다.</td>
+                                <td className="end" colSpan="6">조회된 데이터가 없습니다.</td>
                             </tr> }
                     </tbody>
                 </table>
