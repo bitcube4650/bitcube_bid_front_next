@@ -19,7 +19,7 @@ table {border-collapse:collapse; border-spacing:0; /*table-layout:fixed*/}
 caption, legend {overflow:hidden; text-indent:-9999px; height:1px; padding:0 !important}
 html {font-family:Jalnan2; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%}
 a {background-color:transparent; color:inherit; text-decoration:none; cursor: pointer;}
-a:active, a:hover {outline:0; text-underline-position:under}
+a:active, a:hover {outline:0; text-underline-position:under; text-decoration: none !important;}
 p {outline:none}
 img {border:0}
 button {cursor:pointer; background:none}
