@@ -18,33 +18,20 @@ const Notice = () => {
         content : "",
         userName: "",
         size    : 10,
-        page    : 0,
-        isEnter : true
+        page    : 0
     });
 
     const onChangeSrcData = (e) => {
-        if (e.key === 'Enter'){
-            let params = {...srcData, isEnter: true};
-            if(e.target.name.indexOf('size') > -1){
-                params = {...params, [e.target.name]: e.target.value}
-            }
-            setSrcData({
-                ...params
-            });
-        }else{
-            setSrcData({
-                ...srcData,
-                [e.target.name]: e.target.value
-            });
-        }
+        setSrcData({
+            ...srcData,
+            [e.target.name]: e.target.value
+        });
     }
 
     const onSearch = useCallback(async() => {
-        if(srcData.isEnter === false) return;
         try {
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data);
-            srcData.isEnter = false;
         } catch (error) {
             Swal.fire('조회에 실패하였습니다.', '', 'error');
             console.log(error);
@@ -72,17 +59,17 @@ const Notice = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">제목</div>
                         <div className="width200px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxLength="300" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
                         <div className="sbTit mr30 ml50">내용</div>
                         <div className="width200px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxLength="300" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
                         <div className="sbTit mr30 ml50">등록자</div>
                         <div className="width200px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="50" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
-                        <a onClick={onChangeSrcData} className="btnStyle btnSearch">검색</a>
+                        <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
