@@ -8,6 +8,7 @@ const Menu = () => {
     const path = window.location.pathname;
     const [targetId, setTargetId] = useState("")
     const [menuClickBoolean, setMenuClickBoolean] = useState(false)
+    const [profileDrop, setProfileDrop] = useState(false)
 
     // 메뉴 클릭시 펼쳐지는거
     const onClickMenu = (e) => {
@@ -33,9 +34,9 @@ const Menu = () => {
 
     return (
         <div className="conLeftWrap">
-            <div className="profileDropWrap2">
-                <a href="#!" className="profileDrop2">테스트 님<i className="fa-solid fa-sort-down"></i></a>
-                <div className="profileDropMenu2">
+            <div className={(profileDrop ? 'profileDropWrap2 active' : 'profileDropWrap2')}>
+                <a href="#!" onClick={() => {setProfileDrop(!profileDrop)}} className="profileDrop2">테스트 님<i className="fa-solid fa-sort-down"></i></a>
+                <div  className="profileDropMenu2">
                     <a href="#!" click="changeStatus('info')" data-toggle="modal" title="개인정보 수정"><i className="fa-light fa-gear"></i>개인정보 수정</a>
                     <a href="#!" click="changeStatus('pwd')" data-toggle="modal" title="비밀번호 변경"><i className="fa-light fa-lock-keyhole"></i>비밀번호 변경</a>
                     <a href="#!" data-toggle="modal" data-target="#logout" title="로그아웃"><i className="fa-light fa-arrow-right-from-bracket"></i>로그아웃</a>

@@ -1,10 +1,12 @@
-import React from 'react';
+import React  from 'react';
+import {useState} from 'react'
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 //todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
-const Header = () => {
-    
+const Header = () => {    
+    const [profileDrop, setProfileDrop] = useState(false)
+
     function fnTest ( prams){
         Swal.fire({
             title: '정말 확실합니까?',              // 타이틀
@@ -18,6 +20,10 @@ const Header = () => {
         });
     };
 
+    function changeStatus(){
+
+    }
+
     return (
         <div className="header">
             <div className="headerLeft">
@@ -28,12 +34,12 @@ const Header = () => {
                 <a href='#!' onClick={() => fnTest()}><p>편하고 빠른 전자입찰시스템</p></a>
             </div>
             <div v-if="this.$store.state.loginInfo !== null && this.$store.state.token !== ''" className="headerRight">
-                <div className="profileDropWrap">
-                    <a className="profileDrop"><i className="fa-solid fa-circle-user"> 비트큐브</i>님<i className="fa-solid fa-sort-down"></i></a>
+                <div className={(profileDrop ? 'profileDropWrap active' : 'profileDropWrap')}>
+                    <a href='#' onClick={() => {setProfileDrop(!profileDrop)}} className="profileDrop"><i className="fa-solid fa-circle-user"> 비트큐브</i>님<i className="fa-solid fa-sort-down"></i></a>
                     <div className="profileDropMenu">
-                        <a click="changeStatus('info')" data-toggle="modal" title="개인정보 수정"><i className="fa-light fa-gear"></i>개인정보 수정</a>
-                        <a click="changeStatus('pwd')" data-toggle="modal" title="비밀번호 변경"><i className="fa-light fa-lock-keyhole"></i>비밀번호 변경</a>
-                        <a data-toggle="modal" data-target="#logout" title="로그아웃"><i className="fa-light fa-arrow-right-from-bracket"></i>로그아웃</a>
+                        <a href='/#' onClick={changeStatus('info')} data-toggle="modal" title="개인정보 수정"><i className="fa-light fa-gear"></i>개인정보 수정</a>
+                        <a href='/#' onClick={changeStatus('pwd')} data-toggle="modal" title="비밀번호 변경"><i className="fa-light fa-lock-keyhole"></i>비밀번호 변경</a>
+                        <a href='/#' data-toggle="modal" data-target="#logout" title="로그아웃"><i className="fa-light fa-arrow-right-from-bracket"></i>로그아웃</a>
                     </div>
                 </div>
             </div> 
