@@ -3,6 +3,7 @@ import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import NoticeList from '../components/NoticeList';
+import Swal from 'sweetalert2'; // 공통 팝업창
 
 const Notice = () => {
     const navigate = useNavigate();
@@ -31,7 +32,8 @@ const Notice = () => {
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data);
         } catch (error) {
-            console.log(error); //todo: modal 표시 처리........
+            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            console.log(error);
         }
     },[srcData]);
 

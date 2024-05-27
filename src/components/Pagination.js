@@ -6,11 +6,11 @@ const Pagination = ({ onChangeSrcData, list }) => {
 	const pageMap = onPageMap();
 
 	function onPageMap() {
-		var rtnList = [];
+		let rtnList = [];
 		if(list.totalPages-list.number >= 5) {
 			return [1, 2, 3, 4, 5];
 		} else {
-			for(var i = 1; i <= list.totalPages%5; i++) {
+			for(let i = 1; i <= list.totalPages%5; i++) {
 				rtnList.push(i);
 			}
 		}
@@ -19,7 +19,7 @@ const Pagination = ({ onChangeSrcData, list }) => {
 	}
 
 	function onPage(page) {
-		var e = {
+		let e = {
 			target:{name:"page", value:page}
 		}
 		onChangeSrcData(e);
