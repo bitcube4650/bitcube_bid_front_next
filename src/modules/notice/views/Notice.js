@@ -17,19 +17,31 @@ const Notice = () => {
         content : "",
         userName: "",
         size    : 10,
-        page    : 0
+        page    : 0,
+        isEnter : false
     });
+
     const onChangeSrcData = (e) => {
-        setSrcData({
-            ...srcData,
-            [e.target.name]: e.target.value
-        });
+        if (e.key === 'Enter'){
+            setSrcData({
+                ...srcData,
+                isEnter: true
+            });
+
+        }else{
+            setSrcData({
+                ...srcData,
+                [e.target.name]: e.target.value
+            });
+        }
     }
 
     const onSearch = useCallback(async() => {
+        if(srcData.isEnter === false) return;
         try {
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data);
+            srcData.isEnter = false;
         } catch (error) {
             console.log(error); //todo: modal 표시 처리........
         }
@@ -56,17 +68,17 @@ const Notice = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">제목</div>
                         <div className="width200px">
-                            <input type="text" onChange={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxlength="300" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="title" className="inputStyle" placeholder="" maxlength="300" />
                         </div>
                         <div className="sbTit mr30 ml50">내용</div>
                         <div className="width200px">
-                            <input type="text" onChange={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxlength="300" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="content" className="inputStyle" placeholder="" maxlength="300" />
                         </div>
                         <div className="sbTit mr30 ml50">등록자</div>
                         <div className="width200px">
-                            <input type="text" onChange={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxlength="50" />
+                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxlength="50" />
                         </div>
-                        <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
+                        <a onClick={onChangeSrcData} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
