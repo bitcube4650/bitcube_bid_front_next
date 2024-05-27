@@ -22,6 +22,12 @@ const Menu = () => {
             setMenuClickBoolean(true);
         }
     };
+    
+    //세션 로그인 정보
+    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const userCustType = loginInfo.custType;
+    const userAuth = loginInfo.userAuth;
+    //console.log(loginInfo);
 
     return (
         <div className="conLeftWrap">
@@ -44,8 +50,12 @@ const Menu = () => {
                     <div className={(targetId === "ebid" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
                             <li className={(path === ('/bid/progress') ? 'active' : '')}><a href="/bid/progress">입찰계획</a></li>
-                            <li className={(path === ('/bid/status') ? 'active' : '')}><a click="clickBidStatus">입찰진행</a></li>
-                            <li className={(path === ('/bid/complete') ? 'active' : '')}><a click="clickBidComplete">입찰완료</a></li>
+                            <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/partnerStatus') ? 'active' : '')}><a href='/bid/status'>입찰진행</a></li>
+                            <li style={{ display: userCustType === 'inter' ? 'none' : 'block' }} className={(path === ('/bid/partnerStatus') ? 'active' : '')}><a href='/bid/partnerStatus'>입찰진행-협력사</a></li>
+                            
+                            <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/partnerStatus') ? 'active' : '')}><a href='/bid/complete'>입찰완료</a></li>
+                            <li style={{ display: userCustType === 'inter' ? 'none' : 'block' }} className={(path === ('/bid/partnerStatus') ? 'active' : '')}><a href='/bid/partnerComplete'>입찰완료-협력사</a></li>
+                            <li className={(path === ('/bid/history') ? 'active' : '')}><a href='/bid/history'>낙찰이력</a></li>
                         </ul>
                     </div>
                 </li>
