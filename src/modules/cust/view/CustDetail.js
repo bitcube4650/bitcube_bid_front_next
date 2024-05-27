@@ -21,27 +21,42 @@ const CustDetail = () => {
 	}
 
 	// 업체 정보
-	const [data, setData] = useState({});
+	const [custInfo, setCustInfo] = useState({});
 
 	// 업체 상세 정보 조회
-	const fnInit = useCallback(async() => {
+	const onInit = useCallback(async() => {
 		const response = await axios.post('/api/v1/cust/management/'+custCode, {})
+		const result = response.data;
+		setCustInfo(result.data)
 
-		setData(response.data.data)
+		// onFormattingData('regnum',		result.data.regnum.substring(0,3) + "-" + result.data.regnum.substring(3,5) + "-" + result.data.regnum.substring(5,10));
+		// onFormattingData('presJuminNo',	result.data.presJuminNo.substring(0,6) + "-" + result.data.presJuminNo.substring(6,13))
+
 	}, [custCode])
 
-	// 뒤로가기
-	const goBack = () => {
-		navigate(-1);
+	// const onFormattingData = (name, value) => {
+	// 	setCustInfo(current => ({
+	// 		...current,
+	// 		[name] : value
+	// 	}))
+	// }
+
+	// 취소
+	const onMoveList = () => {
+		{!isApproval ? 
+			navigate('/company/partner/management')
+		:
+			navigate('/company/partner/approval')
+		}
 	};
 	
 	// 업체 승인 처리
-	const fnApproval = async() => {
+	const onApproval = async() => {
 		// confirm 처리 후 승인
 
 		const response = await axios.post('/api/v1/cust/approval', {
 			custCode : custCode,
-			custName : data.custName
+			custName : custInfo.custName
 		})
 		
 		if(response.status != '200'){
@@ -49,22 +64,22 @@ const CustDetail = () => {
 			return;
 		} else {
 			alert("승인처리하였습니다.");
-			goBack();
+			onMoveList();
 		}
 	}
 
 	// 반려 사유 팝업 호출
-	const fnRefuse = () => {
+	const onRefuse = () => {
 
 	}
 
 	// 업체 반려 처리
-	const fnRefuseCallback = async() => {
+	const onRefuseCallback = async() => {
 		const response = await axios.post('/api/v1/cust/back', {
 			custCode : custCode,
-			custName : data.custName,
+			custName : custInfo.custName,
 			etc : '',
-			userEmail : data.userEmail
+			userEmail : custInfo.userEmail
 		})
 		
 		if(response.status != '200'){
@@ -72,17 +87,17 @@ const CustDetail = () => {
 			return;
 		} else {
 			alert("반려되었습니다.");
-			goBack();
+			onMoveList();
 		}
 	}
 
 	// 삭제 사유 팝업 호출
-	const fnDelete = () => {
+	const onDelete = () => {
 		
 	}
 
 	// 업체 삭제 처리
-	const fnDeleteCallback = async() => {
+	const onDeleteCallback = async() => {
 		const response = await axios.post('/api/v1/cust/del', {
 			custCode : custCode,
 			etc : '',
@@ -93,13 +108,13 @@ const CustDetail = () => {
 			return;
 		} else {
 			alert("삭제되었습니다.");
-			goBack();
+			onMoveList();
 		}
 	}
 
 	useEffect(() => {
-		fnInit();
-	}, [fnInit])
+		onInit();
+	}, [onInit])
 
   return (
 	<div className="conRight">
@@ -114,20 +129,20 @@ const CustDetail = () => {
 		{/* contents */}
 		<div className="contents">
 			<div className="formWidth">
-				<CustInfo isApproval={isApproval} data={data} />
+				<CustInfo isApproval={isApproval} custInfo={custInfo} />
 			</div>
 			<div className="text-center mt50">
-				<button onClick={goBack} className="btnStyle btnOutlineRed" title="취소">취소</button>
+				<button onClick={onMoveList} className="btnStyle btnOutlineRed" title="취소">취소</button>
 				{/* <!-- 감사 사용자 / 각사 관리자만 업체 승인/반려/수정/삭제 처리 가능 */}
 				{!isApproval ?
 				<>
-					<button className="btnStyle btnRed" title="삭제" onClick={fnDelete}>삭제</button>
+					<button className="btnStyle btnRed" title="삭제" onClick={onDelete}>삭제</button>
 					<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정">수정 이동</Link>
 				</>
 				:
 				<>
-					<button className="btnStyle btnRed" title="반려" onClick={fnRefuse}>반려</button>
-					<button className="btnStyle btnPrimary" title="승인" onClick={fnApproval}>승인</button>
+					<button className="btnStyle btnRed" title="반려" onClick={onRefuse}>반려</button>
+					<button className="btnStyle btnPrimary" title="승인" onClick={onApproval}>승인</button>
 				</>
 				}
 			</div>

@@ -1,36 +1,323 @@
 import React from 'react'
 
-const SaveCustInfo = ({isEdit, data}) => {
+const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
+	// 조회조건 변경시 파라미터 셋팅
+	const handleChange = (e) => {
+		onChangeData(e.target.name, e.target.value)
+	}
+
+
+
 	return (
 		<>
+			{/* 회사 정보 */}
 			<h3 className="h3Tit mt50">회사 정보</h3>
 			<div className="formWidth">
 				<div className="boxSt mt20">
-				{isEdit ?
+				{!isEdit ?
+					<>
+						{/* 업체 등록 */}
+						<div className="flex align-items-center">
+							<div className="formTit flex-shrink0 width170px">승인 계열사</div>
+							<div className="width100">
+								{/* {{ $store.state.loginInfo.custName }} */}
+								<a href="#" data-toggle="modal" data-target="#otherCustPop" className="btnStyle btnSecondary ml50" title="타계열사 업체">타계열사 업체</a>
+								{/* tooltip */}
+								<i className="fas fa-question-circle toolTipSt toolTipMd ml5">
+									<div className="toolTipText" style={{width:"320px"}}>
+									<ul className="dList">
+										<li><div>등록하실 업체가 다른 계열사에 이미 등록되어 있다면 [타계열사 업체]를 조회하여 등록하십시오.</div></li>
+									</ul>
+									</div>
+								</i>
+								{/* // tooltip */}
+							</div>
+						</div>
+						<div className="flex align-items-center mt20">
+							<div className="formTit flex-shrink0 width170px">업체유형 1 <span className="star">*</span></div>
+							<div className="flex align-items-center width100">
+								<input type="text"  className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
+								<input type="hidden"/>
+							<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
+							</div>
+						</div>
+						<div className="flex align-items-center mt20">
+							<div className="formTit flex-shrink0 width170px">업체유형 2</div>
+							<div className="flex align-items-center width100">
+									<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
+									<input type="hidden"/>
+								<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
+							</div>
+						</div>
+					</>
+				:
+					<>
+					{/* 업체 수정 */}
 					<div className="flex align-items-center">
 						<div className="formTit flex-shrink0 width170px">승인 계열사</div>
-						<div className="width100">{ data.interrelatedNm }</div>
+						<div className="width100">{ custInfo.interrelatedNm }</div>
 					</div>
-				: 
-					<div className="flex align-items-center">
-						<div className="formTit flex-shrink0 width170px">승인 계열사</div>
-						<div className="width100">
-							{/* {{ $store.state.loginInfo.custName }} */}
-							<a href="#" data-toggle="modal" data-target="#otherCustPop" className="btnStyle btnSecondary ml50" title="타계열사 업체">타계열사 업체</a>
-							{/* tooltip */}
-							<i className="fas fa-question-circle toolTipSt toolTipMd ml5">
-								<div className="toolTipText" style={{width:"320px"}}>
-								<ul className="dList">
-									<li><div>등록하실 업체가 다른 계열사에 이미 등록되어 있다면 [타계열사 업체]를 조회하여 등록하십시오.</div></li>
-								</ul>
-								</div>
-							</i>
-							{/* // tooltip */}
+					
+					<div className="flex align-items-center mt20">
+						<div className="formTit flex-shrink0 width170px">업체유형 1</div>
+						<div className="width100">{ custInfo.custTypeNm1 }</div>
+					</div>
+					<div className="flex align-items-center mt20">
+						<div className="formTit flex-shrink0 width170px">업체유형 2</div>
+						<div className="width100">{ custInfo.custTypeNm2 }</div>
+					</div>
+					</>
+				}
+					<div className="flex align-items-center mt20">
+						<div className="formTit flex-shrink0 width170px">회사명 <span className="star">*</span></div>
+						<div className="width100"><input type="text" name="custName" value={custInfo.custName} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
+					</div>
+					
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">대표자명 <span className="star">*</span></div>
+						<div className="width100"><input type="text" name="presName" value={custInfo.presName} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
+					</div>
+
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">사업자등록번호 <span className="star">*</span></div>
+						<div className="flex align-items-center width100">
+							<input type="text" name="regnum1" value={custInfo.regnum1} maxLength="3" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<span style={{margin:"0 10px"}}>-</span>
+							<input type="text" name="regnum2" value={custInfo.regnum2} maxLength="2" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<span style={{margin:"0 10px"}}>-</span>
+							<input type="text" name="regnum3" value={custInfo.regnum3} maxLength="5" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
-				}
+					
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">법인번호</div>
+						<div className="flex align-items-center width100">
+							<input type="text" name="presJuminNo1" value={custInfo.presJuminNo1} maxLength="6" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<span style={{margin:"0 10px"}}>-</span>
+							<input type="text" name="presJuminNo2" value={custInfo.presJuminNo2} maxLength="7" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						</div>
+					</div>
+
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">자본금 <span className="star">*</span></div>
+						<div className="flex align-items-center width100">
+							<input type="text" name="capital" value={custInfo.capital} maxLength="15" className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} />
+							<div className="ml10">원</div>
+						</div>
+					</div>
+					
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">설립년도 <span className="star">*</span></div>
+						<div className="flex align-items-center width100">
+							<input type="text" name="foundYear" value={custInfo.foundYear} maxLength="4" className="inputStyle maxWidth-max-content" placeholder="ex) 2021" onChange={handleChange} />
+							<div className="ml10">년</div>
+						</div>
+					</div>
+					
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">대표전화 <span className="star">*</span></div>
+						<div className="width100">
+							<input type="text" name="tel" value={custInfo.tel} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						</div>
+					</div>
+					
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">팩스</div>
+						<div className="width100">
+							<input type="text" name="fax" value={custInfo.fax} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						</div>
+					</div>
+					
+					<div className="flex mt10">
+						<div className="formTit flex-shrink0 width170px">회사주소 <span className="star">*</span></div>
+						<div className="width100">
+							<div className="flex align-items-center width100">
+								<input type="text"  name="zipcode" value={custInfo.zipcode} className="inputStyle maxWidth-max-content readonly" placeholder="주소 조회 클릭" readOnly onChange={handleChange}/>
+								<a href="#"data-toggle="modal" data-target="#addrPop" className="btnStyle btnSecondary flex-shrink0 ml10" title="주소 조회">주소 조회</a>
+							</div>
+							<div className="mt5"><input type="text" name="addr" value={custInfo.addr} className="inputStyle readonly" placeholder="" readOnly onChange={handleChange} /></div>
+							<div className="mt5"><input type="text" name="addrDetail" value={custInfo.addrDetail} className="inputStyle" placeholder="상세 주소 입력" onChange={handleChange}/></div>
+						</div>
+					</div>
+
+					
+					<div className="flex mt10">
+						<div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star">*</span></div>
+						<div className="width100">
+							{/* 다중파일 업로드 */}
+							<div className="upload-boxWrap">
+								{custInfo.regnumFile != '' ?
+									<div className="upload-box">
+										<input type="file" id="file-input" />
+										<div className="uploadTxt">
+											<i className="fa-regular fa-upload"></i>
+											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
+										</div>
+									</div>
+								:
+									<div className="uploadPreview" >
+										<p>
+											{ custInfo.regnumFileName }
+											<button className='file-remove'>삭제</button>
+										</p>
+									</div>
+								}
+							</div>
+							{/* 다중 파일 업로드 */}
+						</div>
+					</div>
+					
+					<div className="flex mt10">
+						<div className="formTit flex-shrink0 width170px">회사소개 및 기타자료
+							{/* tooltip */}
+							<i className="fas fa-question-circle toolTipSt ml5">
+								<div className="toolTipText" style={{ width:"420px" }}>
+									<ul className="dList">
+										<li><div>첨부파일은 간단한 업체 소개 자료 등의 파일을 첨부해 주십시오.</div></li>
+										<li><div>1개  이상의 파일을 첨부하실 경우 Zip으로 압축하여 첨부해 주십시오</div></li>
+										<li><div>파일은 10M 이상을 초과할 수 없습니다.</div></li>
+									</ul>
+								</div>
+							</i>
+							{/* tooltip */}
+						</div>
+						<div className="width100">
+							{/* 다중파일 업로드 */}
+							<div className="upload-boxWrap">
+							{custInfo.bfile != '' ?
+									<div className="upload-box">
+										<input type="file" id="file-input2" />
+										<div className="uploadTxt">
+											<i className="fa-regular fa-upload"></i>
+											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
+										</div>
+									</div>
+								:
+									<div className="uploadPreview" >
+										<p>
+											{ custInfo.bfileName }
+											<button className='file-remove'>삭제</button>
+										</p>
+									</div>
+								}
+							</div>
+							{/* //다중파일 업로드 */}
+						</div>
+					</div>
+				
+					{isEdit &&
+						<div className="flex align-items-center mt20">
+							<div className="formTit flex-shrink0 width170px">상태</div>
+							<div className="width100">정상</div>
+						</div>
+					}
 				</div>
 			</div>
+			{/* // 회사정보 */}
+
+			{/* 계열사 관리 항목(업체 수정에만 조회) */}
+			{isEdit &&
+			<>
+			<h3 className="h3Tit mt50">계열사 관리항목</h3>
+			<div className="boxSt mt20">
+				<div className="flex align-items-center">
+					<div className="formTit flex-shrink0 width170px">업체등급</div>
+					<div className="width100">
+						<input type="radio" name="custLevel" value="A" id="chkA" className="radioStyle"  checked={custInfo.custLevel === 'A'} onChange={handleChange}/><label for="chkA">A등급</label>
+						<input type="radio" name="custLevel" value="B" id="chkB" className="radioStyle"  checked={custInfo.custLevel === 'B'} onChange={handleChange}/><label for="chkB">B등급</label>
+						<input type="radio" name="custLevel" value="C" id="chkC" className="radioStyle"  checked={custInfo.custLevel === 'C'} onChange={handleChange}/><label for="chkC">C등급</label>
+						<input type="radio" name="custLevel" value="D" id="chkD" className="radioStyle"  checked={custInfo.custLevel === 'D'} onChange={handleChange}/><label for="chkD">D등급</label>
+					</div>
+				</div>
+				<div className="flex align-items-center mt20">
+					<div className="formTit flex-shrink0 width170px">D업체평가</div>
+					<div className="width100">
+						<textarea className="textareaStyle boxOverflowY" name="careContent" value={custInfo.careContent} maxLength="2000" onChange={handleChange}></textarea>
+					</div>
+					</div>
+					<div className="flex align-items-center mt20">
+						<div className="formTit flex-shrink0 width170px">관리단위</div>
+					<div className="width100">
+						<input type="text" className="inputStyle" name="custValuation" value={custInfo.custValuation} maxLength="100"  onChange={handleChange}/>
+					</div>
+				</div>
+			</div>
+			</>
+			}
+			{/* // 계열사 관리 항목 */}
+
+			{/* 관리자 정보 */}
+			<h3 className="h3Tit mt50">관리자 정보</h3>
+			<div className="boxSt mt20">
+				<div className="flex align-items-center">
+					<div className="formTit flex-shrink0 width170px">이름 <span className="star">*</span></div>
+					<div className="width100">
+						<input type="text" name="userName" value={custInfo.userName} className="inputStyle maxWidth-max-content" maxLength="50" onChange={handleChange}/>
+					</div>
+				</div>
+				<div className="flex align-items-center mt10">
+					<div className="formTit flex-shrink0 width170px">이메일 <span className="star">*</span></div>
+					<div className="width100">
+						<input type="text" name="userEmail" value={custInfo.userEmail} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="ex) sample@iljin.co.kr" onChange={handleChange} />
+					</div>
+				</div>
+				{!isEdit ?
+				<>
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">아이디 <span className="star">*</span></div>
+						<div className="flex align-items-center width100">
+							<input type="text" name="userId" value={custInfo.userId} maxLength="10" className="inputStyle maxWidth-max-content" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" onChange={handleChange} />
+							<a href="#" className="btnStyle btnSecondary flex-shrink0 ml10" title="중복 확인">중복 확인</a>
+						</div>
+					</div>
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">비밀번호 <span className="star">*</span></div>
+						<div className="width100">
+							<input style={{'-webkit-text-security':"disc;"}} name="userPwd" value={custInfo.userPwd} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" onChange={handleChange} />
+						</div>
+					</div>
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">비밀번호 확인 <span className="star">*</span></div>
+						<div className="width100">
+							<input style={{'-webkit-text-security':"disc;"}} name="userPwdConfirm" value={custInfo.userPwdConfirm} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="비밀번호와 동일해야 합니다." onChange={handleChange} />
+						</div>
+					</div>
+				</>
+				:
+				<>
+					<div className="flex align-items-center mt10">
+						<div className="formTit flex-shrink0 width170px">아이디</div>
+						<div className="width100">{ custInfo.userId }</div>
+					</div>
+				</>
+				}
+				
+				<div className="flex align-items-center mt10">
+					<div className="formTit flex-shrink0 width170px">휴대폰 <span className="star">*</span></div>
+					<div className="width100">
+						<input type="text" name="userHp" value={custInfo.userHp} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+					</div>
+				</div>
+				<div className="flex align-items-center mt10">
+					<div className="formTit flex-shrink0 width170px">유선전화 <span className="star">*</span></div>
+					<div className="width100">
+						<input type="text" name="userTel" value={custInfo.userTel} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+					</div>
+				</div>
+				<div className="flex align-items-center mt10">
+					<div className="formTit flex-shrink0 width170px">직급</div>
+					<div className="width100">
+						<input type="text" name="userPosition" value={custInfo.userPosition} maxLength="50" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+					</div>
+				</div>
+				<div className="flex align-items-center mt10">
+					<div className="formTit flex-shrink0 width170px">부서</div>
+					<div className="width100">
+						<input type="text" name="userBuseo" value={custInfo.userBuseo} maxLength="50" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+					</div>
+				</div>
+			</div>
+			{/* // 관리자 정보 */}
 		</>
 	)
 }
