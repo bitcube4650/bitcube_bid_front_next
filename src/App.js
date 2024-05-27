@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Login from './views/Login';
 import Main from './views/Main';
 import Notice from './modules/notice/views/Notice';
@@ -19,6 +20,7 @@ const App = () => {
 	return (
 		<div className='Router'>
 			<BrowserRouter>
+				<ScrollToTop />
 				<Routes>
           			<Route path="/login" element={<Login />}></Route>
 					<Route path="/" element={<Login />}></Route>
