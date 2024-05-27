@@ -23,7 +23,7 @@ const Notice = () => {
     });
 
     const onChangeSrcData = (e) => {
-        if (e.key === 'Enter' || e.target.className.indexOf('btnSearch') > -1 || e.target.name.indexOf('size') > -1){
+        if (e.key === 'Enter'){
             let params = {...srcData, isEnter: true};
             if(e.target.name.indexOf('size') > -1){
                 params = {...params, [e.target.name]: e.target.value}
@@ -49,11 +49,11 @@ const Notice = () => {
             Swal.fire('조회에 실패하였습니다.', '', 'error');
             console.log(error);
         }
-    },[srcData]);
+    });
 
     useEffect(() => {
         onSearch();
-    },[onSearch]);
+    },[srcData.size, srcData.page]);
 
     function onNoticeEdit() {
         navigate('/noticeEdit', {state: {updateInsert: "insert"}});
