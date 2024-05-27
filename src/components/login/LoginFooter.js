@@ -12,7 +12,7 @@ function LoginFooter(props) {
                 </div>
                 <div class="loginFootRight" v-if="showIljin">
                 <div class="loginSelectStyle">
-                    <button class="selLabel">ILJIN FAMILY</button>
+                    <button class="selLabel">BITCUBE FAMILY</button>
                     <ul class="optionList">
                     <li class="optionItem"><a href="http://www.iljin.co.kr" target="_blank">일진홀딩스</a></li>
                     <li class="optionItem"><a href="http://www.iljinelec.co.kr" target="_blank">일진전기</a></li>
@@ -28,11 +28,12 @@ function LoginFooter(props) {
                 </div>
             </div>
             <div class="footAddr" v-if="showIljin">
-                전자입찰 문의: IT HelpDesk ( 080 - 707 - 9100 ) &nbsp e-mail : ithelpdesk@iljin.co.kr<br />
-                서울특별시 마포구 마포대로 45(도화동) 일진빌딩<br />© ILJIN ALL RIGHTS RESERVED.
+                전자입찰 문의: IT HelpDesk ( 02 - 720 - 4650 ) &nbsp e-mail : bitcube@bitcube.co.kr<br />
+                서울특별시 강동구 강동U1빌딩 1613호<br />
+                © BITCUBE ALL RIGHTS RESERVED.
             </div>
             <div class="footAddr" v-else>
-                전자입찰 문의: IT HelpDesk ( 080 - 707 - 9100 ) &nbsp e-mail : ithelpdesk@iljin.co.kr
+                전자입찰 문의: IT HelpDesk ( 02 - 720 - 4650 ) &nbsp e-mail : bitcube@bitcube.co.kr
             </div>
         </div>
     )
