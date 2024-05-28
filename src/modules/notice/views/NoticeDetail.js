@@ -9,21 +9,14 @@ const NoticeDetail = () => {
     const navigate = useNavigate();
     const { bno } = useParams();
     const [dataFromList, setDataFromList] = useState({});
-    const [groupList, setGroupList] = useState([]);
 
     async function onSelectDetail() {
         try {
-            let srcData = {bno: bno};
+            const srcData = {bno: bno};
             const response = await axios.post('/api/v1/notice/noticeList', srcData);
-            //const groupResponse = await axios.post('/api/v1/notice/selectGroupList', srcData);
-            const groupResponse = {
-                status : 200,
-                data : ["1", "2", "3"]
-            }
             
-            if(response.status == 200 && groupResponse.status == 200) {
-                setDataFromList(response.data.content[0]);
-                setGroupList(groupResponse.data);
+            if(response.data.status == 200) {
+                setDataFromList(response.data.data.content[0]);
             } else {
                 Swal.fire('조회에 실패하였습니다.', '', 'error');
                 navigate("/notice");
@@ -38,6 +31,10 @@ const NoticeDetail = () => {
     useEffect(() => {
         onSelectDetail();
     }, bno);
+
+    function onNoticeEdit() {
+        navigate('/noticeEdit/' + bno, {state: {updateInsert: "update"}});
+    }
 
     return (
         <div className="conRight">
@@ -63,7 +60,7 @@ const NoticeDetail = () => {
                                 <input type="radio" name= "bm2" value="CUST" id="bm2_2" className="radioStyle" checked={ dataFromList.bco == "CUST" } disabled={ dataFromList.bco != 'CUST' && 'true' } />
                                 <label for="bm2_2" className={ dataFromList.bco != 'CUST' && 'dimmed' }>계열사</label>
                                 <p className="mt5 ml30" v-if="dataFromList.bco == 'CUST'">
-                                    { groupList?.map((group, index) => (<span>{ group }{ index < groupList.length - 1 && ', ' }</span>)) }
+                                    { dataFromList.interrelatedNms }
                                 </p>
                             </div>
                         </div>
@@ -91,8 +88,8 @@ const NoticeDetail = () => {
                     </div>
                     <div className="flex mt20">
                         <div className="formTit flex-shrink0 width170px">공지내용</div>
-                        <div className="width100">
-                            <pre className="overflow-y-auto notiBox width100" style={{height:'400px', backgroundColor: 'white'}}>
+                        <div style={{width: 'calc(100% - 170px)'}}>
+                            <pre className="overflow-y-auto notiBox" style={{height:'400px', backgroundColor: 'white'}}>
                                 { dataFromList.bcontent }
                             </pre>
                         </div>
@@ -102,12 +99,10 @@ const NoticeDetail = () => {
                 <div className="text-center mt50">
                     <Link to="/notice" className="btnStyle btnOutline" title="목록">목록</Link>
                     {/* todo: 수정/삭제 */}
-                    {
-                        ((loginInfo.custType == 'inter' && loginInfo.userAuth == '1') || dataFromList.buserId == loginInfo.userId) &&
-                        <a click="clickUpdate" className="btnStyle btnOutline" title="수정 이동">수정 이동</a>
+                    { ((loginInfo.custType == 'inter' && loginInfo.userAuth == '1') || dataFromList.buserId == loginInfo.userId) &&
+                        <a onClick={ onNoticeEdit } className="btnStyle btnOutline" title="수정 이동">수정</a>
                     }
-                    {
-                        ((loginInfo.custType == 'inter' && loginInfo.userAuth == '1') || dataFromList.buserId == loginInfo.userId) &&
+                    { ((loginInfo.custType == 'inter' && loginInfo.userAuth == '1') || dataFromList.buserId == loginInfo.userId) &&
                         <a data-toggle="modal" data-target="#notiDel" className="btnStyle btnOutlineRed" title="삭제">삭제</a>
                     }
                 </div>
