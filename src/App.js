@@ -15,6 +15,7 @@ import CustList from './modules/cust/view/CustList';
 import CustDetail from './modules/cust/view/CustDetail';
 import SaveCust from './modules/cust/view/SaveCust';
 import Item from './modules/info/views/Item';
+import GroupUser from './modules/info/views/GroupUser'
 
 const App = () => {
 	return (
@@ -37,6 +38,7 @@ const App = () => {
 						<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
 						<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
 						<Route path="/info/group/item" element={<Item />}></Route>
+						<Route path="/info/group/user" element={<GroupUser />}></Route>
 					</Route>
 					{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
 					<Route path="*" element={<NotFound />}></Route>
