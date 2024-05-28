@@ -77,13 +77,16 @@ const GroupUser = () => {
             <div className="contents">
                 <div className="searchBox">
                     <div className="flex align-items-center">
-                        <div className="sbTit mr30">그룹사</div>
-                        <div className="width200px">
-                            <InterrelatedCustCodeSelect InterrelatedCustCodeList={InterrelatedCustCodeList} className="selectStyle"/>
+				        <div class="sbTit width100px">그룹사</div>
+				        <div class="flex align-items-center width250px">
+                            <InterrelatedCustCodeSelect 
+                                InterrelatedCustCodeList={InterrelatedCustCodeList} 
+                                onChangeSrcData={onChangeSrcData}
+                            />
                         </div>
-                        <div className="sbTit mr30 ml50">사용여부</div>
-                        <div className="width200px">
-                            <select name='userYn' onChange={onChangeSrcData} className="selectStyle">
+                        <div class="sbTit width100px ml50">사용여부</div>
+                        <div class="flex align-items-center width250px">
+                            <select name='useYn' onChange={onChangeSrcData} className="selectStyle">
                                 <option value="">전체</option>
                                 <option value="Y">사용</option>
                                 <option value="N">미사용</option>
@@ -91,13 +94,13 @@ const GroupUser = () => {
 
                         </div>
                     </div>
-                    <div className="flex align-items-center">
-                        <div className="sbTit mr30">사용자명</div>
-                        <div className="width200px">
+                    <div class="flex align-items-center height50px mt10">
+                        <div class="sbTit width100px">사용자명</div>
+				        <div class="flex align-items-center width250px">
                             <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
-                        <div className="sbTit mr30 ml50">아이디</div>
-                        <div className="width200px">
+				        <div class="sbTit width100px ml50">아이디</div>
+				        <div class="width250px">
                             <input type="text" onKeyUp={onChangeSrcData} name="userId" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
                         <a onClick={onSearch} className="btnStyle btnSearch">검색</a>

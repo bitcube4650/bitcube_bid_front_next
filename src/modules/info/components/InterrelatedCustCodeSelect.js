@@ -1,9 +1,9 @@
 import React from 'react';
 
-const InterrelatedCustCodeSelect = ({ InterrelatedCustCodeList }) => {
+const InterrelatedCustCodeSelect = ({ InterrelatedCustCodeList, onChangeSrcData  }) => {
     return (
         InterrelatedCustCodeList.length > 0 && (
-            <select className="selectStyle">
+            <select name="interrelatedCustCode" className="selectStyle" onChange={onChangeSrcData}>
                 <option value="">전체</option>
                 {InterrelatedCustCodeList.map((option, index) => (
                     <option key={index} value={option.interrelatedCustCode}>
