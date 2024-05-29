@@ -25,7 +25,7 @@ function LoginWrap(props) {
             });
             console.log(response);
 
-            if(response.status == 200) {
+            if(response.status === 200) {
                 sessionStorage.setItem("loginInfo", JSON.stringify(response.data));
                 navigate("/main");
             } else {
@@ -38,33 +38,33 @@ function LoginWrap(props) {
     }
 
     return (
-        <div class="loginWrap">
-            <div class="loginLeft">
-                <h1><img src={props.logoUrl} class="img-responsive" alt="일진그룹 로고" /></h1>
+        <div className="loginWrap">
+            <div className="loginLeft">
+                <h1><img src={props.logoUrl} className="img-responsive" alt="일진그룹 로고" /></h1>
 
-                <input onChange={onChangeInputValue} autofocus="" autocomplete="name" type="text" name="username" class="loginInputStyle" placeholder="아이디" />
-                <input onChange={onChangeInputValue} autocomplete="new-password" type="password" name="password" class="loginInputStyle mt10" placeholder="비밀번호" />
+                <input onChange={onChangeInputValue} autoFocus="" autoComplete="name" type="text" name="username" className="loginInputStyle" placeholder="아이디" />
+                <input onChange={onChangeInputValue} autoComplete="new-password" type="password" name="password" className="loginInputStyle mt10" placeholder="비밀번호" />
 
-                <div class="loginFindWrap">
-                    <input type="checkbox" id="chkID" v-model="rememberMe" class="loginCheckStyle" /><label for="chkID">아이디 저장</label>
-                    <ul class="loginFind">
-                        <li><a href="#" data-toggle="modal" data-target="#idSearch" title="아이디 찾기">아이디 찾기</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#pwSearch" title="비밀번호 찾기">비밀번호 찾기</a></li>
+                <div className="loginFindWrap">
+                    <input type="checkbox" id="chkID" v-model="rememberMe" className="loginCheckStyle" /><label htmlFor="chkID">아이디 저장</label>
+                    <ul className="loginFind">
+                        <li><a href="/#" data-toggle="modal" data-target="#idSearch" title="아이디 찾기">아이디 찾기</a></li>
+                        <li><a href="/#" data-toggle="modal" data-target="#pwSearch" title="비밀번호 찾기">비밀번호 찾기</a></li>
                     </ul>
                 </div>
-                <div class="loginBtnWrap">
-                    <a onClick={onLogin} class="btnLoginPrimary" title="로그인">로그인</a>
-                    <router-link to="/signup"  class="btnLoginOutline mt10" title="회원가입">회원가입</router-link>
+                <div className="loginBtnWrap">
+                    <a href="/#" onClick={onLogin} className="btnLoginPrimary" title="로그인">로그인</a>
+                    <a href="/signup"  className="btnLoginOutline mt10" title="회원가입">회원가입</a>
                 </div>
             </div>
-            <div class="loginRight">
+            <div className="loginRight">
                 <h2><span>투명</span>합니다.</h2>
                 <h2><span>함께</span>합니다.</h2>
                 <h2><span>미래</span>를 엽니다.</h2>
                 <h3>" CLEAR, UNITED, OPENING THE FUTURE "</h3>
-                <div class="loginRight">
+                <div className="loginRight">
                     <h3 style={{fontSize: '30px', color: '#F3B352', fontWeight: 550}}>IT HelpDesk</h3>
-                    <h3 style={{marginTop: '5px', fontSize: '30px', fontWeight: 550}}>Tel : 080-707-9100</h3>
+                    <h3 style={{marginTop: '5px', fontSize: '30px', fontWeight: 550}}>Tel : 02-720-4650</h3>
                 </div>
             </div>
         </div>

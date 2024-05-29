@@ -7,7 +7,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.8",
-    "bootstrap": "^3.4.1",
+    "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
     "jquery-ui": "^1.13.3",
     "jquery-ui-dist": "^1.13.3",

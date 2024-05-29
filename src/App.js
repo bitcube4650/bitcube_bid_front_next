@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Login from './views/Login';
 import Main from './views/Main';
 import BidProgress from './modules/bid/views/BidProgress';
@@ -16,6 +17,8 @@ import './fontawesome-pro-6.1.1-web/css/all.min.css';
 import CustList from './modules/cust/view/CustList';
 import CustDetail from './modules/cust/view/CustDetail';
 import SaveCust from './modules/cust/view/SaveCust';
+import Item from './modules/info/views/Item';
+import GroupUser from './modules/info/views/GroupUser'
 import Company from './modules/statistics/views/Company';
 import PerformanceDetail from './modules/statistics/views/PerformanceDetail';
 import BiddingStatus from './modules/statistics/views/BiddingStatus';
@@ -25,6 +28,7 @@ const App = () => {
 	return (
 		<div className='Router'>
 			<BrowserRouter>
+				<ScrollToTop />
 				<Routes>
           			<Route path="/login" element={<Login />}></Route>
 					<Route path="/" element={<Login />}></Route>
@@ -36,13 +40,15 @@ const App = () => {
 						<Route path="/notice" element={<Notice />}></Route>
 						<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
 						<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
+						<Route path="/noticeEdit/:bno" element={<NoticeEdit />}></Route>
 						<Route path="/company/partner/approval" element={<CustList />}></Route>
 						<Route path="/company/partner/management" element={<CustList />}></Route>
 						<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>
 						<Route path="/company/partner/management/:custCode" element={<CustDetail />}></Route>
 						<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
 						<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
-
+						<Route path="/info/group/item" element={<Item />}></Route>
+						<Route path="/info/group/user" element={<GroupUser />}></Route>
 						<Route path="/statistics/performance/company" element={<Company />}></Route>
 						<Route path="/statistics/performance/detail" element={<PerformanceDetail />}></Route>
 						<Route path="/statistics/status" element={<BiddingStatus />}></Route>

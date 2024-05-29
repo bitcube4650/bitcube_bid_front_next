@@ -6,7 +6,10 @@ const Footer = () => {
     return (
         <div className="footer">
             <div className="subFooter">
-                <span v-if="showSentence">© ILJIN ALL RIGHTS RESERVED. <br />전자입찰 문의: IT HelpDesk ( 080 - 707 - 9100 ) &nbsp e-mail : ithelpdesk@iljin.co.kr</span>
+                <span v-if="showSentence">
+                    © BITCUBE ALL RIGHTS RESERVED. <br />
+                    전자입찰 문의: IT HelpDesk ( 02 - 720 - 4650 ) &nbsp e-mail : bitcube@bitcube.co.kr
+                </span>
                 <div className="subFooterUtill">
                     <a  click="clickCertificate" title="공동인증서">공동인증서</a>
                     <a  click="clickRegProcess" title="업체등록절차">업체등록절차</a>

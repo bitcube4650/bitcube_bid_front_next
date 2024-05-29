@@ -1,27 +1,53 @@
-import React from 'react'
+import React, { useState } from 'react'
+import OtherCustListPop from './OtherCustListPop'
+import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
-const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
+const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
+	const [otherCustModal, setOtherCustModal] = useState(false)
+	const params = useParams();
+
 	// 조회조건 변경시 파라미터 셋팅
 	const handleChange = (e) => {
 		onChangeData(e.target.name, e.target.value)
 	}
 
+	const onAttachFile = (e) => {
+		console.log(e)
+		if(e.target.files.length > 0){
+			console.log('a')
+			let file = e.target?.files[0];
+			let fileSize = e.target?.files[0]?.size;
+			// 원하는 용량 제한 설정 (10MB)
+			const maxSize = 10 * 1024 * 1024;
+			if (fileSize > maxSize) {
+				Swal.fire('파일 크기가 10MB를 초과하였습니다.', '', 'error');
+			} else {
+				onChangeData(e.target.id, file)
+				onChangeData(e.target.id+'Name', file.name)
+			}
+		}
+	}
 
-
+	const onRemoveFile = (id) => {
+		onChangeData(id, null)
+		onChangeData(id+'Name', '')
+	}
+	
 	return (
 		<>
 			{/* 회사 정보 */}
-			<h3 className="h3Tit mt50">회사 정보</h3>
+			<h3 className={(params?.custCode || '') == '' ? "h3Tit mt50" : "h3Tit" }>회사 정보</h3>
 			<div className="formWidth">
 				<div className="boxSt mt20">
-				{!isEdit ?
+				{(params?.custCode || '') == ''
+				?
 					<>
-						{/* 업체 등록 */}
 						<div className="flex align-items-center">
 							<div className="formTit flex-shrink0 width170px">승인 계열사</div>
 							<div className="width100">
 								{/* {{ $store.state.loginInfo.custName }} */}
-								<a href="#" data-toggle="modal" data-target="#otherCustPop" className="btnStyle btnSecondary ml50" title="타계열사 업체">타계열사 업체</a>
+								<button data-toggle="modal" data-target="#otherCustPop" className="btnStyle btnSecondary ml50" title="타계열사 업체" onClick={() => {setOtherCustModal(true); }}>타계열사 업체</button>
 								{/* tooltip */}
 								<i className="fas fa-question-circle toolTipSt toolTipMd ml5">
 									<div className="toolTipText" style={{width:"320px"}}>
@@ -33,11 +59,23 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 								{/* // tooltip */}
 							</div>
 						</div>
+					</>
+				:
+					<>
+						<div className="flex align-items-center">
+							<div className="formTit flex-shrink0 width170px">승인 계열사</div>
+							<div className="width100">{ custInfo.interrelatedNm }</div>
+						</div>
+					</>
+				}
+				{!isEdit
+					?
+						<>
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">업체유형 1 <span className="star">*</span></div>
 							<div className="flex align-items-center width100">
-								<input type="text"  className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
-								<input type="hidden"/>
+								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
+								<input type="hidden" defaultValue={ custInfo.custType1 }/>
 							<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
@@ -49,23 +87,17 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 								<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
-					</>
-				:
+						</>
+					:
 					<>
-					{/* 업체 수정 */}
-					<div className="flex align-items-center">
-						<div className="formTit flex-shrink0 width170px">승인 계열사</div>
-						<div className="width100">{ custInfo.interrelatedNm }</div>
-					</div>
-					
-					<div className="flex align-items-center mt20">
-						<div className="formTit flex-shrink0 width170px">업체유형 1</div>
-						<div className="width100">{ custInfo.custTypeNm1 }</div>
-					</div>
-					<div className="flex align-items-center mt20">
-						<div className="formTit flex-shrink0 width170px">업체유형 2</div>
-						<div className="width100">{ custInfo.custTypeNm2 }</div>
-					</div>
+						<div className="flex align-items-center mt20">
+							<div className="formTit flex-shrink0 width170px">업체유형 1</div>
+							<div className="width100">{ custInfo.custTypeNm1 }</div>
+						</div>
+						<div className="flex align-items-center mt20">
+							<div className="formTit flex-shrink0 width170px">업체유형 2</div>
+							<div className="width100">{ custInfo.custTypeNm2 }</div>
+						</div>
 					</>
 				}
 					<div className="flex align-items-center mt20">
@@ -146,20 +178,20 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
-								{custInfo.regnumFile != '' ?
+								{custInfo.regnumFile != '' && custInfo.regnumFile != null && custInfo.regnumFile != undefined ?
+									<div className="uploadPreview" >
+										<p>
+											{ custInfo.regnumFileName }
+											<button className='file-remove' onClick={() => onRemoveFile('regnumFile')}>삭제</button>
+										</p>
+									</div>
+								:
 									<div className="upload-box">
-										<input type="file" id="file-input" />
+										<input type="file" id="regnumFile" onChange={onAttachFile} />
 										<div className="uploadTxt">
 											<i className="fa-regular fa-upload"></i>
 											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
 										</div>
-									</div>
-								:
-									<div className="uploadPreview" >
-										<p>
-											{ custInfo.regnumFileName }
-											<button className='file-remove'>삭제</button>
-										</p>
 									</div>
 								}
 							</div>
@@ -184,20 +216,20 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
-							{custInfo.bfile != '' ?
+							{custInfo.bfile != '' && custInfo.bfile != null && custInfo.bfile != undefined ?
+									<div className="uploadPreview" >
+										<p>
+											{ custInfo.bfileName }
+											<button className='file-remove' onClick={() => onRemoveFile('bfile')}>삭제</button>
+										</p>
+									</div>
+								:
 									<div className="upload-box">
-										<input type="file" id="file-input2" />
+									<input type="file" id="bfile" onChange={onAttachFile} />
 										<div className="uploadTxt">
 											<i className="fa-regular fa-upload"></i>
 											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
 										</div>
-									</div>
-								:
-									<div className="uploadPreview" >
-										<p>
-											{ custInfo.bfileName }
-											<button className='file-remove'>삭제</button>
-										</p>
 									</div>
 								}
 							</div>
@@ -208,7 +240,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 					{isEdit &&
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">상태</div>
-							<div className="width100">정상</div>
+							<div className="width100">{ custInfo.certYn }</div>
 						</div>
 					}
 				</div>
@@ -223,10 +255,10 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				<div className="flex align-items-center">
 					<div className="formTit flex-shrink0 width170px">업체등급</div>
 					<div className="width100">
-						<input type="radio" name="custLevel" value="A" id="chkA" className="radioStyle"  checked={custInfo.custLevel === 'A'} onChange={handleChange}/><label for="chkA">A등급</label>
-						<input type="radio" name="custLevel" value="B" id="chkB" className="radioStyle"  checked={custInfo.custLevel === 'B'} onChange={handleChange}/><label for="chkB">B등급</label>
-						<input type="radio" name="custLevel" value="C" id="chkC" className="radioStyle"  checked={custInfo.custLevel === 'C'} onChange={handleChange}/><label for="chkC">C등급</label>
-						<input type="radio" name="custLevel" value="D" id="chkD" className="radioStyle"  checked={custInfo.custLevel === 'D'} onChange={handleChange}/><label for="chkD">D등급</label>
+						<input type="radio" name="custLevel" value="A" id="chkA" className="radioStyle"  checked={custInfo.custLevel === 'A'} onChange={handleChange}/><label htmlFor="chkA">A등급</label>
+						<input type="radio" name="custLevel" value="B" id="chkB" className="radioStyle"  checked={custInfo.custLevel === 'B'} onChange={handleChange}/><label htmlFor="chkB">B등급</label>
+						<input type="radio" name="custLevel" value="C" id="chkC" className="radioStyle"  checked={custInfo.custLevel === 'C'} onChange={handleChange}/><label htmlFor="chkC">C등급</label>
+						<input type="radio" name="custLevel" value="D" id="chkD" className="radioStyle"  checked={custInfo.custLevel === 'D'} onChange={handleChange}/><label htmlFor="chkD">D등급</label>
 					</div>
 				</div>
 				<div className="flex align-items-center mt20">
@@ -273,13 +305,13 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">비밀번호 <span className="star">*</span></div>
 						<div className="width100">
-							<input style={{'-webkit-text-security':"disc;"}} name="userPwd" value={custInfo.userPwd} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" onChange={handleChange} />
+							<input style={{'WebkitTextSecurity':'disc'}} name="userPwd" value={custInfo.userPwd} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" onChange={handleChange} />
 						</div>
 					</div>
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">비밀번호 확인 <span className="star">*</span></div>
 						<div className="width100">
-							<input style={{'-webkit-text-security':"disc;"}} name="userPwdConfirm" value={custInfo.userPwdConfirm} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="비밀번호와 동일해야 합니다." onChange={handleChange} />
+							<input style={{'WebkitTextSecurity':'disc'}} name="userPwdConfirm" value={custInfo.userPwdConfirm} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="비밀번호와 동일해야 합니다." onChange={handleChange} />
 						</div>
 					</div>
 				</>
@@ -318,6 +350,9 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				</div>
 			</div>
 			{/* // 관리자 정보 */}
+			{otherCustModal &&
+				<OtherCustListPop setSelCust={setSelCust} setOtherCustModal={setOtherCustModal} />
+			}
 		</>
 	)
 }

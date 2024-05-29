@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
@@ -8,17 +8,41 @@ const NoticeEdit = () => {
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
 
     const navigate = useNavigate();
-    const location = useLocation();
-    const updateInsert = location.state.updateInsert;
+    const { bno } = useParams();
 
     const [detailData, setDetailData] = useState({
-        btitle      : "test",
+        btitle      : "",
         bco         : "ALL",
         buserName   : loginInfo.userName,
         buserid     : loginInfo.userId,
         bcount      : 0,
-        bcontent    : "어쩌고저쩌고"
+        bcontent    : ""
     });
+
+    async function onSelectDetail() {
+        try {
+            const srcData = {bno: bno};
+            const response = await axios.post('/api/v1/notice/noticeList', srcData);
+            
+            if(response.data.status == 200) {
+                setDetailData(response.data.data.content[0]);
+            } else {
+                Swal.fire('조회에 실패하였습니다.', '', 'error');
+                navigate("/notice");
+            }
+        } catch (error) {
+            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            console.log(error);
+            navigate("/notice");
+        }
+    };
+
+    useEffect(() => {
+        if(bno) {
+            onSelectDetail();
+        }
+    }, bno);
+
     const onChangeDetailData = (e) => {
         setDetailData({
             ...detailData,
@@ -27,8 +51,17 @@ const NoticeEdit = () => {
     }
     const selectedFile = null;
 
+    function onCheckVali() {
+        //todo: 
+        return true;
+    }
+
     //저장
-    function onSaveNotice ( prams){
+    function onSaveCheckNotice(){
+        if(!onCheckVali()) {
+            return false;
+        }
+
         Swal.fire({
             title: '공지사항 등록',          // 타이틀
             text: '공지일시는 현재 처리되는 기준으로 저장됩니다. 저장 하시겠습니까?',  // 내용
@@ -41,36 +74,43 @@ const NoticeEdit = () => {
         }).then(result => {
             // 만약 Promise리턴을 받으면,
             if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
-                if(updateInsert == "update") {
-                    //todo: 
-                } else {
-                    onInsertNotice();
-                }
+                onSaveNotice();
             }
          });
     };
 
-    async function onInsertNotice() {
+    async function onSaveNotice() {
+        let url = ''
+        let saveText = ''
+
+        if(bno) {
+            url = '/api/v1/notice/updateNotice'
+            saveText = '수정'
+        } else {
+            url = '/api/v1/notice/insertNotice'
+            saveText = '등록'
+        }
+
         try {
-            var formData = new FormData();
+            let formData = new FormData();
             formData.append('file', selectedFile);
             formData.append('data', JSON.stringify(detailData));
 
-            const response = await axios.post('/api/v1/notice/insertNotice', formData);
-            console.log(response);
+            const response = await axios.post(url, formData);
 
-            if(response.status == 200) {
-                Swal.fire('등록되었습니다.', '', 'success');
+            console.log(response);
+            if(response.data.status == 200) {
+                Swal.fire(saveText + '되었습니다.', '', 'success');
                 navigate("/notice");
             } else {
-                Swal.fire(response.message, '', 'error');
+                Swal.fire(response.data.msg, '', 'error');
             }
         } catch (error) {
-            Swal.fire('등록에 실패하였습니다.', '', 'error');
+            Swal.fire(saveText + '에 실패하였습니다.', '', 'error');
             console.log(error);
         }
     }
-    
+
     return (
         <div className="conRight">
             <div className="conHeader">
@@ -80,7 +120,7 @@ const NoticeEdit = () => {
                 </ul>
             </div>
             <div className="contents">
-                <h3 className="h3Tit">{ updateInsert == 'update' ? '공지사항 수정' : '공지사항 등록' }</h3>
+                <h3 className="h3Tit">{ bno ? '공지사항 수정' : '공지사항 등록' }</h3>
                 <div className="boxSt mt20">
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width170px">제목</div>
@@ -113,7 +153,7 @@ const NoticeEdit = () => {
                     </div>
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">공지일시</div>
-                        <div className="width100">등록 또는 수정한 날짜로 저장됩니다.</div>
+                        <div className="width100">{ bno?detailData.bdate : "등록 또는 수정한 날짜로 저장됩니다." }</div>
                     </div>
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">조회수</div>
@@ -145,14 +185,12 @@ const NoticeEdit = () => {
                     <div className="flex mt20">
                         <div className="formTit flex-shrink0 width170px">공지내용</div>
                         <div className="width100">
-                            <textarea className="textareaStyle notiBox overflow-y-auto" placeholder="" style={{height:'400px'}} onChange={ onChangeDetailData } name="bcontent" >
-                                { detailData.bcontent }
-                            </textarea>
+                            <textarea className="textareaStyle notiBox overflow-y-auto" style={{height:'400px'}} onChange={ onChangeDetailData } name="bcontent" defaultValue={ detailData.bcontent } />
                         </div>
                     </div>
                     <div className="text-center mt50">
                         <Link to="/notice" className="btnStyle btnOutline" title="목록">목록</Link>
-                        <a onClick={ onSaveNotice } className="btnStyle btnPrimary" title="저장">저장</a>
+                        <a onClick={ onSaveCheckNotice } className="btnStyle btnPrimary" title="저장">저장</a>
                     </div>
                 </div>
             </div>

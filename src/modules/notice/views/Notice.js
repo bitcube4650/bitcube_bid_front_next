@@ -31,7 +31,7 @@ const Notice = () => {
     const onSearch = useCallback(async() => {
         try {
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
-            setNoticeList(response.data);
+            setNoticeList(response.data.data);
         } catch (error) {
             Swal.fire('조회에 실패하였습니다.', '', 'error');
             console.log(error);
@@ -43,7 +43,7 @@ const Notice = () => {
     },[srcData.size, srcData.page]);
 
     function onNoticeEdit() {
-        navigate('/noticeEdit', {state: {updateInsert: "insert"}});
+        navigate('/noticeEdit');
     }
 
     return (

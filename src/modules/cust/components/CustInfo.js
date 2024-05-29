@@ -112,10 +112,10 @@ const CustDetail = ({isApproval, custInfo}) => {
 					<div className="flex align-items-center">
 						<div className="formTit flex-shrink0 width170px">업체등급</div>
 						<div class="width100">
-							<input type="radio" name="custLevel" value="A" id="chkA" class="radioStyle" checked={custInfo.custLevel === 'A'} disabled /><label for="chkA">A등급</label>
-							<input type="radio" name="custLevel" value="B" id="chkB" class="radioStyle" checked={custInfo.custLevel === 'B'} disabled /><label for="chkB">B등급</label>
-							<input type="radio" name="custLevel" value="C" id="chkC" class="radioStyle" checked={custInfo.custLevel === 'C'} disabled /><label for="chkC">C등급</label>
-							<input type="radio" name="custLevel" value="D" id="chkD" class="radioStyle" checked={custInfo.custLevel === 'D'} disabled /><label for="chkD">D등급</label>
+							<input type="radio" name="custLevel" value="A" id="chkA" class="radioStyle" checked={custInfo.custLevel === 'A'} disabled /><label htmlFor="chkA">A등급</label>
+							<input type="radio" name="custLevel" value="B" id="chkB" class="radioStyle" checked={custInfo.custLevel === 'B'} disabled /><label htmlFor="chkB">B등급</label>
+							<input type="radio" name="custLevel" value="C" id="chkC" class="radioStyle" checked={custInfo.custLevel === 'C'} disabled /><label htmlFor="chkC">C등급</label>
+							<input type="radio" name="custLevel" value="D" id="chkD" class="radioStyle" checked={custInfo.custLevel === 'D'} disabled /><label htmlFor="chkD">D등급</label>
 						</div>
 					</div>
 					<div className="flex align-items-center mt20">
