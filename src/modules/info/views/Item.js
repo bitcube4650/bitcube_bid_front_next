@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import ItemList from '../components/ItemList';
+import ItemPop from '../components/ItemPop';
 
 const Item = () => {
-    const navigate = useNavigate();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     //품목그룹
     const [itemGrpList, setItemGrpList] = useState([]);
@@ -24,22 +26,10 @@ const Item = () => {
     });
 
     const onChangeSrcData = (e) => {
-        if (e.key === 'Enter' || e.target.className.indexOf('btnSearch') > -1 || e.target.name.indexOf('size') > -1){
-            let params = {...srcData, isEnter: true};
-            if(e.target.name.indexOf('size') > -1){
-                params = {...params, [e.target.name]: e.target.value}
-            }
-            setSrcData({
-                ...params
-            });
-        }else{
-            setSrcData({
-                ...srcData,
-                [e.target.name]: e.target.value
-            });
-        }
-        console.log
-        (srcData);
+        setSrcData({
+            ...srcData,
+            [e.target.name]: e.target.value
+        });
     }
 
     //품목그룹 조회
@@ -48,7 +38,8 @@ const Item = () => {
             const response = await axios.post("/api/v1/item/itemGrpList", srcData);
             setItemGrpList(response.data);
         } catch (error) {
-            console.log(error); //todo: modal 표시 처리........
+            Swal.fire('품목그룹 조회에 실패하였습니다.', '', 'error');
+            console.log(error);
         }
     },[srcData]);
 
@@ -60,9 +51,27 @@ const Item = () => {
             console.log('ItemList',response.data);
         } catch (error) {
             Swal.fire('조회에 실패하였습니다.', '', 'error');
-            console.log(error); //todo: modal 표시 처리........
+            console.log(error);
         }
     },[srcData]);
+
+    const itemPopRef = useRef();
+
+    const callPopMethod = useCallback((props) => {
+        
+        setIsModalOpen(true);
+        if (itemPopRef.current) {
+            itemPopRef.current.openPop(props);
+        }else{
+            console.log('없음');
+        }
+
+    }, []);
+
+    
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         selectItemGrpList();
@@ -127,7 +136,7 @@ const Item = () => {
                         </select>
                     </div>
                     <div className="flex-shrink0">
-                        <a href="#"   data-toggle="modal" data-target="#itemInfoPop" className="btnStyle btnPrimary" title="품목 등록">품목 등록</a>
+                        <a onClick={() => callPopMethod()} data-toggle="modal" data-target="#itemInfoPop" className="btnStyle btnPrimary" title="품목 등록">품목 등록</a>
                     </div>
                 </div>
 
@@ -151,7 +160,7 @@ const Item = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {itemList.content?.map((item) => <ItemList  key={item.itemCode} item={item}/>)}
+                        {itemList.content?.map((item) => <ItemList  key={item.itemCode} item={item} callPopMethod={callPopMethod}/>)}
                         { itemList.content == null &&
                             <tr>
                                 <td className="end" colSpan="6">조회된 데이터가 없습니다.</td>
@@ -164,6 +173,7 @@ const Item = () => {
                     </div>
                 </div>
             </div>
+            <ItemPop ref={itemPopRef} isOpen={isModalOpen} onClose={closeModal}/>
         </div>
     );
 
