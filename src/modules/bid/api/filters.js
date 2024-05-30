@@ -37,7 +37,14 @@ const filters = {
             return '';
         }
     },
-
+    ftBdComp(data, esmtAmt){
+        if(data.bdAmt <= 0){
+            return '';
+        }else{
+            let rtn = ((data.bdAmt - (data.bdAmt - esmtAmt)) / data.bdAmt * 100)
+            return rtn.toFixed(1) + "%";
+        }
+    },
 
     //콤마 표기함수
     ftEsmtAmt(cust){
@@ -49,7 +56,7 @@ const filters = {
         }
     },
     //소숫점처리 및 콤마
-    fnRoundComma(number){
+    ftRoundComma(number){
         if(this.isEmpty(number)) return ''
         else {
             number = Math.round(number);

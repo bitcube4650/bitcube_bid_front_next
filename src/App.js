@@ -18,6 +18,7 @@ import Item from './modules/info/views/Item';
 import GroupUser from './modules/info/views/GroupUser'
 import BidStatus from './modules/bid/views/BidStatus';
 import BidStatusDetail from './modules/bid/views/BidStatusDetail';
+import Rebid from './modules/bid/views/Rebid';
 
 const App = () => {
 	return (
@@ -31,6 +32,7 @@ const App = () => {
 						<Route path="/main" element={<Main />}></Route>
 						<Route path="/bid/status" element={<BidStatus />}></Route>
 						<Route path="/bid/status/detail" element={<BidStatusDetail />}></Route>
+						<Route path="/bid/rebid" element={<Rebid />}></Route>
 						<Route path="/notice" element={<Notice />}></Route>
 						<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
 						<Route path="/noticeEdit" element={<NoticeEdit />}></Route>

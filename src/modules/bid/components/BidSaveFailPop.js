@@ -10,17 +10,17 @@ const BidSaveFailPop = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => 
 
     //유찰사유
     const [reason, setReason] = useState("");
-    const fnSetReason = (e) => {
+    const onSetReason = (e) => {
         setReason(e.target.value);
     };
 
     //유찰팝업 닫기
-    const fnCloseSaveFailPop = useCallback( () => {
+    const onCloseSaveFailPop = useCallback( () => {
         setReason("");
         setBidSaveFailPop(false);
     });
 
-    const fnMovePage = useCallback(()=>{
+    const onMovePage = useCallback(()=>{
         navigate('/bid/status');
     })
 
@@ -45,16 +45,16 @@ const BidSaveFailPop = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => 
             }else{
                 Swal.fire('', '유찰 처리 되었습니다.', 'success');
                 
-                fnCloseSaveFailPop();
-                fnMovePage();
+                onCloseSaveFailPop();
+                onMovePage();
             }
         });
     })
 
     return (
-        <Modal className="modalStyle" id="biddingReserve" show={bidSaveFailPop} onHide={fnCloseSaveFailPop} keyboard={true}>
+        <Modal className="modalStyle" id="biddingReserve" show={bidSaveFailPop} onHide={onCloseSaveFailPop} keyboard={true}>
             <Modal.Body>
-                <a onClick={fnCloseSaveFailPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a onClick={onCloseSaveFailPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">유찰</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -63,9 +63,9 @@ const BidSaveFailPop = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => 
                         </li>
                     </ul>
                 </div>
-                <textarea className="textareaStyle height150px mt20" placeholder="유찰사유 필수 입력" value={reason} onChange={fnSetReason}></textarea>
+                <textarea className="textareaStyle height150px mt20" placeholder="유찰사유 필수 입력" value={reason} onChange={onSetReason}></textarea>
                 <div className="modalFooter">
-                    <a className="modalBtnClose" onClick={fnCloseSaveFailPop} data-bs-dismiss="modal" title="취소">취소</a>
+                    <a className="modalBtnClose" onClick={onCloseSaveFailPop} data-bs-dismiss="modal" title="취소">취소</a>
                     <a className="modalBtnCheck" title="유찰" onClick={ bidFailure }>유찰</a>
                 </div>
             </Modal.Body>
