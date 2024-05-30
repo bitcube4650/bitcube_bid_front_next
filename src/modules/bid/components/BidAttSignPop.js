@@ -3,18 +3,18 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 
-const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, fnAttSignUpdate}) => {
+const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpdate}) => {
 
     const [attPw, setAttPw] = useState("");
     
     //입회자 서명 팝업 닫기
-    const fnCloseAttSignPop = useCallback( () => {
+    const onCloseAttSignPop = useCallback( () => {
         setAttPw('')
         setAttPop(false);
     })
 
     //입회자 서명
-    const fnAttSign = useCallback(() => {
+    const onAttSign = useCallback(() => {
         if (attPw == null || attPw == "") {
             Swal.fire('', '비밀번호를 입력해주세요.', 'error');
             return false;
@@ -29,10 +29,10 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, fnAttSignUpd
         
         axios.post("/api/v1/bidstatus/attSign", params).then((response) => {
             if (response.data.code == "OK") {
-                fnAttSignUpdate(whoAtt);
+                onAttSignUpdate(whoAtt);
 
                 Swal.fire('', '서명이 완료되었습니다.', 'success');
-                fnCloseAttSignPop();
+                onCloseAttSignPop();
             } else if (response.data.code == "inValid") {
                 Swal.fire('', '입회자 비밀번호가 올바르지 않습니다.', 'warning');
             } else{
@@ -46,9 +46,9 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, fnAttSignUpd
     }
 
     return (
-        <Modal className="modalStyle" id="attSignPop" show={attPop} onHide={fnCloseAttSignPop} keyboard={true}>
+        <Modal className="modalStyle" id="attSignPop" show={attPop} onHide={onCloseAttSignPop} keyboard={true}>
             <Modal.Body>
-                <a onClick={fnCloseAttSignPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a onClick={onCloseAttSignPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">입회자 확인</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -58,12 +58,12 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, fnAttSignUpd
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width100px">비밀번호</div>
                     <div className="width100">
-                        <input type="password" value={attPw} onChange={chgAttPw} onKeyUp={(e) => { if(e.key === 'Enter') fnAttSign()}} className="inputStyle" />
+                        <input type="password" value={attPw} onChange={chgAttPw} onKeyUp={(e) => { if(e.key === 'Enter') onAttSign()}} className="inputStyle" />
                     </div>
                 </div>
                 <div className="modalFooter">
-                    <a onClick={fnCloseAttSignPop} className="modalBtnClose" data-bs-dismiss="modal" title="취소">취소</a>
-                    <a onClick={fnAttSign} className="modalBtnCheck" title="확인">확인</a>
+                    <a onClick={onCloseAttSignPop} className="modalBtnClose" data-bs-dismiss="modal" title="취소">취소</a>
+                    <a onClick={onAttSign} className="modalBtnCheck" title="확인">확인</a>
                 </div>
             </Modal.Body>
         </Modal>

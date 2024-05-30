@@ -37,8 +37,21 @@ const api = {
         }
     },
 
-    fnMovePage(){
-
+    fnPrint(){
+        const printContents = document.querySelector('.printDiv').innerHTML;
+        const html = document.querySelector('html');
+        const printDiv = document.createElement("DIV");
+        printDiv.className = "print-div modalStyle";
+        html.appendChild(printDiv);
+        printDiv.innerHTML = printContents;
+        printDiv.querySelector(".modalFooter").style.display = "none";
+        printDiv.querySelector(".ModalClose").style.display = "none";
+        printDiv.querySelector(".modal-dialog").style.cssText = "width:100%; max-width:700px";
+        document.body.style.display = 'none';
+        window.print();
+        document.body.style.display = 'block';
+        var a = document.querySelector(".print-div");
+        a.parentNode.removeChild(a);
     },
 }
 

@@ -21,13 +21,13 @@ const BidCommonInfo = (props) => {
     const [attPop, setAttPop] = useState(false);
 
     //협력사 사용자 조회 팝업 오픈
-    const fnOpenCustUserPop = (custCode) => {
+    const onOpenCustUserPop = (custCode) => {
         setCustUserPop(true);
         setCustCode(custCode);
     }
 
     //입회자 서명 팝업 오픈
-    const fnOpenAttSignPop = (att, attSignId, signYn) => {
+    const onOpenAttSignPop = (att, attSignId, signYn) => {
         if(signYn == 'N'){
             let currDate = new Date();
             let currDateTime = currDate.getTime();
@@ -47,7 +47,7 @@ const BidCommonInfo = (props) => {
         }
     }
 
-    const fnAttSignUpdate = (whoAtt) => {
+    const onAttSignUpdate = (whoAtt) => {
         if(whoAtt == '1'){
             props.data.openAtt1Sign ='Y'
         }else if(whoAtt == '2'){
@@ -104,7 +104,7 @@ const BidCommonInfo = (props) => {
                     <div className="width100">
                         <div className="overflow-y-scroll boxStSm width100" style={{height:"50px"}}>
                             { props.data.custList?.map((cust, idx) => 
-                                <a onClick={()=>fnOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
+                                <a onClick={()=>onOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
                                 {props.data.custList.length != (idx+1) &&
                                 <span>, </span>
                                 }
@@ -218,7 +218,7 @@ const BidCommonInfo = (props) => {
                         { props.attSign == 'Y' &&
                         <div className="width100">{ props.data.openAtt1 }
                             { props.data.openAtt1Id == userId && 
-                            <span style={ props.data.openAtt1Sign != 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={() => fnOpenAttSignPop('1', props.data.openAtt1Id, props.data.openAtt1Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
+                            <span style={ props.data.openAtt1Sign != 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={() => onOpenAttSignPop('1', props.data.openAtt1Id, props.data.openAtt1Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
                             }
                             { (props.data.openAtt1Id != userId && props.data.openAtt1Id != null && props.data.openAtt1Id != '' ) &&
                             <span style={{ color:props.data.openAtt1Sign != 'Y' ? 'red' : '' }}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
@@ -235,7 +235,7 @@ const BidCommonInfo = (props) => {
                         { props.attSign == 'Y' &&
                         <div className="width100" v-else-if="attSign == 'Y'">{ props.data.openAtt2 }
                             { props.data.openAtt2Id == userId &&
-                            <span style={ props.data.openAtt2Sign != 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={ () => fnOpenAttSignPop('2', props.data.openAtt2Id, props.data.openAtt2Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
+                            <span style={ props.data.openAtt2Sign != 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={ () => onOpenAttSignPop('2', props.data.openAtt2Id, props.data.openAtt2Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
                             }
                             { (props.data.openAtt2Id != userId && props.data.openAtt2Id != null && props.data.openAtt2Id != '') &&
                             <span style={{ color:props.data.openAtt2Sign != 'Y' ? 'red' : '' }}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
@@ -292,7 +292,7 @@ const BidCommonInfo = (props) => {
                             ) }
                             </tbody>
                         </table>
-                        <p className="text-right mt10"><strong v-text="fnAllSum(data.specInput)"></strong></p>
+                        <p className="text-right mt10"><strong v-text="onAllSum(data.specInput)"></strong></p>
                     </div>
                     }
                 </div>
@@ -314,7 +314,7 @@ const BidCommonInfo = (props) => {
             </div>
 
             {/* 입회자 서명 */}
-            <BidAttSignPop biNo={props.data.biNo} whoAtt={whoAtt} attSignId={attSignId} setAttPop={setAttPop} attPop={attPop} fnAttSignUpdate={fnAttSignUpdate} />
+            <BidAttSignPop key={'att_'+props.data.biNo} biNo={props.data.biNo} whoAtt={whoAtt} attSignId={attSignId} setAttPop={setAttPop} attPop={attPop} onAttSignUpdate={onAttSignUpdate} />
             {/* 입회자 서명 */}
 
             {/* 협력사 사용자 */}
