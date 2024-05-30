@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import Login from './views/Login';
 import Main from './views/Main';
+import SignUp from './views/SignUp';
 import Notice from './modules/notice/views/Notice';
 import NoticeDetail from './modules/notice/views/NoticeDetail';
 import NoticeEdit from './modules/notice/views/NoticeEdit';
@@ -18,6 +19,7 @@ import Item from './modules/info/views/Item';
 import GroupUser from './modules/info/views/GroupUser'
 import BidStatus from './modules/bid/views/BidStatus';
 import BidStatusDetail from './modules/bid/views/BidStatusDetail';
+import Rebid from './modules/bid/views/Rebid';
 
 const App = () => {
 	return (
@@ -27,10 +29,12 @@ const App = () => {
 				<Routes>
           			<Route path="/login" element={<Login />}></Route>
 					<Route path="/" element={<Login />}></Route>
+					<Route path="/signUp" element={<SignUp />}></Route>
 					<Route element={<Layout />}>
 						<Route path="/main" element={<Main />}></Route>
 						<Route path="/bid/status" element={<BidStatus />}></Route>
 						<Route path="/bid/status/detail" element={<BidStatusDetail />}></Route>
+						<Route path="/bid/rebid" element={<Rebid />}></Route>
 						<Route path="/notice" element={<Notice />}></Route>
 						<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
 						<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
