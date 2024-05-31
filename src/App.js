@@ -23,40 +23,46 @@ import Company from './modules/statistics/views/Company';
 import PerformanceDetail from './modules/statistics/views/PerformanceDetail';
 import BiddingStatus from './modules/statistics/views/BiddingStatus';
 import BiddingDetail from './modules/statistics/views/BiddingDetail';
+import { BidProvider } from './modules/bid/context/BidContext';
+import ErrorBoundary from './ErrorBoundary';
 
 const App = () => {
 	return (
 		<div className='Router'>
 			<BrowserRouter>
 				<ScrollToTop />
-				<Routes>
-          			<Route path="/login" element={<Login />}></Route>
-					<Route path="/" element={<Login />}></Route>
-					<Route element={<Layout />}>
-						<Route path="/main" element={<Main />}></Route>
-						<Route path="/bid/progress" element={<BidProgress />}></Route>
-						<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>
-						<Route path="/bid/progress/detail/:biNo" element={<BidProgressDetail />}></Route>
-						<Route path="/notice" element={<Notice />}></Route>
-						<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
-						<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
-						<Route path="/noticeEdit/:bno" element={<NoticeEdit />}></Route>
-						<Route path="/company/partner/approval" element={<CustList />}></Route>
-						<Route path="/company/partner/management" element={<CustList />}></Route>
-						<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>
-						<Route path="/company/partner/management/:custCode" element={<CustDetail />}></Route>
-						<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
-						<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
-						<Route path="/info/group/item" element={<Item />}></Route>
-						<Route path="/info/group/user" element={<GroupUser />}></Route>
-						<Route path="/statistics/performance/company" element={<Company />}></Route>
-						<Route path="/statistics/performance/detail" element={<PerformanceDetail />}></Route>
-						<Route path="/statistics/status" element={<BiddingStatus />}></Route>
-						<Route path="/statistics/detail" element={<BiddingDetail />}></Route>
-					</Route>
-					{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
-					<Route path="*" element={<NotFound />}></Route>
-				</Routes>
+				 <ErrorBoundary> {/*Context를 사용할 때 ErrorBoundary를 사용해야 어떤 에러가 나오는지 표시됩니다.*/}
+					<BidProvider>
+						<Routes>
+							<Route path="/login" element={<Login />}></Route>
+							<Route path="/" element={<Login />}></Route>
+							<Route element={<Layout />}>
+								<Route path="/main" element={<Main />}></Route>
+								<Route path="/bid/progress" element={<BidProgress />}></Route>
+								<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>
+								<Route path="/bid/progress/detail/:biNo" element={<BidProgressDetail />}></Route>
+								<Route path="/notice" element={<Notice />}></Route>
+								<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
+								<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
+								<Route path="/noticeEdit/:bno" element={<NoticeEdit />}></Route>
+								<Route path="/company/partner/approval" element={<CustList />}></Route>
+								<Route path="/company/partner/management" element={<CustList />}></Route>
+								<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>
+								<Route path="/company/partner/management/:custCode" element={<CustDetail />}></Route>
+								<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
+								<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
+								<Route path="/info/group/item" element={<Item />}></Route>
+								<Route path="/info/group/user" element={<GroupUser />}></Route>
+								<Route path="/statistics/performance/company" element={<Company />}></Route>
+								<Route path="/statistics/performance/detail" element={<PerformanceDetail />}></Route>
+								<Route path="/statistics/status" element={<BiddingStatus />}></Route>
+								<Route path="/statistics/detail" element={<BiddingDetail />}></Route>
+							</Route>
+							{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
+							<Route path="*" element={<NotFound />}></Route>
+						</Routes>
+					</BidProvider>
+				</ErrorBoundary>
 			</BrowserRouter>
 		</div>
 	);
