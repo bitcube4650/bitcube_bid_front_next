@@ -3,11 +3,21 @@ import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
+import GroupUserDetailPop from './GroupUserDatail'
 import InterrelatedCustCodeSelect from '../components/InterrelatedCustCodeSelect'
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 const GroupUser = () => {
-    const navigate = useNavigate();
+    // 사용자 등록 / 수정 여부
+    const [CreateUser, setCreateUser] = useState(false)
+    // 모달창 오픈 여부
+    const [groupUserDetailPopOpen, setGroupUserDetailPopOpen] = useState(false);  // 모달 오픈
+    // 모달창 오픈 시 상태값
+    const onGroupUserPop = () => {
+        setGroupUserDetailPopOpen(true); 
+        setCreateUser(true); 
+    }
+
 
     //세션 로그인 정보
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
@@ -38,7 +48,7 @@ const GroupUser = () => {
             const response = await axios.post("/api/v1/couser/userList", srcData);
             setGroupUserList(response.data.data);
         } catch (error) {
-            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
         }
     });
@@ -46,10 +56,6 @@ const GroupUser = () => {
     useEffect(() => {
         onSearch();
     },[srcData.size, srcData.page]);
-
-    function onNoticeEdit() {
-        //navigate('/noticeEdit', {state: {updateInsert: "insert"}});
-    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,19 +79,22 @@ const GroupUser = () => {
                     <li>정보관리</li>
                     <li>사용자관리</li>
                 </ul>
+                    <div>
+                        <a onClick={ onGroupUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
+                    </div>
             </div>
             <div className="contents">
                 <div className="searchBox">
                     <div className="flex align-items-center">
-				        <div class="sbTit width100px">그룹사</div>
-				        <div class="flex align-items-center width250px">
+				        <div className="sbTit width100px">그룹사</div>
+				        <div className="flex align-items-center width250px">
                             <InterrelatedCustCodeSelect 
                                 InterrelatedCustCodeList={InterrelatedCustCodeList} 
                                 onChangeSrcData={onChangeSrcData}
                             />
                         </div>
-                        <div class="sbTit width100px ml50">사용여부</div>
-                        <div class="flex align-items-center width250px">
+                        <div className="sbTit width100px ml50">사용여부</div>
+                        <div className="flex align-items-center width250px">
                             <select name='useYn' onChange={onChangeSrcData} className="selectStyle">
                                 <option value="">전체</option>
                                 <option value="Y">사용</option>
@@ -94,14 +103,14 @@ const GroupUser = () => {
 
                         </div>
                     </div>
-                    <div class="flex align-items-center height50px mt10">
-                        <div class="sbTit width100px">사용자명</div>
-				        <div class="flex align-items-center width250px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
+                    <div className="flex align-items-center height50px mt10">
+                        <div className="sbTit width100px">사용자명</div>
+				        <div className="flex align-items-center width250px">
+                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
                         </div>
-				        <div class="sbTit width100px ml50">아이디</div>
-				        <div class="width250px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="userId" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
+				        <div className="sbTit width100px ml50">아이디</div>
+				        <div className="width250px">
+                            <input type="text" onKeyUp={onChangeSrcData} name="userId" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
                         </div>
                         <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
@@ -117,7 +126,7 @@ const GroupUser = () => {
                         </select>
                     </div>
                     <div>
-                        <a onClick={ onNoticeEdit } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
+                        <a onClick={ onGroupUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
                     </div>
                 </div>
                 <table className="tblSkin1 mt10">
@@ -159,7 +168,16 @@ const GroupUser = () => {
                     </div>
                 </div>
             </div>
+            <GroupUserDetailPop 
+                srcUserId={null} 
+                CreateUser={CreateUser}
+                groupUserDetailPopOpen={groupUserDetailPopOpen} 
+                setGroupUserDetailPopOpen={setGroupUserDetailPopOpen} 
+                onSearch={onSearch}
+            />
         </div>
+        
+        
     );
 };
 
