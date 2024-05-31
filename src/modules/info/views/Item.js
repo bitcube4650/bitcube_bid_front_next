@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react'
-import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
@@ -8,6 +7,7 @@ import ItemPop from '../components/ItemPop';
 
 const Item = () => {
 
+    //모달창 띄우기
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     //품목그룹
@@ -33,12 +33,12 @@ const Item = () => {
     }
 
     //품목그룹 조회
-    const selectItemGrpList = useCallback(async() => {
+    const onSelectItemGrpList = useCallback(async() => {
         try {
-            const response = await axios.post("/api/v1/item/itemGrpList", srcData);
+            const response = await axios.post("/api/v1/item/itemGrpList", {});
             setItemGrpList(response.data);
         } catch (error) {
-            Swal.fire('품목그룹 조회에 실패하였습니다.', '', 'error');
+            Swal.fire('', '품목그룹 조회에 실패하였습니다.', 'error');
             console.log(error);
         }
     },[srcData]);
@@ -48,35 +48,34 @@ const Item = () => {
         try {
             const response = await axios.post("/api/v1/item/itemList", srcData);
             setItemList(response.data);
-            console.log('ItemList',response.data);
+            console.log('itemList',itemList);
         } catch (error) {
-            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
         }
     },[srcData]);
 
     const itemPopRef = useRef();
 
-    const callPopMethod = useCallback((props) => {
-        
+    //팝업창 띄우기
+    const onCallPopMethod = useCallback((props) => {
+
         setIsModalOpen(true);
         if (itemPopRef.current) {
-            itemPopRef.current.openPop(props);
-        }else{
-            console.log('없음');
+            itemPopRef.current.onOpenPop(props);
         }
 
     }, []);
 
     
-    const closeModal = () => {
+    const onCloseModal = () => {
         setIsModalOpen(false);
     };
 
     useEffect(() => {
-        selectItemGrpList();
+        onSelectItemGrpList();
         onSearch();
-    },[onSearch]);
+    },[srcData.size, srcData.page]);
 
     return (
         <div className="conRight">
@@ -115,11 +114,11 @@ const Item = () => {
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit width100px">품목코드</div>
                         <div className="flex align-items-center width250px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="itemCode" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}}/>
+                            <input type="text" onChange={onChangeSrcData} name="itemCode" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}}/>
                         </div>
                         <div className="sbTit width100px ml50">품목명</div>
                         <div className="width250px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="itemName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}}/>
+                            <input type="text" onChange={onChangeSrcData} name="itemName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}}/>
                         </div>
                         <a onClick={onSearch}  className="btnStyle btnSearch">검색</a>
                     </div>
@@ -136,7 +135,7 @@ const Item = () => {
                         </select>
                     </div>
                     <div className="flex-shrink0">
-                        <a onClick={() => callPopMethod()} data-toggle="modal" data-target="#itemInfoPop" className="btnStyle btnPrimary" title="품목 등록">품목 등록</a>
+                        <a onClick={()=>onCallPopMethod()} data-toggle="modal" data-target="#itemInfoPop" className="btnStyle btnPrimary" title="품목 등록">품목 등록</a>
                     </div>
                 </div>
 
@@ -160,7 +159,7 @@ const Item = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {itemList.content?.map((item) => <ItemList  key={item.itemCode} item={item} callPopMethod={callPopMethod}/>)}
+                        {itemList.content?.map((item) => <ItemList  key={item.itemCode} item={item} onCallPopMethod={onCallPopMethod}/>)}
                         { itemList.content == null &&
                             <tr>
                                 <td className="end" colSpan="6">조회된 데이터가 없습니다.</td>
@@ -173,7 +172,7 @@ const Item = () => {
                     </div>
                 </div>
             </div>
-            <ItemPop ref={itemPopRef} isOpen={isModalOpen} onClose={closeModal}/>
+            <ItemPop ref={itemPopRef} isOpen={isModalOpen} onClose={onCloseModal} onSearch={onSearch} />
         </div>
     );
 

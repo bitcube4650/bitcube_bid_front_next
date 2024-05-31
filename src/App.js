@@ -3,9 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import Login from './views/Login';
 import Main from './views/Main';
+import SignUp from './views/SignUp';
 import BidProgress from './modules/bid/views/BidProgress';
 import BidProgressSave from './modules/bid/views/BidProgressSave';
 import BidProgressDetail from './modules/bid/views/BidProgressDetail';
+import BidStatus from './modules/bid/views/BidStatus';
+import BidStatusDetail from './modules/bid/views/BidStatusDetail';
+import Rebid from './modules/bid/views/Rebid';
 import Notice from './modules/notice/views/Notice';
 import NoticeDetail from './modules/notice/views/NoticeDetail';
 import NoticeEdit from './modules/notice/views/NoticeEdit';
@@ -31,16 +35,20 @@ const App = () => {
 		<div className='Router'>
 			<BrowserRouter>
 				<ScrollToTop />
-				 <ErrorBoundary> {/*Context를 사용할 때 ErrorBoundary를 사용해야 어떤 에러가 나오는지 표시됩니다.*/}
+				<ErrorBoundary> {/*Context를 사용할 때 ErrorBoundary를 사용해야 어떤 에러가 나오는지 표시됩니다.*/}
 					<BidProvider>
 						<Routes>
 							<Route path="/login" element={<Login />}></Route>
 							<Route path="/" element={<Login />}></Route>
+							<Route path="/signUp" element={<SignUp />}></Route>
 							<Route element={<Layout />}>
 								<Route path="/main" element={<Main />}></Route>
 								<Route path="/bid/progress" element={<BidProgress />}></Route>
 								<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>
 								<Route path="/bid/progress/detail/:biNo" element={<BidProgressDetail />}></Route>
+								<Route path="/bid/status" element={<BidStatus />}></Route>
+								<Route path="/bid/status/detail" element={<BidStatusDetail />}></Route>
+								<Route path="/bid/rebid" element={<Rebid />}></Route>
 								<Route path="/notice" element={<Notice />}></Route>
 								<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
 								<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
