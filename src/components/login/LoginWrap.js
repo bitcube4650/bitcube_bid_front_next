@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import LoginFailPop from "../login/LoginFailPop";
 import LoginNotAppPop from "../login/LoginNotAppPop";
+import IdSearchPop from "../login/IdSearchPop";
+import PwSearchPop from "../login/PwSearchPop";
 import Swal from 'sweetalert2';
 import axios from "axios"
 
@@ -26,6 +28,12 @@ function LoginWrap(props) {
 
     // 로그인 승인 실패 팝업
     const [loginNotAppPop, setLoginNotAppPop] = useState(false);
+
+    // 아이디 찾기 팝업
+    const [idSearchPop, setIdSearchPop] = useState(false);
+
+    // 비밀번호 찾기 팝업
+    const [pwSearchPop, setPwSearchPop] = useState(false);
 
     const navigate = useNavigate();
 
@@ -77,7 +85,15 @@ function LoginWrap(props) {
 
     const onSignUp = () => {
         navigate("/SignUp");
-    }
+    };
+
+    const onIdSearch = () => {
+        setIdSearchPop(true);
+    };
+
+    const onPwSearch = () => {
+        setPwSearchPop(true);
+    };
     
     return (
         <div class="loginWrap">
@@ -103,23 +119,21 @@ function LoginWrap(props) {
                     className="loginInputStyle mt10"
                     placeholder="비밀번호"
                 />
-
-                {/* <input onChange={onChangeInputValue} autofocus="" autocomplete="name" type="text" name="username" class="loginInputStyle" placeholder="아이디" />
-                <input onChange={onChangeInputValue} autocomplete="new-password" type="password" name="password" class="loginInputStyle mt10" placeholder="비밀번호" /> */}
-
                 <div className="loginFindWrap">
                     <input type="checkbox" id="chkID" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="loginCheckStyle"/>
                     <label htmlFor="chkID">아이디 저장</label>
-                    {/* <input type="checkbox" id="chkID" v-model="rememberMe" class="loginCheckStyle" /><label htmlFor="chkID">아이디 저장</label> */}
                     <ul class="loginFind">
-                        <li><a href="#" data-toggle="modal" data-target="#idSearch" title="아이디 찾기">아이디 찾기</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#pwSearch" title="비밀번호 찾기">비밀번호 찾기</a></li>
+                        <li>
+                            <a onClick={onIdSearch} title="아이디 찾기">아이디 찾기</a>
+                        </li>
+                        <li>
+                            <a onClick={onPwSearch} title="비밀번호 찾기">비밀번호 찾기</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="loginBtnWrap">
                     <a onClick={onLogin} class="btnLoginPrimary" title="로그인">로그인</a>
                     <a onClick={onSignUp} class="btnLoginOutline mt10" title="회원가입">회원가입</a>
-                    {/* <router-link to="/signup"  class="btnLoginOutline mt10" title="회원가입">회원가입</router-link> */}
                 </div>
             </div>
             <div class="loginRight">
@@ -140,6 +154,14 @@ function LoginWrap(props) {
             {/* 로그인 인증 실패 */}
             <LoginNotAppPop loginNotAppPop={loginNotAppPop} setLoginNotAppPop={setLoginNotAppPop} />
             {/* 로그인 인증 실패 */}
+
+            {/* 아이디찾기 */}
+            <IdSearchPop idSearchPop={idSearchPop} setIdSearchPop={setIdSearchPop} />
+            {/* 아이디찾기 */}
+
+            {/* 비밀번호찾기 */}
+            <PwSearchPop pwSearchPop={pwSearchPop} setPwSearchPop={setPwSearchPop} />
+            {/* 비밀번호찾기 */}
         </div>
     )
 }
