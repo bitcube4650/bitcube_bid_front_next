@@ -3,21 +3,27 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 import Ft from '../api/filters';
+import Pagination from '../../../components/Pagination';
 
 const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop, setSubmitHistPop}) => {
 
+    //조회 결과
     const [list, setList] = useState([]);
 
+    //조회조건
+    const [srcData, setSrcData] = useState({
+        biNo : biNo
+    ,   custCode : custCode
+    ,	size : 10
+    ,	page : 0
+    });
+
     const onSearch = useCallback(async() => {
-        let params = {
-            biNo : biNo,
-            custCode : custCode
-        }
-        await axios.post("/api/v1/bidstatus/submitHist", params).then((response) => {
+        await axios.post("/api/v1/bidstatus/submitHist", srcData).then((response) => {
             if (response.data.code != "OK") {
                 Swal.fire('', response.data.msg, 'error');
             } else {
-                setList(response.data.data);
+                setList(response.data.data.content);
             }
         })
     });
@@ -28,47 +34,54 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
 
     useEffect(() => {
         onSearch();
-    },[custCode]);
+    },[srcData]);
+
+    const onChangeSrcData = (e) => {
+        setSrcData({
+            ...srcData,
+            [e.target.name]: e.target.value
+        });
+    }
 
     return (
-        <Modal class="modalStyle" id="submitHistPop" show={submitHistPop} onHide={onClosePop} keyboard={true} size="lg">
-            <Modal.Body class="modal-body">
-                <a class="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i class="fa-solid fa-xmark"></i></a>
-                <h2 class="modalTitle">제출 이력</h2>
-                <table class="tblSkin1 mt20">
+        <Modal className="modalStyle" id="submitHistPop" show={submitHistPop} onHide={onClosePop} keyboard={true} size="lg">
+            <Modal.Body>
+                <a className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <h2 className="modalTitle">제출 이력</h2>
+                <table className="tblSkin1 mt20">
                     <colgroup>
-                    <col />
+                        <col />
                     </colgroup>
                     <thead>
-                    <tr>
-                        <th>차수</th>
-                        <th>입찰참가업체명</th>
-                        <th>견적금액(총액)</th>
-                        <th>담당자</th>
-                        <th class="end">제출일시</th>
-                    </tr>
+                        <tr>
+                            <th>차수</th>
+                            <th>입찰참가업체명</th>
+                            <th>견적금액(총액)</th>
+                            <th>담당자</th>
+                            <th className="end">제출일시</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    { list.content?.map((val) =>
+                    { list?.map((val) =>
                         <tr>
                             <td>{val.biOrder}</td>
-                            <td class="text-left">{custName}</td>
+                            <td className="text-left">{custName}</td>
                             <td>{val.esmtCurr} { Ft.numberWithCommas(val.esmtAmt) }</td>
                             <td>{userName}</td>
-                            <td class="end">{val.submitDate}</td>
+                            <td className="end">{val.submitDate}</td>
                         </tr>
                     )}
                     </tbody>
                 </table>
                 {/* pagination */}
-                <div class="row mt30">
-                    <div class="col-xs-12">
-                    <pagination searchFunc="search" />
+                <div className="row mt30">
+                    <div className="col-xs-12">
+                        <Pagination onChangeSrcData={onChangeSrcData} list={list} />
                     </div>
                 </div>
                 {/* //pagination */}
-                <div class="modalFooter">
-                    <a class="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
+                <div className="modalFooter">
+                    <a className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
                 </div>
             </Modal.Body>
         </Modal>

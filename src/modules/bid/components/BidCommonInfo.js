@@ -282,10 +282,10 @@ const BidCommonInfo = (props) => {
                             <tbody>
                             { props.data.specInput?.map((spec) => 
                                 <tr>
-                                    <td className="text-left">{ Ft.numberWithCommas(spec.name) }</td>
-                                    <td className="text-right">{ Ft.numberWithCommas(spec.ssize) }</td>
+                                    <td className="text-left">{ spec.name }</td>
+                                    <td className="text-right">{ spec.ssize }</td>
                                     <td className="text-right">{ Ft.numberWithCommas(spec.orderQty) }</td>
-                                    <td className="text-right">{ Ft.numberWithCommas(spec.unitcode) }</td>
+                                    <td className="text-right">{ spec.unitcode }</td>
                                     <td className="text-right">{ Ft.numberWithCommas(spec.orderUc) }</td>
                                     <td className="text-right end">{ Ft.numberWithCommas(spec.orderQty * spec.orderUc) }</td>
                                 </tr>

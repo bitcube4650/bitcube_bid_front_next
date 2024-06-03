@@ -29,6 +29,8 @@ import BiddingStatus from './modules/statistics/views/BiddingStatus';
 import BiddingDetail from './modules/statistics/views/BiddingDetail';
 import { BidProvider } from './modules/bid/context/BidContext';
 import ErrorBoundary from './ErrorBoundary';
+import PartnerBidStatus from './modules/bid/views/PartnerBidStatus'
+import PartnerBidStatusDetail from './modules/bid/views/PartnerBidStatusDetail'
 
 const App = () => {
 	return (
@@ -65,6 +67,8 @@ const App = () => {
 								<Route path="/statistics/performance/detail" element={<PerformanceDetail />}></Route>
 								<Route path="/statistics/status" element={<BiddingStatus />}></Route>
 								<Route path="/statistics/detail" element={<BiddingDetail />}></Route>
+								<Route path="/bid/partnerStatus" element={<PartnerBidStatus />}></Route>
+								<Route path="/bid/partnerStatus/detail" element={<PartnerBidStatusDetail />}></Route>
 							</Route>
 							{/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
 							<Route path="*" element={<NotFound />}></Route>

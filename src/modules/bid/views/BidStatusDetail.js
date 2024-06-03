@@ -8,6 +8,7 @@ import Api from '../api/api';
 import BidSaveFailPop from '../components/BidSaveFailPop';
 import BidResultReport from '../components/BidResultReport';
 import BidSubmitHistoryPop from '../components/BidSubmitHistoryPop';
+import BidSuccessPop from '../components/BidSuccessPop';
 
 const BidStatusDetail = () => {
 
@@ -64,6 +65,7 @@ const BidStatusDetail = () => {
         });
     });
 
+    //개찰 공인인증서 비밀번호
     const [certPwd, setCertPwd] = useState('');
 
     //개찰
@@ -90,7 +92,7 @@ const BidStatusDetail = () => {
                 Swal.fire('', '개찰 처리중 오류가 발생했습니다.', 'warning');
             } else {
                 Swal.fire('', '개찰했습니다.', 'success');
-                window.location.replace("/")
+                onSearch();
             }
         });
     })
@@ -176,8 +178,11 @@ const BidStatusDetail = () => {
     })
 
     //낙찰
-    const onSuccSelect = useCallback(() =>{
-
+    const [succPop, setSuccPop] = useState(false);
+    const [succCust, setSuccCust] = useState({});
+    const onSuccSelect = useCallback((e,cust) =>{
+        setSuccCust(cust)
+        setSuccPop(true);
     })
 
     //업체 제출 이력
@@ -266,7 +271,7 @@ const BidStatusDetail = () => {
                         { (data.ingTag == 'A1' || data.ingTag == 'A3') && (data.bidAuth || data.openAuth || (data.createUser == userId)) &&
                         <a onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
-                        { ((data.ingTag == 'A1' || data.ingTag == 'A3') && data.openAuth && data.estCloseCheck) && 
+                        { ((data.ingTag == 'A1' || data.ingTag == 'A3') && data.openAuth && (data.estCloseCheck == 1)) && 
                         <a onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
                         }
                     </div>
@@ -317,12 +322,12 @@ const BidStatusDetail = () => {
                                     <td>{ cust.damdangName }</td>
                                     <td>
                                         {cust.etcPath &&
-                                        <img onClick={ () => Api.onCustSpecFileDown(cust.etcFile, cust.etcPath)} src="/images/icon_etc.svg" className="iconImg" alt="etc"/>
+                                        <img onClick={ () => Api.fnCustSpecFileDown(cust.etcFile, cust.etcPath)} src="/images/icon_etc.svg" className="iconImg" alt="etc"/>
                                         }
                                     </td>
                                     <td>
                                         {(cust.esmtYn == '2' && (data.openAuth || data.bidAuth)) &&
-                                        <a onClick={onSuccSelect} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
+                                        <a onClick={(e)=>onSuccSelect(e,cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
                                         }
                                     </td>
                                 </tr>
@@ -380,7 +385,7 @@ const BidStatusDetail = () => {
              {/* //contents */}
 
              {/* 인증서 비밀번호 입력 */}
-            <div className="modal fade modalStyle" id="certPwd" tabIndex="-1" role="dialog" aria-hidden="true">
+            {/* <div className="modal fade modalStyle" id="certPwd" tabIndex="-1" role="dialog" aria-hidden="true">
                 <div className="modal-dialog" style={{width:"100%", maxWidth:"510px"}} >
                     <div className="modal-content">
                         <div className="modal-body">
@@ -400,9 +405,14 @@ const BidStatusDetail = () => {
                         </div>				
                     </div>
                 </div>
-            </div>
+            </div> */}
             {/* //인증서 비밀번호 입력 */}
 
+            {/* 낙찰 */}
+            {succPop && 
+            <BidSuccessPop biNo={data.biNo} custCode={succCust.custCode} custName={succCust.custName} biName={data.biName} succPop={succPop} setSuccPop={setSuccPop} />
+            }
+            {/* //낙찰 */}
              
             {/* 유찰 */}
             <BidSaveFailPop key={'fali_'+data.biNo} biNo={data.biNo} biName={data.biName} bidSaveFailPop={bidSaveFailPop} setBidSaveFailPop={setBidSaveFailPop} />
@@ -413,7 +423,9 @@ const BidStatusDetail = () => {
             {/* //개찰결과 보고서 */}
 
             {/* 제출이력 */}
-            <BidSubmitHistoryPop key={'hist_'+data.biNo} biNo={data.biNo} histCust={histCust.custCode} custName={histCust.custName} userName={histCust.damdangName} submitHistPop={submitHistPop} setSubmitHistPop={setSubmitHistPop}/>
+            {submitHistPop &&
+            <BidSubmitHistoryPop key={'hist_'+data.biNo} biNo={data.biNo} custCode={histCust.custCode} custName={histCust.custName} userName={histCust.damdangName} submitHistPop={submitHistPop} setSubmitHistPop={setSubmitHistPop}/>
+            }
             {/* //제출이력 */}
         </div>
     )

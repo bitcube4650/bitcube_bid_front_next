@@ -544,3 +544,7 @@ input, select {vertical-align:top; margin-top:0 !important}
 .input-container {display: flex;flex-wrap: wrap;}
 .input-container > label {width: 27%;box-sizing: border-box;}
 /* .modal-content {width: 150% !important;} */
+
+.blueHighlight {
+    color: #0109d0 !important;
+}
