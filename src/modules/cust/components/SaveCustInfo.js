@@ -2,36 +2,39 @@ import React, { useState } from 'react'
 import OtherCustListPop from './OtherCustListPop'
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import * as CommonUtils from 'components/CommonUtils';
+import filters from '../api/filters';
 
-const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
+const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
+	// 세션정보
+	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
 	const [otherCustModal, setOtherCustModal] = useState(false)
 	const params = useParams();
 
 	// 조회조건 변경시 파라미터 셋팅
 	const handleChange = (e) => {
-		onChangeData(e.target.name, e.target.value)
+		onChangeData('custInfo', e.target.name, e.target.value)
 	}
 
 	const onAttachFile = (e) => {
-		console.log(e)
 		if(e.target.files.length > 0){
-			console.log('a')
 			let file = e.target?.files[0];
 			let fileSize = e.target?.files[0]?.size;
 			// 원하는 용량 제한 설정 (10MB)
 			const maxSize = 10 * 1024 * 1024;
 			if (fileSize > maxSize) {
-				Swal.fire('파일 크기가 10MB를 초과하였습니다.', '', 'error');
+				Swal.fire('', '파일 크기가 10MB를 초과하였습니다.', 'error');
 			} else {
-				onChangeData(e.target.id, file)
-				onChangeData(e.target.id+'Name', file.name)
+				onChangeData('custInfo', e.target.id, file)
+				onChangeData('custInfo', e.target.id+'Name', file.name)
 			}
 		}
 	}
 
 	const onRemoveFile = (id) => {
-		onChangeData(id, null)
-		onChangeData(id+'Name', '')
+		onChangeData('custInfo', id, null)
+		onChangeData('custInfo', id+'Name', '')
+		onChangeData('custInfo', id==='regnumFile' ? 'regnumPath' : id+'Path', '')
 	}
 	
 	return (
@@ -46,7 +49,7 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 						<div className="flex align-items-center">
 							<div className="formTit flex-shrink0 width170px">승인 계열사</div>
 							<div className="width100">
-								{/* {{ $store.state.loginInfo.custName }} */}
+								{loginInfo.custName}
 								<button data-toggle="modal" data-target="#otherCustPop" className="btnStyle btnSecondary ml50" title="타계열사 업체" onClick={() => {setOtherCustModal(true); }}>타계열사 업체</button>
 								{/* tooltip */}
 								<i className="fas fa-question-circle toolTipSt toolTipMd ml5">
@@ -74,16 +77,16 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">업체유형 1 <span className="star">*</span></div>
 							<div className="flex align-items-center width100">
-								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
-								<input type="hidden" defaultValue={ custInfo.custType1 }/>
+								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm1} readOnly />
+								<input type="hidden" value={ custInfo.custType1 }/>
 							<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">업체유형 2</div>
 							<div className="flex align-items-center width100">
-									<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
-									<input type="hidden"/>
+									<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm2} readOnly />
+									<input type="hidden" value={ custInfo.custType2 }/>
 								<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
@@ -133,7 +136,7 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">자본금 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="capital" value={custInfo.capital} maxLength="15" className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} />
+							<input type="text" name="capital" value={CommonUtils.onComma(custInfo.capital)} maxLength="15" className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} />
 							<div className="ml10">원</div>
 						</div>
 					</div>
@@ -149,14 +152,14 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">대표전화 <span className="star">*</span></div>
 						<div className="width100">
-							<input type="text" name="tel" value={custInfo.tel} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="tel" value={CommonUtils.onAddDashTel(custInfo.tel)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">팩스</div>
 						<div className="width100">
-							<input type="text" name="fax" value={custInfo.fax} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="fax" value={CommonUtils.onAddDashTel(custInfo.fax)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
@@ -178,7 +181,7 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
-								{custInfo.regnumFile != '' && custInfo.regnumFile != null && custInfo.regnumFile != undefined ?
+								{custInfo.regnumFileName != '' && custInfo.regnumFileName != null && custInfo.regnumFileName != undefined ?
 									<div className="uploadPreview" >
 										<p>
 											{ custInfo.regnumFileName }
@@ -216,7 +219,7 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
-							{custInfo.bfile != '' && custInfo.bfile != null && custInfo.bfile != undefined ?
+							{custInfo.bfileName != '' && custInfo.bfileName != null && custInfo.bfileName != undefined ?
 									<div className="uploadPreview" >
 										<p>
 											{ custInfo.bfileName }
@@ -240,7 +243,7 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 					{isEdit &&
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">상태</div>
-							<div className="width100">{ custInfo.certYn }</div>
+							<div className="width100">{ filters.onSetCustStatusStr(custInfo.certYn) }</div>
 						</div>
 					}
 				</div>
@@ -327,13 +330,13 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">휴대폰 <span className="star">*</span></div>
 					<div className="width100">
-						<input type="text" name="userHp" value={custInfo.userHp} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						<input type="text" name="userHp" value={CommonUtils.onAddDashTel(custInfo.userHp)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 					</div>
 				</div>
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">유선전화 <span className="star">*</span></div>
 					<div className="width100">
-						<input type="text" name="userTel" value={custInfo.userTel} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						<input type="text" name="userTel" value={CommonUtils.onAddDashTel(custInfo.userTel)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 					</div>
 				</div>
 				<div className="flex align-items-center mt10">
@@ -351,7 +354,7 @@ const SaveCustInfo = ({isEdit, custInfo, setSelCust, onChangeData}) => {
 			</div>
 			{/* // 관리자 정보 */}
 			{otherCustModal &&
-				<OtherCustListPop setSelCust={setSelCust} setOtherCustModal={setOtherCustModal} />
+				<OtherCustListPop setOtherCustModal={setOtherCustModal} onChangeData={onChangeData} />
 			}
 		</>
 	)

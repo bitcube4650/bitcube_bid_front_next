@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom';
-import Pagination from '../../../components/Pagination';
 import List from '../components/CustList';
+import Swal from 'sweetalert2';
+import Pagination from 'components/Pagination';
 
 const CustList = () => {
 	const url = useLocation().pathname;
@@ -36,8 +37,17 @@ const CustList = () => {
 
 	// 업체 리스트 조회
 	const onSearch = useCallback(async() => {
-		const response = await axios.post('/api/v1/cust/custList', srcData)
-		setCustList(response.data);
+		try{
+			const response = await axios.post('/api/v1/cust/custList', srcData)
+			let result = response.data
+			if(result.code == 'OK'){
+				setCustList(result.data);
+			} else {
+				Swal.fire('', result.msg, 'warning');
+			}
+		} catch(error){
+			Swal.fire('', error, 'warning')
+		}
 	})
 
 	useEffect(() => {
@@ -56,7 +66,7 @@ const CustList = () => {
 				<div className="conTopBox">
 					{/* 업체 관리 */}
 					{isApproval ? 
-					    // 승인 업체
+						// 승인 업체
 						<ul className="dList">
 						<li>
 							<div>
@@ -127,7 +137,7 @@ const CustList = () => {
 
 					{/* 감사 사용자 / 각사 관리자만 업체 등록 가능 */}
 					{!isApproval &&
-						<div class="flex-shrink0">
+						<div className="flex-shrink0">
 							<Link to="/company/partner/management/save" title="업체 등록"  className="btnStyle btnPrimary"> 업체등록 </Link>
 						</div>
 					}
@@ -172,9 +182,9 @@ const CustList = () => {
 					<List isApproval={isApproval} custList={custList} />
 				</table>
 				{/* pagination */}
-				<div class="row mt40">
-					<div class="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={custList} />
+				<div className="row mt40">
+					<div className="col-xs-12">
+						<Pagination onChangeSrcData={onChangeSrcData} list={custList} />
 					</div>
 				</div>
 				{/* // pagination */}

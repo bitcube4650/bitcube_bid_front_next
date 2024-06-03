@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import CustInfo from '../components/CustInfo'
+import Swal from 'sweetalert2';
 
 const CustDetail = () => {
 	const url = useLocation().pathname;
@@ -29,17 +30,7 @@ const CustDetail = () => {
 		const result = response.data;
 		setCustInfo(result.data)
 
-		// onFormattingData('regnum',		result.data.regnum.substring(0,3) + "-" + result.data.regnum.substring(3,5) + "-" + result.data.regnum.substring(5,10));
-		// onFormattingData('presJuminNo',	result.data.presJuminNo.substring(0,6) + "-" + result.data.presJuminNo.substring(6,13))
-
 	}, [custCode])
-
-	// const onFormattingData = (name, value) => {
-	// 	setCustInfo(current => ({
-	// 		...current,
-	// 		[name] : value
-	// 	}))
-	// }
 
 	// 취소
 	const onMoveList = () => {
@@ -52,8 +43,24 @@ const CustDetail = () => {
 	
 	// 업체 승인 처리
 	const onApproval = async() => {
-		// confirm 처리 후 승인
+		// confirm
+		Swal.fire({
+			title: "",
+			text : '승인처리하시겠습니까?',
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#004B9E",
+			confirmButtonText: "승인",
+			cancelButtonColor: "#b70b2e",
+			cancelButtonText : '취소',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onApprovalCallBack();
+			}
+		})
+	}
 
+	const onApprovalCallBack = async() => {
 		const response = await axios.post('/api/v1/cust/approval', {
 			custCode : custCode,
 			custName : custInfo.custName
@@ -63,14 +70,27 @@ const CustDetail = () => {
 			alert(response.data.message);
 			return;
 		} else {
-			alert("승인처리하였습니다.");
+			Swal.fire('', '승인처리되었습니다.', 'success');
 			onMoveList();
 		}
 	}
 
 	// 반려 사유 팝업 호출
 	const onRefuse = () => {
-
+		Swal.fire({
+			title: "",
+			text : '반려처리하시겠습니까?',
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#004B9E",
+			confirmButtonText: "반려",
+			cancelButtonColor: "#b70b2e",
+			cancelButtonText : '취소',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onRefuseCallback()
+			}
+		})
 	}
 
 	// 업체 반려 처리
@@ -86,14 +106,27 @@ const CustDetail = () => {
 			alert(response.data.message);
 			return;
 		} else {
-			alert("반려되었습니다.");
+			Swal.fire('', '반려되었습니다.', 'success');
 			onMoveList();
 		}
 	}
 
 	// 삭제 사유 팝업 호출
 	const onDelete = () => {
-		
+		Swal.fire({
+			title: "",
+			text : '삭제처리하시겠습니까?',
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#004B9E",
+			confirmButtonText: "삭제",
+			cancelButtonColor: "#b70b2e",
+			cancelButtonText : '취소',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onDeleteCallback()
+			}
+		})
 	}
 
 	// 업체 삭제 처리
@@ -107,7 +140,7 @@ const CustDetail = () => {
 			alert(response.data.message);
 			return;
 		} else {
-			alert("삭제되었습니다.");
+			Swal.fire('', '삭제되었습니다.', 'success');
 			onMoveList();
 		}
 	}

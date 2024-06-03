@@ -1,5 +1,7 @@
 import axios from 'axios';
 import React from 'react'
+import * as CommonUtils from 'components/CommonUtils';
+import filters from '../api/filters';
 
 // 첨부파일 다운로드
 const fnDownloadFile = async(filePath, fileName) => {
@@ -47,15 +49,15 @@ const CustDetail = ({isApproval, custInfo}) => {
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">사업자등록번호</div>
-					<div className="width100">{ custInfo.regnum }</div>
+					<div className="width100">{ CommonUtils.onAddDashRegNum(custInfo.regnum) }</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">법인번호</div>
-					<div className="width100">{ custInfo.presJuminNo }</div>
+					<div className="width100">{ filters.onAddDashRPresJuminNum(custInfo.presJuminNo) }</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">자본금</div>
-					<div className="width100">{ custInfo.capital } 원</div>
+					<div className="width100">{ CommonUtils.onComma(custInfo.capital) } 원</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">설립년도</div>
@@ -63,11 +65,11 @@ const CustDetail = ({isApproval, custInfo}) => {
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">대표전화</div>
-					<div className="width100">{ custInfo.tel }</div>
+					<div className="width100">{ CommonUtils.onAddDashTel(custInfo.tel) }</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">팩스</div>
-					<div className="width100">{ custInfo.fax }</div>
+					<div className="width100">{ CommonUtils.onAddDashTel(custInfo.fax) }</div>
 				</div>
 				<div className="flex mt20">
 					<div className="formTit flex-shrink0 width170px">회사주소</div>
@@ -80,13 +82,13 @@ const CustDetail = ({isApproval, custInfo}) => {
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">사업자등록증</div>
 					<div className="width100">
-						<a className="textUnderline" onClick={() => fnDownloadFile(custInfo.regnumPath, custInfo.regnumFile)}>{ custInfo.regnumFile }</a>
+						<a className="textUnderline" onClick={() => fnDownloadFile(custInfo.regnumPath, custInfo.regnumFileName)}>{ custInfo.regnumFileName }</a>
 					</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">회사소개 및 기타자료</div>
 					<div className="width100">
-						<a className="textUnderline" onClick={() => fnDownloadFile(custInfo.bfilePath, custInfo.bfile)}>{ custInfo.bfile }</a>
+						<a className="textUnderline" onClick={() => fnDownloadFile(custInfo.bfilePath, custInfo.bfileName)}>{ custInfo.bfileName }</a>
 					</div>
 				</div>
 				{/* 승인 업체 상세에서는 미조회 */}
@@ -94,7 +96,7 @@ const CustDetail = ({isApproval, custInfo}) => {
 				<>
 					<div className="flex align-items-center mt20">
 						<div className="formTit flex-shrink0 width170px">상태</div>
-						<div className="width100">{ custInfo.certYn }</div>
+						<div className="width100">{ filters.onSetCustStatusStr(custInfo.certYn) }</div>
 					</div>
 					<div className="flex align-items-center mt20" style={custInfo.certYn == 'D' ? {} : {display : "none"}}>
 						<div className="formTit flex-shrink0 width170px">사유</div>
@@ -111,11 +113,11 @@ const CustDetail = ({isApproval, custInfo}) => {
 				<div className="boxSt mt20">
 					<div className="flex align-items-center">
 						<div className="formTit flex-shrink0 width170px">업체등급</div>
-						<div class="width100">
-							<input type="radio" name="custLevel" value="A" id="chkA" class="radioStyle" checked={custInfo.custLevel === 'A'} disabled /><label htmlFor="chkA">A등급</label>
-							<input type="radio" name="custLevel" value="B" id="chkB" class="radioStyle" checked={custInfo.custLevel === 'B'} disabled /><label htmlFor="chkB">B등급</label>
-							<input type="radio" name="custLevel" value="C" id="chkC" class="radioStyle" checked={custInfo.custLevel === 'C'} disabled /><label htmlFor="chkC">C등급</label>
-							<input type="radio" name="custLevel" value="D" id="chkD" class="radioStyle" checked={custInfo.custLevel === 'D'} disabled /><label htmlFor="chkD">D등급</label>
+						<div className="width100">
+							<input type="radio" name="custLevel" value="A" id="chkA" className="radioStyle" checked={custInfo.custLevel === 'A'} disabled /><label htmlFor="chkA">A등급</label>
+							<input type="radio" name="custLevel" value="B" id="chkB" className="radioStyle" checked={custInfo.custLevel === 'B'} disabled /><label htmlFor="chkB">B등급</label>
+							<input type="radio" name="custLevel" value="C" id="chkC" className="radioStyle" checked={custInfo.custLevel === 'C'} disabled /><label htmlFor="chkC">C등급</label>
+							<input type="radio" name="custLevel" value="D" id="chkD" className="radioStyle" checked={custInfo.custLevel === 'D'} disabled /><label htmlFor="chkD">D등급</label>
 						</div>
 					</div>
 					<div className="flex align-items-center mt20">
@@ -146,11 +148,11 @@ const CustDetail = ({isApproval, custInfo}) => {
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">휴대폰</div>
-					<div className="width100">{ custInfo.userHp }</div>
+					<div className="width100">{ CommonUtils.onAddDashTel(custInfo.userHp) }</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">유선전화</div>
-					<div className="width100">{ custInfo.userTel }</div>
+					<div className="width100">{ CommonUtils.onAddDashTel(custInfo.userTel) }</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">직급</div>
