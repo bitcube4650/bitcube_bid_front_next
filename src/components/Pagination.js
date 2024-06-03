@@ -2,12 +2,12 @@ import React from 'react';
 
 const Pagination = ({ onChangeSrcData, list }) => {
 	const curr = Math.floor((list.number) / 5);
-	const lastGorup = Math.floor(list.totalPages / 5);
+	const lastGorup = Math.floor(list.totalPages / 5)-1;
 	const pageMap = onPageMap();
 
 	function onPageMap() {
 		let rtnList = [];
-		if(list.totalPages-list.number >= 5) {
+		if((parseInt(list.totalPages)-parseInt(list.number)) >= 5 || list.totalPages%5 == 0) {
 			return [1, 2, 3, 4, 5];
 		} else {
 			for(let i = 1; i <= list.totalPages%5; i++) {
@@ -25,8 +25,8 @@ const Pagination = ({ onChangeSrcData, list }) => {
 		onChangeSrcData(e);
 	}
 	
-    return (
-        <div className="pagination1 text-center">
+	return (
+		<div className="pagination1 text-center">
 			<a href="#" onClick={() => onPage(curr==0?list.number:(curr-1)*5)} title="이전 페이지그룹 이동">
 				<i className="fa-light fa-chevrons-left"></i>
 			</a>
@@ -46,7 +46,7 @@ const Pagination = ({ onChangeSrcData, list }) => {
 			<a href="#" onClick={() => {onPage(list.number==list.totalPages-1?list.number:list.number+1);}} title="다음 페이지로 이동">
 				<i className="fa-light fa-chevron-right"></i>
 			</a>
-			<a href="#" onClick={() => {onPage(curr==lastGorup?list.number:(curr+1)*5);}} title="끝페이지 다음 페이지로 이동">
+			<a href="#" onClick={() => {onPage(curr==lastGorup?list.totalPages-1:(curr+1)*5);}} title="끝페이지 다음 페이지로 이동">
 				<i className="fa-light fa-chevrons-right"></i>
 			</a>
 		</div>
