@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react'
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from 'components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import ItemList from '../components/ItemList';
 import ItemPop from '../components/ItemPop';
@@ -18,6 +18,8 @@ const Item = () => {
 
     //조회조건
     const [srcData, setSrcData] = useState({
+        itemCode: '',
+        itemName: '',
         itemGrp: '',
         useYn: 'Y',
         nonPopYn :'Y',
@@ -25,35 +27,51 @@ const Item = () => {
         page    : 0
     });
 
-    const onChangeSrcData = (e) => {
+    const onChangeSrcData = useCallback((e) => {
+        
         setSrcData({
             ...srcData,
             [e.target.name]: e.target.value
         });
-    }
+        
+    },[srcData]);
 
     //품목그룹 조회
-    const onSelectItemGrpList = useCallback(async() => {
+    const onSelectItemGrpList = async() => {
         try {
             const response = await axios.post("/api/v1/item/itemGrpList", {});
-            setItemGrpList(response.data);
+            if (response.data.code == 'OK') {
+                setItemGrpList(response.data.data);
+            }else{
+                Swal.fire('', '품목그룹 조회에 실패하였습니다.', 'error');
+                console.log(response.data.data);
+            }
+            
         } catch (error) {
             Swal.fire('', '품목그룹 조회에 실패하였습니다.', 'error');
             console.log(error);
         }
-    },[srcData]);
+    };
 
     //품목 조회
     const onSearch = useCallback(async() => {
         try {
+            console.log('srcData',srcData)
+            setSrcData(srcData);
             const response = await axios.post("/api/v1/item/itemList", srcData);
-            setItemList(response.data);
-            console.log('itemList',itemList);
+
+            if (response.data.code == 'OK') {
+                setItemList(response.data.data);
+            }else{
+                Swal.fire('', '조회에 실패하였습니다.', 'error');
+                console.log(response.data.data);
+            }
+            
         } catch (error) {
             Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
         }
-    },[srcData]);
+    }, [srcData]);
 
     const itemPopRef = useRef();
 
@@ -68,9 +86,9 @@ const Item = () => {
     }, []);
 
     
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsModalOpen(false);
-    };
+    }, []);
 
     useEffect(() => {
         onSelectItemGrpList();
@@ -114,13 +132,13 @@ const Item = () => {
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit width100px">품목코드</div>
                         <div className="flex align-items-center width250px">
-                            <input type="text" onChange={onChangeSrcData} name="itemCode" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}}/>
+                            <input type="text" onChange={onChangeSrcData} name="itemCode" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter'){ srcData.page = 0; onSearch()}}}/>
                         </div>
                         <div className="sbTit width100px ml50">품목명</div>
                         <div className="width250px">
-                            <input type="text" onChange={onChangeSrcData} name="itemName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}}/>
+                            <input type="text" onChange={onChangeSrcData} name="itemName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter'){ srcData.page = 0; onSearch()}}}/>
                         </div>
-                        <a onClick={onSearch}  className="btnStyle btnSearch">검색</a>
+                        <a onClick={(e)=>{ srcData.page = 0; onSearch();}}  className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
 
@@ -160,7 +178,7 @@ const Item = () => {
                     </thead>
                     <tbody>
                         {itemList.content?.map((item) => <ItemList  key={item.itemCode} item={item} onCallPopMethod={onCallPopMethod}/>)}
-                        { itemList.content == null &&
+                        { itemList.totalElements == 0 &&
                             <tr>
                                 <td className="end" colSpan="6">조회된 데이터가 없습니다.</td>
                             </tr> }

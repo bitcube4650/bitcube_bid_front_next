@@ -1,27 +1,26 @@
 import React, { useImperativeHandle, forwardRef, useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
+import Modal from 'react-bootstrap/Modal';
 
 const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
     const [itemId, setItemId] = useState('');
     const [detail, setDetail] = useState({ itemCode: '', itemGrpCd: '', itemName: '', useYn: 'Y' });
     const [itemGrpList, setItemGrpList] = useState([]);
 
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden'; // 스크롤 비활성화
-        } else {
-            document.body.style.overflow = 'visible'; // 스크롤 다시 활성화
-        }
-    }, [isOpen]);
 
     //품목 상세 조회
     const onSelectDetail = async (id) => {
         const searchParams = { itemCodeDetail: id, nonPopYn: 'Y' };
         try {
             const response = await axios.post("/api/v1/item/itemList", searchParams);
-            setDetail(response.data.content[0]);
+            if (response.data.code == 'OK') {
+                setDetail(response.data.data.content[0]);
+            }else{
+                Swal.fire('', '품목 상세 조회에 실패하였습니다.', 'error');
+                console.log(response.data.data);
+            }
+            
         } catch (error) {
             Swal.fire('', '품목 상세 조회에 실패하였습니다.', 'error');
             console.log(error);
@@ -32,7 +31,12 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
     const onSelectItemGrpList = async () => {
         try {
             const response = await axios.post("/api/v1/item/itemGrpList", {});
-            setItemGrpList(response.data);
+            if (response.data.code == 'OK') {
+                setItemGrpList(response.data.data);
+            }else{
+                Swal.fire('', '품목그룹 조회에 실패하였습니다.', 'error');
+                console.log(response.data.data);
+            }
         } catch (error) {
             Swal.fire('', '품목그룹 조회에 실패하였습니다.', 'error');
             console.log(error);
@@ -41,12 +45,13 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
 
     //팝업창 열었을때 데이터 조회 및 초기화
     const onOpenPop = (props) => {
+        
         setItemId(props);
         onSelectItemGrpList();
+        setDetail({ itemCode: '', itemGrpCd: '', itemName: '', useYn: 'Y' });
+        
         if (props) {
             onSelectDetail(props);
-        } else {
-            setDetail({ itemCode: '', itemGrpCd: '', itemName: '', useYn: 'Y' });
         }
     };
 
@@ -96,7 +101,7 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
 
         try {
             //유효성 체크
-            var check = await onCheckValid();
+            await onCheckValid();
             
             //등록
             if(!itemId){
@@ -113,7 +118,8 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
                         Swal.fire('', '저장 중 오류가 발생했습니다.', 'error');
                     }
                 } catch (error) {
-                    Swal.fire('', error, 'error');
+                    Swal.fire('', '저장 중 오류가 발생했습니다.', 'error');
+                    console.log(error);
                 }
                 
             }
@@ -132,7 +138,8 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
                         Swal.fire('', '저장 중 오류가 발생했습니다.', 'error');
                     }
                 } catch (error) {
-                    Swal.fire('', error, 'error');
+                    Swal.fire('', '저장 중 오류가 발생했습니다.', 'error');
+                    console.log(error);
                 }
             }
 
@@ -150,55 +157,45 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
         onOpenPop
     }), [isOpen]);
 
-    if (!isOpen) return null;//isOpen이 false이면 팝업창 안보임
-
-    return ReactDOM.createPortal(
-        <>
-            <div className="modal-backdrop show"></div>
-            <div className="modal" tabIndex="-1" style={{ display: 'block' }}>
-                <div className="modal-dialog" style={{ width: '100%', maxWidth: '500px' }}>
-                    <div className="modal-content">
-                        <div className="modal-body">
-                            <a onClick={onClose} className="ModalClose" title="닫기"><i className="fas fa-times"></i></a>
-                            <h2 className="modalTitle">품목 {itemId ? '수정' : '등록'}</h2>
-                            <div className="flex align-items-center">
-                                <div className="formTit flex-shrink0 width120px">품목코드 <span className="star">*</span></div>
-                                <div className="width100"><input type="text" value={detail.itemCode} onChange={onChangeDetail} name="itemCode" readOnly={!!itemId} maxLength="10" className="inputStyle" placeholder="숫자만 입력하세요" /></div>
-                            </div>
-                            <div className="flex align-items-center mt20">
-                                <div className="formTit flex-shrink0 width120px">품목그룹</div>
-                                <div className="width100">
-                                    <select value={detail.itemGrpCd} onChange={onChangeDetail} name="itemGrpCd" className="selectStyle">
-                                        <option value="">선택</option>
-                                        {itemGrpList?.map((itemGrp) => <option key={itemGrp.itemGrpCd} value={itemGrp.itemGrpCd}>{itemGrp.grpNm}</option>)}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="flex align-items-center mt20">
-                                <div className="formTit flex-shrink0 width120px">품목명 <span className="star">*</span></div>
-                                <div className="width100"><input type="text" value={detail.itemName} onChange={onChangeDetail} name="itemName" className="inputStyle" placeholder="품목명을 입력하세요" /></div>
-                            </div>
-                            <div className="flex align-items-center mt10">
-                                <div className="formTit flex-shrink0 width120px">사용여부 <span className="star">*</span></div>
-                                <div className="width100">
-                                    <select value={detail.useYn} onChange={onChangeDetail} name="useYn" className="selectStyle">
-                                        <option value="Y">사용</option>
-                                        <option value="N">미사용</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="modalFooter">
-                                <a onClick={onClose} className="modalBtnClose" title="취소">취소</a>
-                                <a onClick={onSave} className="modalBtnCheck" title="저장">저장</a>
-                            </div>
-                        </div>
+    return (
+        <Modal class="modalStyle" id="itemPop" show={isOpen} onHide={onClose} keyboard={true} >
+            <Modal.Body class="modal-body">
+                <a onClick={onClose} className="ModalClose" title="닫기"><i className="fas fa-times"></i></a>
+                <h2 className="modalTitle">품목 {itemId ? '수정' : '등록'}</h2>
+                <div className="flex align-items-center">
+                    <div className="formTit flex-shrink0 width120px">품목코드 <span className="star">*</span></div>
+                    <div className="width100"><input type="text" value={detail.itemCode} onChange={onChangeDetail} name="itemCode" readOnly={!!itemId} maxLength="10" className="inputStyle" placeholder="숫자만 입력하세요" /></div>
+                </div>
+                <div className="flex align-items-center mt20">
+                    <div className="formTit flex-shrink0 width120px">품목그룹</div>
+                    <div className="width100">
+                        <select value={detail.itemGrpCd} onChange={onChangeDetail} name="itemGrpCd" className="selectStyle">
+                            <option value="">선택</option>
+                            {itemGrpList?.map((itemGrp) => <option key={itemGrp.itemGrpCd} value={itemGrp.itemGrpCd}>{itemGrp.grpNm}</option>)}
+                        </select>
                     </div>
                 </div>
-            </div>
-        </>,
-        document.body
-    );
+                <div className="flex align-items-center mt20">
+                    <div className="formTit flex-shrink0 width120px">품목명 <span className="star">*</span></div>
+                    <div className="width100"><input type="text" value={detail.itemName} onChange={onChangeDetail} name="itemName" className="inputStyle" placeholder="품목명을 입력하세요" /></div>
+                </div>
+                <div className="flex align-items-center mt10">
+                    <div className="formTit flex-shrink0 width120px">사용여부 <span className="star">*</span></div>
+                    <div className="width100">
+                        <select value={detail.useYn} onChange={onChangeDetail} name="useYn" className="selectStyle">
+                            <option value="Y">사용</option>
+                            <option value="N">미사용</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="modalFooter">
+                    <a onClick={onClose} className="modalBtnClose" title="취소">취소</a>
+                    <a onClick={onSave} className="modalBtnCheck" title="저장">저장</a>
+                </div>
+            </Modal.Body>
+        </Modal>
+    )
 });
 
 export default ItemPop;
