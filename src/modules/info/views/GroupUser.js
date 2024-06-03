@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
@@ -12,16 +11,24 @@ const GroupUser = () => {
     const [CreateUser, setCreateUser] = useState(false)
     // 모달창 오픈 여부
     const [groupUserDetailPopOpen, setGroupUserDetailPopOpen] = useState(false);  // 모달 오픈
-    // 모달창 오픈 시 상태값
-    const onGroupUserPop = () => {
+    // 사용자등록 모달창 오픈 시 상태값
+    const onGroupUserPop = useCallback(() => {
+        setSrcUserIdChange("")
         setGroupUserDetailPopOpen(true); 
         setCreateUser(true); 
+    }, []);
+    
+    // 상세, 수정
+    const [SrcUserIdChange, setSrcUserIdChange] = useState("");
+    function onUserDetailPopUserIdChange(userId){
+        setSrcUserIdChange(userId)
+        setCreateUser(false)
+        setGroupUserDetailPopOpen(true); 
     }
-
-
+    
+    
     //세션 로그인 정보
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
-    //console.log(loginInfo);
     //조회 결과
     const [GroupUserList, setGroupUserList] = useState({})
     const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState({})
@@ -51,27 +58,25 @@ const GroupUser = () => {
             Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
         }
-    });
+    }, [srcData]);
 
     useEffect(() => {
         onSearch();
-    },[srcData.size, srcData.page]);
+    }, [srcData.size, srcData.page]);
 
     useEffect(() => {
         const fetchData = async () => {
           try {
             const interrelatedListResponse = await axios.post("/api/v1/couser/interrelatedList", null);
             setInterrelatedCustCodeList(interrelatedListResponse.data.data)
-            // console.log("?? 이거 왜 2번뜸")
-            // console.log(interrelatedListResponse.data.data);
           } catch (error) {
             console.log(error);
           }
         };
     
         fetchData();
-      }, []);
-
+    }, []);
+      
     return (
         <div className="conRight">
             <div className="conHeader">
@@ -79,9 +84,9 @@ const GroupUser = () => {
                     <li>정보관리</li>
                     <li>사용자관리</li>
                 </ul>
-                    <div>
-                        <a onClick={ onGroupUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
-                    </div>
+                <div>
+                    <a onClick={ onGroupUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
+                </div>
             </div>
             <div className="contents">
                 <div className="searchBox">
@@ -106,17 +111,17 @@ const GroupUser = () => {
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit width100px">사용자명</div>
 				        <div className="flex align-items-center width250px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
+                            <input type="text" onChange={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
                         </div>
 				        <div className="sbTit width100px ml50">아이디</div>
 				        <div className="width250px">
-                            <input type="text" onKeyUp={onChangeSrcData} name="userId" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
+                            <input type="text" onChange={onChangeSrcData} name="userId" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
                         </div>
                         <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
-                <div className="width100">
+                    <div className="width100">
                         전체 : <span className="textMainColor"><strong>{ GroupUserList.totalElements ? GroupUserList.totalElements.toLocaleString() : 0 }</strong></span>건
                         <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
                             <option value="10">10개씩 보기</option>
@@ -155,7 +160,7 @@ const GroupUser = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { GroupUserList.content?.map((groupUser, index) => <GroupUserListJs key={index} groupUser={groupUser} /> ) }
+                        { GroupUserList.content?.map((groupUser, index) => <GroupUserListJs key={index} groupUser={groupUser} onUserDetailPopUserIdChange={onUserDetailPopUserIdChange}/> ) }
                         { GroupUserList.content == null &&
                             <tr>
                                 <td className="end" colSpan="9">조회된 데이터가 없습니다.</td>
@@ -168,16 +173,16 @@ const GroupUser = () => {
                     </div>
                 </div>
             </div>
-            <GroupUserDetailPop 
-                srcUserId={null} 
-                CreateUser={CreateUser}
-                groupUserDetailPopOpen={groupUserDetailPopOpen} 
-                setGroupUserDetailPopOpen={setGroupUserDetailPopOpen} 
-                onSearch={onSearch}
-            />
+            {groupUserDetailPopOpen && (
+                <GroupUserDetailPop 
+                    srcUserId={SrcUserIdChange} 
+                    CreateUser={CreateUser}
+                    groupUserDetailPopOpen={groupUserDetailPopOpen} 
+                    setGroupUserDetailPopOpen={setGroupUserDetailPopOpen} 
+                    onSearch={onSearch}
+                />
+            )}
         </div>
-        
-        
     );
 };
 

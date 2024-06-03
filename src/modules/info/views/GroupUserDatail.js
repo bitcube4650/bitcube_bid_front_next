@@ -5,14 +5,15 @@ import Swal from 'sweetalert2'; // 공통 팝업창
 
 
 const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setGroupUserDetailPopOpen, onSearch}) => {
-    const [GroupUserDatailData, setGroupUserDatailData] = useState({
+    //console.log(srcUserId + " / " + CreateUser)
+    const [GroupUserDatailData, setGroupUserDetailData] = useState({
         "isCreate"              : CreateUser,
         "userId"                : "",
         "userPwd"               : "",
         "userPwdConfirm"        : "",
         "userName"              : "",
         "interrelatedCustCode"  : "",
-        "userAuth"              : "4",
+        "userAuth"              : "",
         "userInterrelatedList"  : [],
         "openauth"              : "",
         "bidauth"               : "",
@@ -23,26 +24,56 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
         "deptName"              : "",
         "useYn"                 : "Y",
     })
-    const [CreateUserTest, setCreateUserTest] = useState(true);
+    //소속계열사 리스트
     const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState({})
+    //사용자중복확인 체크 여부
     const [UserIdChkYn, setUserIdChkYn] = useState(false);
+    //감사사용자 > 계열사 체크 리스트
+    const [InterrelatedCustCodeCheckedList, setInterrelatedCustCodeCheckedList] = useState([])
+    
+    // 값 세팅
+    const onSetGroupUserData = (e) => {
+        if (InterrelatedCustCodeCheckedList.includes(e.target.value)) {
+            setInterrelatedCustCodeCheckedList(InterrelatedCustCodeCheckedList.filter(item => item !== e.target.value));
+        } else {
+            setInterrelatedCustCodeCheckedList([...InterrelatedCustCodeCheckedList, e.target.value]);
+        }
+        setGroupUserDetailData({
+            ...GroupUserDatailData,
+            [e.target.name]: e.target.value,
+            isCreate : CreateUser
+        })
+        //console.log(InterrelatedCustCodeCheckedList);
+        //console.log(GroupUserDatailData);
+    }
 
-    // 팝업 호출할때 isCreate 값 세팅
+
+    // 사용자 상세 조회
+    const onSrcUserDatail = useCallback(async () => {
+        if (srcUserId != null) {
+            try {
+                const srcUserDatailResponse = await axios.post("/api/v1/couser/userDetail", {
+                    userId: srcUserId
+                });
+                console.log(srcUserDatailResponse.data.data);
+                setGroupUserDetailData(srcUserDatailResponse.data.data);
+                //setInterrelatedCustCodeCheckedList(srcUserDatailResponse.data.data.userInterrelatedList)
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [srcUserId]);
+
+    // 처음들어왓을때 값세팅 
     useEffect(() => {
-        setGroupUserDatailData(prevState => ({
+        setGroupUserDetailData(prevState => ({
             ...prevState,
             isCreate: CreateUser
         }));
-        if(srcUserId != null){
-            // 사용자 상세 조회
-            //onSrcUserDatail();
+        if (!CreateUser && srcUserId != null) {
+            onSrcUserDatail();
         }
-    }, [CreateUser, groupUserDetailPopOpen]);
-
-
-    function onTest(){
-        setCreateUserTest(!CreateUserTest)
-    }
+    }, [CreateUser, groupUserDetailPopOpen, onSrcUserDatail]);
 
     // 계열사 가져오기
     useEffect(() => {
@@ -61,18 +92,10 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
     //팝업 닫기
     const onClosePop = useCallback( () => {
         // 입력값 초기화
-        setGroupUserDatailData({});
+        setGroupUserDetailData({});
         // 모달 닫기
         setGroupUserDetailPopOpen(false);
     });
-
-    const onSetGroupUserData = (e) => {
-        setGroupUserDatailData({
-            ...GroupUserDatailData,
-            [e.target.name]: e.target.value
-        })
-        //console.log(GroupUserDatailData);
-    }
 
     // 로그인 ID 변경 시, 아이디 중복체크 false 처리하기위해....
     const onUserIdChange = (e) => {
@@ -207,17 +230,16 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
 
 
     return (
-        <Modal className="modalStyle" show={groupUserDetailPopOpen} onHide={onClosePop} >
-            <Modal.Body style={{width:"125% !important" }} >
-                <Button onClick={onTest}> test용가리 </Button>
+        <Modal className="modalStyle" show={groupUserDetailPopOpen} onHide={onClosePop} size='lg'>
+            <Modal.Body>
                 <a onClick={onClosePop} className="ModalClose" data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">사용자 
-                    {( CreateUserTest ? ' 등록' : ' 수정' )}
+                    {( CreateUser? ' 등록' : ' 수정' )}
                 </h2>
-                <div className="flex align-items-center">
+                <div className="flex align-items-center" style={{height : '50px'}}>
                     <div className="formTit flex-shrink0 width120px">로그인ID <span className="star">*</span></div>
                     {
-                        CreateUserTest ? 
+                        CreateUser? 
                         <div  className="flex align-items-center width100">
                             <div className="width100">
                                 <input type="text" name="userId" className="inputStyle" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" maxLength="10" autoComplete="off" onChange={onUserIdChange}/>
@@ -231,7 +253,7 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                     }
                 </div>
                 {
-                    CreateUserTest && 
+                    CreateUser&& 
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">비밀번호</div>
                         <div className="width100">
@@ -240,7 +262,7 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                     </div>
                 }
                 {
-                    CreateUserTest && 
+                    CreateUser&& 
                     <div  className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">비밀번호 확인</div>
                         <div className="width100">
@@ -252,10 +274,10 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                     <div className="formTit flex-shrink0 width120px">이름 <span className="star">*</span></div>
                     <div className="width100"><input type="text" name="userName" className="inputStyle" placeholder="" value={GroupUserDatailData.userName} onChange={onSetGroupUserData}/></div>
                 </div>
-                <div className="flex align-items-center mt10">
+                <div className="flex align-items-center mt10" style={{height : '50px'}}>
                     <div className="formTi7t flex-shrink0 width120px">소속 계열사 <span className="star">*</span></div>
                     {
-                        CreateUserTest ?
+                        CreateUser?
                         <div className="width100"  >
                             {
                                 InterrelatedCustCodeList.length > 0 && (
@@ -279,7 +301,7 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">사용권한 <span className="star">*</span></div>
                     <div className="width100">
-                        <select name="userAuth" className="selectStyle" onChange={onSetGroupUserData}>
+                        <select name="userAuth" className="selectStyle" value={GroupUserDatailData.userAuth} onChange={onSetGroupUserData}>
                             <option value="">선택</option>
                             <option value="1">시스템관리자</option>
                             <option value="2">각사관리자</option>
@@ -309,17 +331,32 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                                         {
                                             InterrelatedCustCodeList.length > 0 && (
                                                 <div className="input-container">
-                                                    {InterrelatedCustCodeList.map((value, index) => (
-                                                        <label className="mr20" key={index}>{value.interrelatedNm}
+                                                    {InterrelatedCustCodeList.map((value) => (
+                                                        <label className="mr20" key={value.interrelatedCustCode}>
                                                             <input
                                                                 type="checkbox"
-                                                                name="userInterrelatedList"
                                                                 value={value.interrelatedCustCode}
+                                                                checked={InterrelatedCustCodeCheckedList.includes(value.interrelatedCustCode)}
                                                                 onChange={onSetGroupUserData}
                                                                 />
+                                                            {value.interrelatedNm}
                                                         </label>
                                                     ))}
                                                 </div>
+                                                // <div>
+                                                //     {options.map(option => (
+                                                //     <label key={option.interrelatedCustCode}>
+                                                //         <input
+                                                //         type="checkbox"
+                                                //         value={option.interrelatedCustCode}
+                                                //         checked={InterrelatedCustCodeCheckedList.includes(option.interrelatedCustCode)}
+                                                //         onChange={handleCheckboxChange}
+                                                //         />
+                                                //         {option.interrelatedNm}
+                                                //     </label>
+                                                //     ))}
+                                                //     <div>Selected Values: {InterrelatedCustCodeCheckedList.join(', ')}</div>
+                                                // </div>
                                             )
                                         }
                                         </td>
@@ -348,7 +385,7 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                     </div>
                 </div>
                 {
-                    !CreateUserTest && 
+                    !CreateUser&& 
                     <div className="flex align-items-center mt10" v-if="!this.CreateUser">
                         <div className="formTit flex-shrink0 width120px">비밀번호 <span className="star">*</span></div>
                         <div className="width100">
@@ -360,23 +397,23 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
                 
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">휴대폰 ☎  <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userHp" className="inputStyle" placeholder="숫자만" maxLength="13" onChange={onSetGroupUserData}/></div>
+                    <div className="width100"><input type="text" name="userHp" className="inputStyle" value={GroupUserDatailData.userHp} placeholder="숫자만" maxLength="13" onChange={onSetGroupUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">유선전화 ☎  <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userTel" className="inputStyle" placeholder="숫자만" maxLength="13" onChange={onSetGroupUserData}/></div>
+                    <div className="width100"><input type="text" name="userTel" className="inputStyle" value={GroupUserDatailData.userTel} placeholder="숫자만" maxLength="13" onChange={onSetGroupUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">이메일 <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userEmail" className="inputStyle" placeholder="james@iljin.co.kr" onChange={onSetGroupUserData}/></div>
+                    <div className="width100"><input type="text" name="userEmail" className="inputStyle" value={GroupUserDatailData.userEmail} placeholder="james@iljin.co.kr" onChange={onSetGroupUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">직급</div>
-                    <div className="width100"><input type="text" name="userPosition" className="inputStyle" placeholder="" onChange={onSetGroupUserData}/></div>
+                    <div className="width100"><input type="text" name="userPosition" className="inputStyle" value={GroupUserDatailData.userPosition} placeholder="" onChange={onSetGroupUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">부서</div>
-                    <div className="width100"><input type="text" name="deptName" className="inputStyle" placeholder="" onChange={onSetGroupUserData}/></div>
+                    <div className="width100"><input type="text" name="deptName" className="inputStyle" value={GroupUserDatailData.deptName} placeholder="" onChange={onSetGroupUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">사용여부 <span className="star">*</span></div>

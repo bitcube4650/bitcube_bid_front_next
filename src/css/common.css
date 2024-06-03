@@ -539,3 +539,8 @@ input, select {vertical-align:top; margin-top:0 !important}
 
 /* modal - swal2 */
 .swal2-icon{margin: 40px auto  0px !important}
+
+/* 사용자관리 계열사 항목 css */
+.input-container {display: flex;flex-wrap: wrap;}
+.input-container > label {width: 27%;box-sizing: border-box;}
+/* .modal-content {width: 150% !important;} */

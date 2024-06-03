@@ -1,10 +1,6 @@
-import React from 'react';
+import {React} from 'react';
 
-function GroupUserList(props) {
-    function onUserDetail() {
-
-    }
-
+function GroupUserListJS(props, onUserDetailPopUserIdChange) {
     function hpNumberAddDash(val) {
         if (!val) return '';
         val = val.toString();
@@ -55,15 +51,20 @@ function GroupUserList(props) {
             return tmp;
         }
     }
+    
+    function onUserDetailPop(){
+        props.onUserDetailPopUserIdChange(props.groupUser.userId)
+    }
 
     return (
         <tr>
             <td className="text-left">
-                <a href='/#' onClick={ onUserDetail } className="textUnderline notiTitle" >
+                <a onClick={()=>{props.onUserDetailPopUserIdChange(props.groupUser.userId)}} className="textUnderline notiTitle" >
                     { props.groupUser.userName}
-                </a></td>
+                </a>
+            </td>
             <td className="text-left">
-                <a href='/#' onClick={ onUserDetail } className="textUnderline notiTitle" >
+                <a onClick={()=>{props.onUserDetailPopUserIdChange(props.groupUser.userId)}} className="textUnderline notiTitle" >
                     { props.groupUser.userId}
                 </a>
             </td>
@@ -78,4 +79,4 @@ function GroupUserList(props) {
     );
 };
 
-export default GroupUserList;
+export default GroupUserListJS;
