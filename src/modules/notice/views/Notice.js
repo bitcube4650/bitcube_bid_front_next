@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate  } from "react-router-dom";
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from 'components/Pagination';
 import NoticeList from '../components/NoticeList';
 import Swal from 'sweetalert2'; // 공통 팝업창
 

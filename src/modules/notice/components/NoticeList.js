@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import * as CommonUtils from 'components/CommonUtils';
 
 function NoticeList(props) {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ function NoticeList(props) {
             </td>
             <td>{ props.notice.buserName }</td>
             <td>{ props.notice.bdate }</td>
-            <td className="end">{ props.notice.bcount }</td>
+            <td className="end">{ CommonUtils.onComma(props.notice.bcount) }</td>
         </tr>
     );
 };
