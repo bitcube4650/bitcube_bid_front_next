@@ -36,6 +36,8 @@ import BidCompleteDetail from './modules/bid/views/BidCompleteDetail'
 import PartnerBidComplete from './modules/bid/views/PartnerBidComplete'
 import PartnerBidCompleteDetail from './modules/bid/views/PartnerBidCompleteDetail'
 import BidHistory from './modules/bid/views/BidHistory'
+import AdminFaq from './modules/notice/views/AdminFaq';
+import UserFaq from './modules/notice/views/UserFaq';
 
 const App = () => {
 	return (
@@ -60,6 +62,8 @@ const App = () => {
 								<Route path="/noticeDetail/:bno" element={<NoticeDetail />}></Route>
 								<Route path="/noticeEdit" element={<NoticeEdit />}></Route>
 								<Route path="/noticeEdit/:bno" element={<NoticeEdit />}></Route>
+								<Route path="/notice/faq/admin" element={<AdminFaq />}></Route>
+								<Route path="/notice/faq/user" element={<UserFaq />}></Route>
 								<Route path="/company/partner/approval" element={<CustList />}></Route>
 								<Route path="/company/partner/management" element={<CustList />}></Route>
 								<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>

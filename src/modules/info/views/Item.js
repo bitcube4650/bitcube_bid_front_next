@@ -56,7 +56,6 @@ const Item = () => {
     //품목 조회
     const onSearch = useCallback(async() => {
         try {
-            console.log('srcData',srcData)
             setSrcData(srcData);
             const response = await axios.post("/api/v1/item/itemList", srcData);
 
