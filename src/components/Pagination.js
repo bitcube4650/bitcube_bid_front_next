@@ -7,7 +7,8 @@ const Pagination = ({ onChangeSrcData, list }) => {
 
 	function onPageMap() {
 		let rtnList = [];
-		if((parseInt(list.totalPages)-parseInt(list.number)) >= 5 || list.totalPages%5 == 0) {
+
+		if(list.number < Math.floor(list.totalPages/5)*5) {
 			return [1, 2, 3, 4, 5];
 		} else {
 			for(let i = 1; i <= list.totalPages%5; i++) {
