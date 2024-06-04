@@ -180,7 +180,7 @@ const SignUp = () => {
                     <div className="provisionAgree">
                         <input type="checkbox" id="isAgree" checked={ isAgree }  onChange={(e) => setIsAgree(e.target.checked)} className="loginCheckStyle" /><label for="isAgree">약관에 동의</label>
                         {isAgree ? (
-                            <Link to="/SignUp2" replace className="btnStyle btnOutlineBlue btnMd" title="동의하고 계속하기">동의하고 계속하기</Link>
+                            <Link to="/SignUpMain" replace className="btnStyle btnOutlineBlue btnMd" title="동의하고 계속하기">동의하고 계속하기</Link>
                         ) : (
                             <button className="btnStyle btnOutlineBlue btnMd dimmed" title="동의하고 계속하기">동의하고 계속하기</button>
                         )}
