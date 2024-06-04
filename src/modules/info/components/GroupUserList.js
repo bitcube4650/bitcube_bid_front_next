@@ -1,6 +1,6 @@
 import {React} from 'react';
 
-function GroupUserListJS(props, onUserDetailPopUserIdChange) {
+function GroupUserListJS(props) {
     function hpNumberAddDash(val) {
         if (!val) return '';
         val = val.toString();
@@ -50,10 +50,6 @@ function GroupUserListJS(props, onUserDetailPopUserIdChange) {
             tmp += val.substr(7);
             return tmp;
         }
-    }
-    
-    function onUserDetailPop(){
-        props.onUserDetailPopUserIdChange(props.groupUser.userId)
     }
 
     return (

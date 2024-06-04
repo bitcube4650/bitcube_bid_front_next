@@ -3,6 +3,7 @@ import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
 import GroupUserDetailPop from './GroupUserDatail'
+import GroupUserPasswordComfirm from '../components/GroupUserPasswordComfirm'
 import InterrelatedCustCodeSelect from '../components/InterrelatedCustCodeSelect'
 import Swal from 'sweetalert2'; // 공통 팝업창
 
@@ -10,22 +11,29 @@ const GroupUser = () => {
     // 사용자 등록 / 수정 여부
     const [CreateUser, setCreateUser] = useState(false)
     // 모달창 오픈 여부
-    const [groupUserDetailPopOpen, setGroupUserDetailPopOpen] = useState(false);  // 모달 오픈
-    // 사용자등록 모달창 오픈 시 상태값
+    const [groupUserDetailPopOpen, setGroupUserDetailPopOpen] = useState(false);  // 사용자 등록/수정모달 오픈
+    const [GroupUserPasswordComfirmOpen, setGroupUserPasswordComfirmOpen] = useState(false);    // 비밀번호 확인
+
+    // 사용자등록 팝업호출
     const onGroupUserPop = useCallback(() => {
         setSrcUserIdChange("")
         setGroupUserDetailPopOpen(true); 
         setCreateUser(true); 
     }, []);
-    
-    // 상세, 수정
+    // 상세, 수정에 필요한 userId
     const [SrcUserIdChange, setSrcUserIdChange] = useState("");
+    // 비밀번호 확인 팝업 호출
     function onUserDetailPopUserIdChange(userId){
         setSrcUserIdChange(userId)
-        setCreateUser(false)
-        setGroupUserDetailPopOpen(true); 
+        setGroupUserPasswordComfirmOpen(true)   
     }
-    
+    // 사용자 상세, 수정 팝업 호출
+    function onUserDetailPop(userId){
+        setSrcUserIdChange(userId)
+        setCreateUser(false)
+        setGroupUserPasswordComfirmOpen(false)
+        setGroupUserDetailPopOpen(true)   
+    }
     
     //세션 로그인 정보
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
@@ -180,6 +188,14 @@ const GroupUser = () => {
                     groupUserDetailPopOpen={groupUserDetailPopOpen} 
                     setGroupUserDetailPopOpen={setGroupUserDetailPopOpen} 
                     onSearch={onSearch}
+                />
+            )}
+            {GroupUserPasswordComfirmOpen && (
+                <GroupUserPasswordComfirm 
+                    srcUserId={SrcUserIdChange} 
+                    GroupUserPasswordComfirmOpen={GroupUserPasswordComfirmOpen}
+                    setGroupUserPasswordComfirmOpen={setGroupUserPasswordComfirmOpen}
+                    onUserDetailPop={onUserDetailPop} 
                 />
             )}
         </div>
