@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as CommonUtils from 'components/CommonUtils';
 import filters from '../api/filters';
+import axios from 'axios';
 
 const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 	// 세션정보
@@ -35,6 +36,22 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 		onChangeData('custInfo', id, null)
 		onChangeData('custInfo', id+'Name', '')
 		onChangeData('custInfo', id==='regnumFile' ? 'regnumPath' : id+'Path', '')
+	}
+
+	const onIdCheck = async () => {
+		const response = await axios.post('/api/v1/cust/idcheck', custInfo)
+		var result = response.data;
+
+		if(result.code === 'OK'){
+			Swal.fire('', '사용 가능한 아이디 입니다.', 'info');
+			onChangeData('custInfo', 'idCheck', true)
+		} else if(result.code == 'DUP') {
+			Swal.fire('', '이미 등록된 아이디입니다.', 'error');
+			onChangeData('custInfo', 'idCheck', false)
+		} else {
+			Swal.fire('', '입력한 아이디를 사용할 수 있습니다.', 'error');
+			onChangeData('custInfo', 'idCheck', false)
+		}
 	}
 	
 	return (
@@ -78,7 +95,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 							<div className="formTit flex-shrink0 width170px">업체유형 1 <span className="star">*</span></div>
 							<div className="flex align-items-center width100">
 								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm1} readOnly />
-								<input type="hidden" value={ custInfo.custType1 }/>
+								<input type="hidden" value={ custInfo.custType1 || '' }/>
 							<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
@@ -86,7 +103,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 							<div className="formTit flex-shrink0 width170px">업체유형 2</div>
 							<div className="flex align-items-center width100">
 									<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm2} readOnly />
-									<input type="hidden" value={ custInfo.custType2 }/>
+									<input type="hidden" value={ custInfo.custType2 || '' }/>
 								<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
@@ -105,38 +122,38 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				}
 					<div className="flex align-items-center mt20">
 						<div className="formTit flex-shrink0 width170px">회사명 <span className="star">*</span></div>
-						<div className="width100"><input type="text" name="custName" value={custInfo.custName} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
+						<div className="width100"><input type="text" name="custName" value={custInfo.custName || ''} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">대표자명 <span className="star">*</span></div>
-						<div className="width100"><input type="text" name="presName" value={custInfo.presName} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
+						<div className="width100"><input type="text" name="presName" value={custInfo.presName || ''} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
 					</div>
 
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">사업자등록번호 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="regnum1" value={custInfo.regnum1} maxLength="3" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="regnum1" value={custInfo.regnum1 || ''} maxLength="3" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 							<span style={{margin:"0 10px"}}>-</span>
-							<input type="text" name="regnum2" value={custInfo.regnum2} maxLength="2" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="regnum2" value={custInfo.regnum2 || ''} maxLength="2" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 							<span style={{margin:"0 10px"}}>-</span>
-							<input type="text" name="regnum3" value={custInfo.regnum3} maxLength="5" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="regnum3" value={custInfo.regnum3 || ''} maxLength="5" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">법인번호</div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="presJuminNo1" value={custInfo.presJuminNo1} maxLength="6" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="presJuminNo1" value={custInfo.presJuminNo1 || ''} maxLength="6" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 							<span style={{margin:"0 10px"}}>-</span>
-							<input type="text" name="presJuminNo2" value={custInfo.presJuminNo2} maxLength="7" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="presJuminNo2" value={custInfo.presJuminNo2 || ''} maxLength="7" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">자본금 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="capital" value={CommonUtils.onComma(custInfo.capital)} maxLength="15" className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} />
+							<input type="text" name="capital" value={CommonUtils.onComma(custInfo.capital || '')} maxLength="15" className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} />
 							<div className="ml10">원</div>
 						</div>
 					</div>
@@ -144,7 +161,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">설립년도 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="foundYear" value={custInfo.foundYear} maxLength="4" className="inputStyle maxWidth-max-content" placeholder="ex) 2021" onChange={handleChange} />
+							<input type="text" name="foundYear" value={custInfo.foundYear || ''} maxLength="4" className="inputStyle maxWidth-max-content" placeholder="ex) 2021" onChange={handleChange} />
 							<div className="ml10">년</div>
 						</div>
 					</div>
@@ -152,14 +169,14 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">대표전화 <span className="star">*</span></div>
 						<div className="width100">
-							<input type="text" name="tel" value={CommonUtils.onAddDashTel(custInfo.tel)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="tel" value={CommonUtils.onAddDashTel(custInfo.tel || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">팩스</div>
 						<div className="width100">
-							<input type="text" name="fax" value={CommonUtils.onAddDashTel(custInfo.fax)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="fax" value={CommonUtils.onAddDashTel(custInfo.fax || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
@@ -167,11 +184,11 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						<div className="formTit flex-shrink0 width170px">회사주소 <span className="star">*</span></div>
 						<div className="width100">
 							<div className="flex align-items-center width100">
-								<input type="text"  name="zipcode" value={custInfo.zipcode} className="inputStyle maxWidth-max-content readonly" placeholder="주소 조회 클릭" readOnly onChange={handleChange}/>
+								<input type="text"  name="zipcode" value={custInfo.zipcode || ''} className="inputStyle maxWidth-max-content readonly" placeholder="주소 조회 클릭" readOnly onChange={handleChange}/>
 								<a href="#"data-toggle="modal" data-target="#addrPop" className="btnStyle btnSecondary flex-shrink0 ml10" title="주소 조회">주소 조회</a>
 							</div>
-							<div className="mt5"><input type="text" name="addr" value={custInfo.addr} className="inputStyle readonly" placeholder="" readOnly onChange={handleChange} /></div>
-							<div className="mt5"><input type="text" name="addrDetail" value={custInfo.addrDetail} className="inputStyle" placeholder="상세 주소 입력" onChange={handleChange}/></div>
+							<div className="mt5"><input type="text" name="addr" value={custInfo.addr || ''} className="inputStyle readonly" placeholder="" readOnly onChange={handleChange} /></div>
+							<div className="mt5"><input type="text" name="addrDetail" value={custInfo.addrDetail || ''} className="inputStyle" placeholder="상세 주소 입력" onChange={handleChange}/></div>
 						</div>
 					</div>
 
@@ -267,13 +284,13 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">D업체평가</div>
 					<div className="width100">
-						<textarea className="textareaStyle boxOverflowY" name="careContent" value={custInfo.careContent} maxLength="2000" onChange={handleChange}></textarea>
+						<textarea className="textareaStyle boxOverflowY" name="careContent" value={custInfo.careContent || ''} maxLength="2000" onChange={handleChange}></textarea>
 					</div>
 					</div>
 					<div className="flex align-items-center mt20">
 						<div className="formTit flex-shrink0 width170px">관리단위</div>
 					<div className="width100">
-						<input type="text" className="inputStyle" name="custValuation" value={custInfo.custValuation} maxLength="100"  onChange={handleChange}/>
+						<input type="text" className="inputStyle" name="custValuation" value={custInfo.custValuation || ''} maxLength="100"  onChange={handleChange}/>
 					</div>
 				</div>
 			</div>
@@ -287,13 +304,13 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				<div className="flex align-items-center">
 					<div className="formTit flex-shrink0 width170px">이름 <span className="star">*</span></div>
 					<div className="width100">
-						<input type="text" name="userName" value={custInfo.userName} className="inputStyle maxWidth-max-content" maxLength="50" onChange={handleChange}/>
+						<input type="text" name="userName" value={custInfo.userName || ''} className="inputStyle maxWidth-max-content" maxLength="50" onChange={handleChange}/>
 					</div>
 				</div>
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">이메일 <span className="star">*</span></div>
 					<div className="width100">
-						<input type="text" name="userEmail" value={custInfo.userEmail} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="ex) sample@iljin.co.kr" onChange={handleChange} />
+						<input type="text" name="userEmail" value={custInfo.userEmail || ''} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="ex) sample@iljin.co.kr" onChange={handleChange} />
 					</div>
 				</div>
 				{!isEdit ?
@@ -301,20 +318,20 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">아이디 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="userId" value={custInfo.userId} maxLength="10" className="inputStyle maxWidth-max-content" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" onChange={handleChange} />
-							<a href="#" className="btnStyle btnSecondary flex-shrink0 ml10" title="중복 확인">중복 확인</a>
+							<input type="text" name="userId" value={custInfo.userId || ''} maxLength="10" className="inputStyle maxWidth-max-content" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" onChange={(e) => {handleChange(e); onChangeData('custInfo', 'idCheck', false);}} />
+							<button className="btnStyle btnSecondary flex-shrink0 ml10" title="중복 확인" onClick={onIdCheck}>중복 확인</button>
 						</div>
 					</div>
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">비밀번호 <span className="star">*</span></div>
 						<div className="width100">
-							<input style={{'WebkitTextSecurity':'disc'}} name="userPwd" value={custInfo.userPwd} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" onChange={handleChange} />
+							<input style={{'WebkitTextSecurity':'disc'}} name="userPwd" value={custInfo.userPwd || ''} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" onChange={handleChange} />
 						</div>
 					</div>
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">비밀번호 확인 <span className="star">*</span></div>
 						<div className="width100">
-							<input style={{'WebkitTextSecurity':'disc'}} name="userPwdConfirm" value={custInfo.userPwdConfirm} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="비밀번호와 동일해야 합니다." onChange={handleChange} />
+							<input style={{'WebkitTextSecurity':'disc'}} name="userPwdConfirm" value={custInfo.userPwdConfirm || ''} maxLength="100" className="inputStyle maxWidth-max-content" placeholder="비밀번호와 동일해야 합니다." onChange={handleChange} />
 						</div>
 					</div>
 				</>
@@ -330,25 +347,25 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">휴대폰 <span className="star">*</span></div>
 					<div className="width100">
-						<input type="text" name="userHp" value={CommonUtils.onAddDashTel(custInfo.userHp)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						<input type="text" name="userHp" value={CommonUtils.onAddDashTel(custInfo.userHp || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 					</div>
 				</div>
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">유선전화 <span className="star">*</span></div>
 					<div className="width100">
-						<input type="text" name="userTel" value={CommonUtils.onAddDashTel(custInfo.userTel)} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						<input type="text" name="userTel" value={CommonUtils.onAddDashTel(custInfo.userTel || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 					</div>
 				</div>
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">직급</div>
 					<div className="width100">
-						<input type="text" name="userPosition" value={custInfo.userPosition} maxLength="50" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						<input type="text" name="userPosition" value={custInfo.userPosition || ''} maxLength="50" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 					</div>
 				</div>
 				<div className="flex align-items-center mt10">
 					<div className="formTit flex-shrink0 width170px">부서</div>
 					<div className="width100">
-						<input type="text" name="userBuseo" value={custInfo.userBuseo} maxLength="50" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+						<input type="text" name="userBuseo" value={custInfo.userBuseo || ''} maxLength="50" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 					</div>
 				</div>
 			</div>

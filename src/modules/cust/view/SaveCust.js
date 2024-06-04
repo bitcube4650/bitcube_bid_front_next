@@ -14,7 +14,9 @@ const SaveCust = () => {
 		url : '/api/v1/cust/management/'
 	});
 
-	let [custInfo, setCustInfo] = useState({});
+	let [custInfo, setCustInfo] = useState({
+		idCheck : false
+	});
 
 	let isEdit = false;
 	if(selCust?.custCode != '') isEdit = true;
@@ -58,71 +60,150 @@ const SaveCust = () => {
 		onChangeData('custInfo',	'presJuminNo2',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.regnum.substring(6,13) : '')
 	})
 
-	const onSave = () => {
+	const onValidation = () => {
+		// 등록인 경우에만 체크
+		// if(!isEdit){
+		// 	if(CommonUtils.isEmpty(custInfo.custType1)){
+		// 		Swal.fire('', '업체유형 1을 선택해주세요.', 'warning')
+		// 		return false;
+		// 	}
+		// }
+
 		if(CommonUtils.isEmpty(custInfo.custName)){
 			Swal.fire('', '회사명을 입력해주세요.', 'warning')
-			return;
+			return false;
 		}
 		
 		if(CommonUtils.isEmpty(custInfo.presName)){
 			Swal.fire('', '대표자명을 입력해주세요.', 'warning')
-			return;
+			return false;
 		}
 		
 		if(CommonUtils.isEmpty(custInfo.regnum1) || CommonUtils.isEmpty(custInfo.regnum2) || CommonUtils.isEmpty(custInfo.regnum3)){
 			Swal.fire('', '사업자등록번호를 입력해주세요.', 'warning')
-			return;
+			return false;
 		} else {
 			if(custInfo.regnum1.length != 3){
 				Swal.fire('', '사업자등록번호를 정확히 입력해주세요.', 'warning')
-				return;
+				return false;
 			}
 			if(custInfo.regnum2.length != 2){
 				Swal.fire('', '사업자등록번호를 정확히 입력해주세요.', 'warning')
-				return;
+				return false;
 			}
 			if(custInfo.regnum3.length != 5){
 				Swal.fire('', '사업자등록번호를 정확히 입력해주세요.', 'warning')
-				return;
+				return false;
 			}
 		}
 
 		if(!CommonUtils.isEmpty(custInfo.presJuminNo1) || !CommonUtils.isEmpty(custInfo.presJuminNo2)){
 			if(custInfo.presJuminNo1.length != 6){
 				Swal.fire('', '법인번호를 정확히 입력해주세요.', 'warning')
-				return;
+				return false;
 			}
 			if(custInfo.presJuminNo2.length != 7){
 				Swal.fire('', '법인번호를 정확히 입력해주세요.', 'warning')
-				return;
+				return false;
 			}
 		}
 
 		if(CommonUtils.isEmpty(custInfo.capital)){
 			Swal.fire('', '자본금을 입력해주세요.', 'warning')
-			return;
+			return false;
 		}
 
 		if(CommonUtils.isEmpty(custInfo.foundYear)){
-			Swal.fire('', '섭립년도를 입력해주세요.', 'warning')
-			return;
+			Swal.fire('', '설립년도를 입력해주세요.', 'warning')
+			return false;
 		}
 
-		if(CommonUtils.isEmpty(custInfo.tel)){
+		if(CommonUtils.isEmpty(CommonUtils.onAddDashTel(custInfo.tel))){
 			Swal.fire('', '대표전화를 입력해주세요.', 'warning')
-			return;
+			return false;
 		}
 
-		if(CommonUtils.isEmpty(custInfo.zipcode) || CommonUtils.isEmpty(custInfo.addr) || CommonUtils.isEmpty(custInfo.addrDetail)){
-			Swal.fire('', '회사주소를 입력해주세요.', 'warning')
-			return;
-		}
+		// if(CommonUtils.isEmpty(custInfo.zipcode) || CommonUtils.isEmpty(custInfo.addr) || CommonUtils.isEmpty(custInfo.addrDetail)){
+		// 	Swal.fire('', '회사주소를 입력해주세요.', 'warning')
+		// 	return false;
+		// }
 
 		if(CommonUtils.isEmpty(custInfo.regnumFileName)){
 			Swal.fire('', '사업자등록증을 첨부해주세요.', 'warning')
-			return;
+			return false;
 		}
-		
+
+		if(CommonUtils.isEmpty(custInfo.userName)){
+			Swal.fire('', '관리자 이름을 입력해주세요.', 'warning')
+			return false;
+		}
+
+		if(CommonUtils.isEmpty(custInfo.userEmail)){
+			Swal.fire('', '관리자 메일주소를 입력해주세요.', 'warning')
+			return false;
+		} else {
+			const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+			if (!emailRegex.test(custInfo.userEmail)) {
+				Swal.fire('', '입력한 이메일 형식이 올바르지 않습니다.', 'warning');
+				return false;
+			}
+		}
+
+		// 등록인 경우에만 체크
+		if(!isEdit){
+			if(CommonUtils.isEmpty(custInfo.userId)){
+				Swal.fire('', '관리자 아이디를 입력해주세요.', 'warning')
+				return false;
+			}
+	
+			if(CommonUtils.isEmpty(custInfo.idCheck) || custInfo.idCheck === false){
+				Swal.fire('', '관리자 아이디 중복 체크 해주세요', 'warning')
+				return false;
+			}
+	
+			if(CommonUtils.isEmpty(custInfo.userPwd)){
+				Swal.fire('', '관리자 비밀번호를 입력해주세요.', 'warning')
+				return false;
+			} else {
+				const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+				if (!pwdRegex.test(custInfo.userPwd)) {
+					Swal.fire({ type: "warning", text: "비밀번호는 최소 8자 이상, 숫자와 특수문자를 포함해야 합니다." });
+					return false;
+				}
+			}
+	
+			if(custInfo.userPwdConfirm != custInfo.userPwd){
+				Swal.fire('', '관리자 비밀번호와 동일하게 입력해주세요.', 'warning')
+				return false;
+			}
+		}
+
+		if(CommonUtils.isEmpty(custInfo.userHp)){
+			Swal.fire('', '관리자 휴대폰 번호를 입력해주세요.', 'warning')
+			return false;
+		} else {
+			const phoneNumberRegex = /^\d{3}-\d{3,4}-\d{4}$/;
+			if (!phoneNumberRegex.test(CommonUtils.onAddDashTel(custInfo.userHp))) {
+				Swal.fire('', '휴대폰번호 형식에 맞게 입력해주세요.', 'warning');
+				return false;
+			}
+		}
+
+		if(CommonUtils.isEmpty(custInfo.userTel)){
+			Swal.fire('', '관리자 유선전화를 입력해주세요.', 'warning')
+			return false;
+		} else {
+			const telNumberRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
+			if (!telNumberRegex.test(CommonUtils.onAddDashTel(custInfo.userTel))) {
+				Swal.fire('', '유선전화 형식에 맞게 입력해주세요.', 'warning');
+				return false;
+			}
+		}
+	}
+
+	const onSave = () => {
+		if(onValidation() === false) return;		// 유효성 검사
+
 		Swal.fire({
 			title: "",
 			text : `${!isEdit ? '회원가입' : '저장'} 처리하시겠습니까?`,
@@ -152,10 +233,7 @@ const SaveCust = () => {
 			
 			let result = response.data;
 			if(result.code != 'ERROR'){
-				let msg = '';
-				{!isEdit ? msg = '가입되었습니다.' : msg = '수정되었습니다.'}
-
-				Swal.fire('', result.msg, 'success');
+				Swal.fire('', `${!isEdit ? '가입되었습니다.' : '수정되었습니다.'}`, 'success');
 				navigate('/company/partner/management')
 			} else {
 				Swal.fire('', result.msg, 'error');
@@ -196,8 +274,8 @@ const SaveCust = () => {
 				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData}/>
 				
 				<div className="text-center mt50">
-					<a className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</a>
-					<a className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</a>
+					<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
+					<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
 				</div>
 			</div>
 			{/* // contents */}
