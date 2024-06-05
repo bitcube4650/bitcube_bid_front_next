@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
+import AffiliateSelectModal from 'components/modal/AffiliateSelectModal';
 
 const NoticeEdit = () => {
     //세션 로그인 정보
@@ -9,6 +10,10 @@ const NoticeEdit = () => {
 
     const navigate = useNavigate();
     const { bno } = useParams();
+
+    const [affiliateSelectData, setAffiliateSelectData] = useState({
+        show: false
+    });
 
     const [detailData, setDetailData] = useState({
         btitle      : "",
@@ -26,6 +31,12 @@ const NoticeEdit = () => {
             
             if(response.data.status == 200) {
                 setDetailData(response.data.data.content[0]);
+                if(response.data.data.content[0].interrelatedCodes) {
+                    setAffiliateSelectData({
+                        ...affiliateSelectData.show,
+                        ["interrelatedCodes"] : response.data.data.content[0].interrelatedCodes.split(",")
+                    })
+                }
             } else {
                 Swal.fire('조회에 실패하였습니다.', '', 'error');
                 navigate("/notice");
@@ -41,7 +52,16 @@ const NoticeEdit = () => {
         if(bno) {
             onSelectDetail();
         }
-    }, bno);
+    }, [bno]);
+
+    useEffect(() => {
+        if(affiliateSelectData.isChange) {
+            setDetailData({
+                ...detailData,
+                ['interrelatedNms']: affiliateSelectData.interrelatedNms
+            });
+        }
+    }, [affiliateSelectData.interrelatedCodes]);
 
     const onChangeDetailData = (e) => {
         setDetailData({
@@ -97,8 +117,6 @@ const NoticeEdit = () => {
             formData.append('data', JSON.stringify(detailData));
 
             const response = await axios.post(url, formData);
-
-            console.log(response);
             if(response.data.status == 200) {
                 Swal.fire(saveText + '되었습니다.', '', 'success');
                 navigate("/notice");
@@ -131,20 +149,15 @@ const NoticeEdit = () => {
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">공지대상</div>
                         <div className="flex width100">
-                            <input type="radio" id="bm2_1" className="radioStyle" onChange={ onChangeDetailData } name="bm2" value="ALL" checked={ detailData.bco == "ALL" } disabled={loginInfo.userAuth != '1' ? true : false} />
+                            <input type="radio" id="bm2_1" className="radioStyle" onChange={ onChangeDetailData } name="bco" value="ALL" checked={ detailData.bco == "ALL" } disabled={loginInfo.userAuth != '1' ? true : false} />
                             <label for="bm2_1">공통</label>
-                            todo: 계열사
-                            {/*
-                            <div click="openModal">
-                                <input type="radio" name="bm2"  v-model="detailData.bco" value="CUST" id="bm2_2" className="radioStyle" />
-                                    <label for="bm2_2" data-toggle="modal">계열사</label>
-                                <p className="mt5 ml30" v-if="detailData.bco == 'CUST'">
-                                    <span v-for="(val, index) in groupList" key="index">
-                                        { val.interrelated.interrelatedNm }{ index < groupList.length - 1 ? ', ' : '' }
-                                    </span>
-                                </p>
+                            <div onClick={(e) => setAffiliateSelectData({...affiliateSelectData, ["show"]: true})} data-toggle="modal" title="계열사 선택">
+                                <input type="radio" name= "bco" value="CUST" id="bm2_2" className="radioStyle" onChange={ onChangeDetailData } checked={ detailData.bco == "CUST" } />
+                                <label for="bm2_2">계열사</label>
+                                { detailData.bco == 'CUST' &&
+                                    <p className="mt5 ml30">{ detailData.interrelatedNms }</p>
+                                }
                             </div>
-                            */}
                         </div>
                     </div>
                     <div className="flex align-items-center mt20">
@@ -194,6 +207,8 @@ const NoticeEdit = () => {
                     </div>
                 </div>
             </div>
+
+            <AffiliateSelectModal affiliateSelectData={ affiliateSelectData } setAffiliateSelectData={ setAffiliateSelectData } />
         </div>
     );
 };

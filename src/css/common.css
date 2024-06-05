@@ -548,3 +548,6 @@ input, select {vertical-align:top; margin-top:0 !important}
 .blueHighlight {
     color: #0109d0 !important;
 }
+
+/* bootstrap이 바뀌면서 적용이 되지않는 css */
+.text-left {text-align: left;}
