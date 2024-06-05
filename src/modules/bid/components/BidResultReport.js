@@ -94,7 +94,7 @@ const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
                     </thead>
                     <tbody>
                         { data.custList?.map((cust, idx) => 
-                            <tr>
+                            <tr key={idx}>
                                 <td>{ idx+1 }</td>
                                 <td className="text-left">{ cust.custName }</td>
                                 <td>{ cust.presName }</td>

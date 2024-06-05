@@ -104,7 +104,7 @@ const BidCommonInfo = (props) => {
                     <div className="width100">
                         <div className="overflow-y-scroll boxStSm width100" style={{height:"50px"}}>
                             { props.data.custList?.map((cust, idx) => 
-                                <a onClick={()=>onOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
+                                <a key={idx} onClick={()=>onOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
                                 {props.data.custList.length != (idx+1) &&
                                 <span>, </span>
                                 }
@@ -135,6 +135,9 @@ const BidCommonInfo = (props) => {
                     <div className="width100">{ Ft.numberWithCommas(props.data.bdAmt) } 
                     { (props.data.bdAmt != null && props.data.bdAmt != undefined && props.data.bdAmt != '') &&
                         <span>원</span>
+                    }
+                    { (props.data.ingTag == 'A5' && props.data.realAmt != undefined && props.data.realAmt != null && props.data.realAmt != '' && ( props.data.createUser == userId || props.data.gongoId == userId)) &&
+                    <span> ( 실제 계약금액 : { Ft.numberWithCommas(props.data.realAmt) } 원 )</span>
                     }
                     </div>
                 </div>
@@ -259,7 +262,7 @@ const BidCommonInfo = (props) => {
                     
                     { props.data.insMode == '1' && 
                     <div className="width100">
-                        { props.data.specFile?.map((specFile) => <a onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
+                        { props.data.specFile?.map((specFile, idx) => <a key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
                     </div>
                     }
 
@@ -280,8 +283,8 @@ const BidCommonInfo = (props) => {
                             </tr>
                             </thead>
                             <tbody>
-                            { props.data.specInput?.map((spec) => 
-                                <tr>
+                            { props.data.specInput?.map((spec, idx) => 
+                                <tr key={idx}>
                                     <td className="text-left">{ spec.name }</td>
                                     <td className="text-right">{ spec.ssize }</td>
                                     <td className="text-right">{ Ft.numberWithCommas(spec.orderQty) }</td>
@@ -299,8 +302,8 @@ const BidCommonInfo = (props) => {
                 <div className="flex mt20">
                     <div className="formTit flex-shrink0 width170px">첨부파일</div>
                     <div className="width100">
-                        { props.data.fileList?.map((file) => 
-                            <div className={file.fileFlag == '1' ? 'textHighlight' : ''}>
+                        { props.data.fileList?.map((file, idx) => 
+                            <div key={idx} className={file.fileFlag == '1' ? 'textHighlight' : ''}>
                                 <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
                             </div>) }
                     </div>
@@ -309,6 +312,12 @@ const BidCommonInfo = (props) => {
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width170px">재입찰사유</div>
                     <div className="width100">{ props.data.whyA3 }</div>
+                </div>
+                }
+                { (props.data.ingTag == 'A7' && props.data.whyA7 != '' ) &&
+                <div className="flex align-items-center mt20">
+                    <div className="formTit flex-shrink0 width170px">유찰사유</div>
+                    <div className="width100">{ props.data.whyA7 }</div>
                 </div>
                 }
             </div>

@@ -8,6 +8,10 @@ const filters = {
         if(val == '1'){ return '파일등록'}
         else if(val == '2'){ return '직접입력'}
     },
+    ftIngTag(val){
+        if(val == 'A5'){ return '입찰완료'}
+        else if(val == 'A7'){ return '유찰'}
+    },
     numberWithCommas(val) {
         if(!val) return '';
         else {
