@@ -9,6 +9,8 @@ const CustList = () => {
 	const url = useLocation().pathname;
 	// url 파라미터에 certYn이 있으면 해당 값을 가져온다
 	const certYn = new URLSearchParams(useLocation().search).get("certYn")
+	// 세션정보
+	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
 	
 	let isApproval = false;								// 업체 승인 화면 여부
 	if(url.indexOf('approval') > -1) {
@@ -136,7 +138,7 @@ const CustList = () => {
 					</div>
 
 					{/* 감사 사용자 / 각사 관리자만 업체 등록 가능 */}
-					{!isApproval &&
+					{(!isApproval && (loginInfo.userAuth == '2' || loginInfo.userAuth == '4')) &&
 						<div className="flex-shrink0">
 							<Link to="/company/partner/management/save" title="업체 등록"  className="btnStyle btnPrimary"> 업체등록 </Link>
 						</div>

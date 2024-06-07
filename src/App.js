@@ -68,8 +68,8 @@ const App = () => {
 								<Route path="/notice/faq/user" element={<UserFaq />}></Route>
 								<Route path="/company/partner/approval" element={<CustList />}></Route>
 								<Route path="/company/partner/management" element={<CustList />}></Route>
-								<Route path="/company/partner/approval/:custCode" element={<CustDetail />}></Route>
-								<Route path="/company/partner/management/:custCode" element={<CustDetail />}></Route>
+								<Route path="/company/partner/approval/:custCode" element={<CustDetail title={'업체승인'} isApproval={true} />}></Route>
+								<Route path="/company/partner/management/:custCode" element={<CustDetail title={'업체상세'} isApproval={false} />}></Route>
 								<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
 								<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
 								<Route path="/info/group/item" element={<Item />}></Route>

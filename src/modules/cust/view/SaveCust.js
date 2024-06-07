@@ -4,10 +4,15 @@ import SaveCustInfo from '../components/SaveCustInfo';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import * as CommonUtils from 'components/CommonUtils';
+import SaveManagementInfo from '../components/SaveManagementInfo';
+import AdminInfo from '../components/AdminInfo';
+import SaveAdminInfo from '../components/SaveAdminInfo';
 
 const SaveCust = () => {
 	const params = useParams();
 	const navigate = useNavigate();
+	// 세션정보
+	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
 
 	const [selCust, setSelCust] = useState({		// 선택된 업체(타 계열사 선택)
 		custCode : params?.custCode || '',
@@ -46,7 +51,7 @@ const SaveCust = () => {
 
 	// 업체 상세 정보 조회
 	const onInit = useCallback(async() => {
-		const response = await axios.post(selCust.url+selCust.custCode, {})
+		const response = await axios.post(loginInfo.custType === "inter" ? selCust.url+selCust.custCode : '/api/v1/cust/info', {})
 		const result = response.data;
 		setCustInfo(result.data);
 
@@ -56,8 +61,8 @@ const SaveCust = () => {
 		onChangeData('custInfo',	'regnum3',		!CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(5,10) : '')
 
 		// 법인번호
-		onChangeData('custInfo',	'presJuminNo1',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.regnum.substring(0,6) : '')
-		onChangeData('custInfo',	'presJuminNo2',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.regnum.substring(6,13) : '')
+		onChangeData('custInfo',	'presJuminNo1',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(0,6) : '')
+		onChangeData('custInfo',	'presJuminNo2',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(6,13) : '')
 	})
 
 	const onValidation = () => {
@@ -234,7 +239,11 @@ const SaveCust = () => {
 			let result = response.data;
 			if(result.code != 'ERROR'){
 				Swal.fire('', `${!isEdit ? '가입되었습니다.' : '수정되었습니다.'}`, 'success');
-				navigate('/company/partner/management')
+				if(loginInfo.custType === 'inter') {
+					navigate('/company/partner/management')
+				} else {
+					navigate(`/company/partner/management/${loginInfo.custCode}`)
+				}
 			} else {
 				Swal.fire('', result.msg, 'error');
 			}
@@ -272,11 +281,28 @@ const SaveCust = () => {
 				</div>
 				}
 				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData}/>
-				
-				<div className="text-center mt50">
-					<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
-					<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
-				</div>
+				{/* 계열사 관리 항목(업체 수정에만 조회) */}
+				{loginInfo.custType === 'inter'
+				?	<>
+					(isEdit &&
+						<SaveManagementInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />					
+					)
+					(
+						<SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />
+						<div className="text-center mt50">
+							<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
+							<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
+						</div>
+					)
+					</>
+				:	<>
+						<div className="text-center mt50">
+							<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
+							<button className="btnStyle btnPrimary" title='저장' onClick={onSave}>저장</button>
+						</div>
+						<AdminInfo custInfo={custInfo} />
+					</>
+				}
 			</div>
 			{/* // contents */}
 		</div>

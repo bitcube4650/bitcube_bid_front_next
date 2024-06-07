@@ -23,14 +23,25 @@ const fnDownloadFile = async(filePath, fileName) => {
 }
 
 const CustDetail = ({isApproval, custInfo}) => {
+	// 세션정보
+	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+
 	return (
 		<>
 			<h3 className="h3Tit">회사 정보</h3>
 			<div className="boxSt mt20">
-				<div className="flex align-items-center">
-					<div className="formTit flex-shrink0 width170px">가입희망 계열사</div>
-					<div className="width100">{ custInfo.interrelatedNm }</div>
-				</div>
+				{loginInfo.custType === "inter"
+				?
+					<div className="flex align-items-center">
+						<div className="formTit flex-shrink0 width170px">가입희망 계열사</div>
+						<div className="width100">{ custInfo.interrelatedNm }</div>
+					</div>
+				:
+					<div className="flex align-items-center">
+						<div className="formTit flex-shrink0 width170px">승인 계열사</div>
+						<div className="overflow-y-scroll boxStSm width100" style={{height:"80px"}} dangerouslySetInnerHTML={{__html : custInfo.interrelatedNm}} />
+					</div>
+				}
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">업체유형 1</div>
 					<div className="width100">{ custInfo.custTypeNm1 }</div>
@@ -104,64 +115,6 @@ const CustDetail = ({isApproval, custInfo}) => {
 					</div>
 				</>
 				}
-			</div>
-
-			{/* 승인 업체 상세에서는 미조회 */}
-			{!isApproval &&
-			<>
-				<h3 className="h3Tit mt50">계열사 관리 항목</h3>
-				<div className="boxSt mt20">
-					<div className="flex align-items-center">
-						<div className="formTit flex-shrink0 width170px">업체등급</div>
-						<div className="width100">
-							<input type="radio" name="custLevel" value="A" id="chkA" className="radioStyle" checked={custInfo.custLevel === 'A'} disabled /><label htmlFor="chkA">A등급</label>
-							<input type="radio" name="custLevel" value="B" id="chkB" className="radioStyle" checked={custInfo.custLevel === 'B'} disabled /><label htmlFor="chkB">B등급</label>
-							<input type="radio" name="custLevel" value="C" id="chkC" className="radioStyle" checked={custInfo.custLevel === 'C'} disabled /><label htmlFor="chkC">C등급</label>
-							<input type="radio" name="custLevel" value="D" id="chkD" className="radioStyle" checked={custInfo.custLevel === 'D'} disabled /><label htmlFor="chkD">D등급</label>
-						</div>
-					</div>
-					<div className="flex align-items-center mt20">
-						<div className="formTit flex-shrink0 width170px">D업체평가</div>
-						<div className="width100">{ custInfo.careContent }</div>
-					</div>
-					<div className="flex align-items-center mt20">
-						<div className="formTit flex-shrink0 width170px">관리단위</div>
-						<div className="width100">{ custInfo.custValuation }</div>
-					</div>
-				</div>
-			</>
-			}
-
-			<h3 className="h3Tit mt50">관리자 정보</h3>
-			<div className="boxSt mt20">
-				<div className="flex align-items-center">
-					<div className="formTit flex-shrink0 width170px">이름</div>
-					<div className="width100">{ custInfo.userName }</div>
-				</div>
-				<div className="flex align-items-center mt20">
-					<div className="formTit flex-shrink0 width170px">이메일</div>
-					<div className="width100">{ custInfo.userEmail }</div>
-				</div>
-				<div className="flex align-items-center mt20">
-					<div className="formTit flex-shrink0 width170px">아이디</div>
-					<div className="width100">{ custInfo.userId }</div>
-				</div>
-				<div className="flex align-items-center mt20">
-					<div className="formTit flex-shrink0 width170px">휴대폰</div>
-					<div className="width100">{ CommonUtils.onAddDashTel(custInfo.userHp) }</div>
-				</div>
-				<div className="flex align-items-center mt20">
-					<div className="formTit flex-shrink0 width170px">유선전화</div>
-					<div className="width100">{ CommonUtils.onAddDashTel(custInfo.userTel) }</div>
-				</div>
-				<div className="flex align-items-center mt20">
-					<div className="formTit flex-shrink0 width170px">직급</div>
-					<div className="width100">{ custInfo.userPosition }</div>
-				</div>
-				<div className="flex align-items-center mt20">
-					<div className="formTit flex-shrink0 width170px">부서</div>
-					<div className="width100">{ custInfo.userBuseo }</div>
-				</div>
 			</div>
 		</>
 	)
