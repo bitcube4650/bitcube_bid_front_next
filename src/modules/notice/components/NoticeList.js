@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as CommonUtils from 'components/CommonUtils';
 
@@ -6,7 +7,7 @@ function NoticeList(props) {
     const navigate = useNavigate();
 
     function onNoticeDetail() {
-        //todo: 클릭 시 조회수 +1
+        axios.post("/api/v1/notice/updateClickNum", {'bno': props.notice.bno}); //클릭 시 조회수 +1
         navigate('/noticeDetail/' + props.notice.bno);
     }
 

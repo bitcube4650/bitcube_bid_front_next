@@ -18,11 +18,11 @@ const NoticeDetail = () => {
             if(response.data.status == 200) {
                 setDataFromList(response.data.data.content[0]);
             } else {
-                Swal.fire('조회에 실패하였습니다.', '', 'error');
+                Swal.fire('', '조회에 실패하였습니다.', 'error');
                 navigate("/notice");
             }
         } catch (error) {
-            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
             navigate("/notice");
         }

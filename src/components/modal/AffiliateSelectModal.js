@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import Modal from 'react-bootstrap/Modal';
@@ -32,13 +31,24 @@ const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => 
     })
 
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
-    const navigate = useNavigate();
 
     const [allAffiliateList, setAllAffiliateList] = useState([]);
     const [affiliateList, setAffiliateList] = useState([]);
     const [selectAffiliateList, setSelectAffiliateList] = useState([]);
 
     async function onSelecAffiliate() {
+        if(loginInfo.custType == 'inter' && loginInfo.userAuth == '1') {    //시스템관리자인 경우
+            onSelectAffiliateList();
+        } else {
+            //자신이 속한 계열사만 선택 가능
+			setAllAffiliateList([{
+                interrelatedCustCode: loginInfo.custCode,
+                interrelatedNm: loginInfo.custName
+            }]);
+        }
+    };
+
+    async function onSelectAffiliateList() {
         try {
             const response = await axios.post('/login/interrelatedList');
             if(response.status == 200) {
@@ -60,12 +70,10 @@ const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => 
                 setAffiliateList(response.data);
             } else {
                 Swal.fire('계열사 조회에 실패하였습니다.', '', 'error');
-                navigate("/notice");
             }
         } catch (error) {
             Swal.fire('계열사 조회에 실패하였습니다.', '', 'error');
             console.log(error);
-            navigate("/notice");
         }
     };
 

@@ -11,18 +11,21 @@ const NoticeEdit = () => {
     const navigate = useNavigate();
     const { bno } = useParams();
 
+    //계열사 팝업 정보
     const [affiliateSelectData, setAffiliateSelectData] = useState({
         show: false
     });
 
     const [detailData, setDetailData] = useState({
         btitle      : "",
-        bco         : "ALL",
+        bco         : "CUST",
         buserName   : loginInfo.userName,
         buserid     : loginInfo.userId,
         bcount      : 0,
         bcontent    : ""
     });
+
+    const [uploadFile, setUploadFile] = useState([]);
 
     async function onSelectDetail() {
         try {
@@ -30,19 +33,24 @@ const NoticeEdit = () => {
             const response = await axios.post('/api/v1/notice/noticeList', srcData);
             
             if(response.data.status == 200) {
-                setDetailData(response.data.data.content[0]);
-                if(response.data.data.content[0].interrelatedCodes) {
+                let responseData = response.data.data.content[0];
+
+                setDetailData({
+                    ...responseData,
+                    ['interrelatedCustCodeArr']: responseData.interrelatedCodes.split(",")
+                });
+                if(responseData.interrelatedCodes) {    //계열사 정보가 있는 경우
                     setAffiliateSelectData({
                         ...affiliateSelectData.show,
-                        ["interrelatedCodes"] : response.data.data.content[0].interrelatedCodes.split(",")
+                        ["interrelatedCodes"] : responseData.interrelatedCodes.split(",")
                     })
                 }
             } else {
-                Swal.fire('조회에 실패하였습니다.', '', 'error');
+                Swal.fire('', '조회에 실패하였습니다.', 'error');
                 navigate("/notice");
             }
         } catch (error) {
-            Swal.fire('조회에 실패하였습니다.', '', 'error');
+            Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
             navigate("/notice");
         }
@@ -58,10 +66,11 @@ const NoticeEdit = () => {
         if(affiliateSelectData.isChange) {
             setDetailData({
                 ...detailData,
+                ['interrelatedCustCodeArr']: affiliateSelectData.interrelatedCodes,
                 ['interrelatedNms']: affiliateSelectData.interrelatedNms
             });
         }
-    }, [affiliateSelectData.interrelatedCodes]);
+    }, [affiliateSelectData.isChange]);
 
     const onChangeDetailData = (e) => {
         setDetailData({
@@ -69,10 +78,25 @@ const NoticeEdit = () => {
             [e.target.name]: e.target.value
         });
     }
-    const selectedFile = null;
 
     function onCheckVali() {
-        //todo: 
+        if(!detailData.btitle) {
+            Swal.fire('', '제목을 입력해주세요.', 'warning');
+            return false;
+        }
+        if(!detailData.bcontent) {
+            Swal.fire('', '내용을 입력해주세요.', 'warning');
+            return false;
+        }
+        if(!detailData.bco) {
+            Swal.fire('', '공지대상을 선택해주세요.', 'warning');
+            return false;
+        }
+        if(detailData.bco == 'CUST' && (!detailData.interrelatedCustCodeArr || detailData.interrelatedCustCodeArr.length == 0)) {
+            Swal.fire('', '공지할 계열사를 선택해주세요.', 'warning');
+            return false;
+        }
+
         return true;
     }
 
@@ -113,18 +137,18 @@ const NoticeEdit = () => {
 
         try {
             let formData = new FormData();
-            formData.append('file', selectedFile);
+            formData.append('file', uploadFile);
             formData.append('data', JSON.stringify(detailData));
 
             const response = await axios.post(url, formData);
             if(response.data.status == 200) {
-                Swal.fire(saveText + '되었습니다.', '', 'success');
+                Swal.fire('', saveText + '되었습니다.', 'success');
                 navigate("/notice");
             } else {
-                Swal.fire(response.data.msg, '', 'error');
+                Swal.fire('', response.data.msg, 'error');
             }
         } catch (error) {
-            Swal.fire(saveText + '에 실패하였습니다.', '', 'error');
+            Swal.fire('', saveText + '에 실패하였습니다.', 'error');
             console.log(error);
         }
     }
