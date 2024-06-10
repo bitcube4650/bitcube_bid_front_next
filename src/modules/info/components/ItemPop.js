@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef, useEffect, useState } from 'react';
+import React, { useImperativeHandle, forwardRef, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import Modal from 'react-bootstrap/Modal';
@@ -158,8 +158,8 @@ const ItemPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
     }), [isOpen]);
 
     return (
-        <Modal class="modalStyle" id="itemPop" show={isOpen} onHide={onClose} keyboard={true} >
-            <Modal.Body class="modal-body">
+        <Modal className="modalStyle" id="itemPop" show={isOpen} onHide={onClose} keyboard={true} >
+            <Modal.Body className="modal-body">
                 <a onClick={onClose} className="ModalClose" title="닫기"><i className="fas fa-times"></i></a>
                 <h2 className="modalTitle">품목 {itemId ? '수정' : '등록'}</h2>
                 <div className="flex align-items-center">

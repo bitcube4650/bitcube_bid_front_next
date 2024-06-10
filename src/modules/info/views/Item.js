@@ -14,7 +14,7 @@ const Item = () => {
     const [itemGrpList, setItemGrpList] = useState([]);
 
     //조회 결과
-    const [itemList, setItemList] = useState([]);
+    const [itemList, setItemList] = useState({});
 
     //조회조건
     const [srcData, setSrcData] = useState({
@@ -56,7 +56,6 @@ const Item = () => {
     //품목 조회
     const onSearch = useCallback(async() => {
         try {
-            setSrcData(srcData);
             const response = await axios.post("/api/v1/item/itemList", srcData);
 
             if (response.data.code == 'OK') {
@@ -84,7 +83,7 @@ const Item = () => {
 
     }, []);
 
-    
+    //팝업창 닫기
     const onCloseModal = useCallback(() => {
         setIsModalOpen(false);
     }, []);

@@ -122,6 +122,8 @@ input, select {vertical-align:top; margin-top:0 !important}
 .modalBtnClose:hover {border:1px solid #222; color:#333; background:#eee}
 .modalBtnCheck {border:1px solid #000; color:#fff; background:#000; display:inline-flex; align-items:center; justify-content:center; height:50px; width:auto; padding:0 25px; border-radius:4px; box-sizing:border-box; font-size:14px; font-weight:500; margin:0 5px; transition:.3s}
 .modalBtnCheck:hover {border:1px solid #004B9E; color:#fff; background:#004B9E}
+.modalBtnDelete {border:1px solid #db1e1e; color:#fff; background:#db1e1e; display:inline-flex; align-items:center; justify-content:center; height:50px; width:auto; padding:0 25px; border-radius:4px; box-sizing:border-box; font-size:14px; font-weight:500; margin:0 5px; transition:.3s}
+.modalBtnDelete:hover {border:1px solid #004B9E; color:#fff; background:#004B9E}
 
 
 /* input field */
