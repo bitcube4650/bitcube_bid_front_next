@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const SaveAdminInfo = ({isEdit, custInfo, onChangeData}) => {
-	// 조회조건 변경시 파라미터 셋팅
+	// custInfo의 input 데이터 setting
 	const handleChange = (e) => {
 		onChangeData('custInfo', e.target.name, e.target.value)
 	}

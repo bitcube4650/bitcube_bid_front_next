@@ -6,18 +6,19 @@ import ManagementInfo from '../components/ManagementInfo'
 import AdminInfo from '../components/AdminInfo'
 import DeleteCustPop from '../components/DeleteCustPop'
 import Swal from 'sweetalert2';
+import UserPasswordComfirm from 'components/modal/UserPasswordComfirm';
 
 const CustDetail = ({title, isApproval}) => {
 	const navigate = useNavigate();
 	const params = useParams();
-	// 세션정보
-	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
-	const custCode = params.custCode		// 상세 조회할 업체 코드
 
-	// 업체 정보
-	const [custInfo, setCustInfo] = useState({});
-	const [deletePop, setDeletePop] = useState(false)
-	const [deleteType, setDeleteType] = useState("")			// 삭제 유형(반려, 삭제, 탈퇴)
+	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));		// 세션 정보
+	const custCode = params.custCode										// 상세 조회할 업체 코드
+
+	const [custInfo, setCustInfo] = useState({});							// 업체 정보
+	const [deletePop, setDeletePop] = useState(false)						// 업체 삭제 팝업
+	const [deleteType, setDeleteType] = useState("")						// 삭제 유형(반려, 삭제, 탈퇴)
+	const [pwdCheckPop, setPwdCheckPop] = useState(false)					// 비밀번호 확인 팝업
 
 	// 업체 상세 정보 조회
 	const onInit = useCallback(async() => {
@@ -80,8 +81,13 @@ const CustDetail = ({title, isApproval}) => {
 	// 비밀번호 확인
 	const onCheckPwd = () => {
 		// 비밀번호 확인 후 탈퇴 팝업 호출
-		setDeletePop(true);
-		setDeleteType("leave")
+		setPwdCheckPop(true)
+	}
+
+	const onCheckPwdCallback = () => {
+		setPwdCheckPop(false)			// 비밀번호 확인 팝업 닫기
+		setDeletePop(true);				// 탈퇴 팝업 활성화
+		setDeleteType("leave")			// 삭제 유형 '탈퇴'
 	}
 
 
@@ -148,6 +154,7 @@ const CustDetail = ({title, isApproval}) => {
 		</div>
 		{/* 업체 반려 및 삭제 팝업 */}
 		<DeleteCustPop deletePop={deletePop} setDeletePop={setDeletePop} deleteType={deleteType} custCode={custCode} onMoveList={onMoveList}/>
+		<UserPasswordComfirm srcUserId={loginInfo.userId} GroupUserPasswordComfirmOpen={pwdCheckPop} setGroupUserPasswordComfirmOpen={setPwdCheckPop} onUserDetailPop={onCheckPwdCallback}/>
 	</div>
   )
 }

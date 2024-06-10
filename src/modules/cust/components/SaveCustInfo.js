@@ -11,11 +11,12 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 	const [otherCustModal, setOtherCustModal] = useState(false)
 	const params = useParams();
 
-	// 조회조건 변경시 파라미터 셋팅
+	// custInfo의 input 데이터 setting
 	const handleChange = (e) => {
 		onChangeData('custInfo', e.target.name, e.target.value)
 	}
 
+	// 첨부파일 추가
 	const onAttachFile = (e) => {
 		if(e.target.files.length > 0){
 			let file = e.target?.files[0];
@@ -31,6 +32,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 		}
 	}
 
+	// 첨부파일 삭제
 	const onRemoveFile = (id) => {
 		onChangeData('custInfo', id, null)
 		onChangeData('custInfo', id+'Name', '')
