@@ -178,7 +178,7 @@ const SignUp = () => {
                     </div>
 
                     <div className="provisionAgree">
-                        <input type="checkbox" id="isAgree" checked={ isAgree }  onChange={(e) => setIsAgree(e.target.checked)} className="loginCheckStyle" /><label for="isAgree">약관에 동의</label>
+                        <input type="checkbox" id="isAgree" checked={ isAgree }  onChange={(e) => setIsAgree(e.target.checked)} className="loginCheckStyle" /><label htmlFor="isAgree">약관에 동의</label>
                         {isAgree ? (
                             <Link to="/SignUpMain" replace className="btnStyle btnOutlineBlue btnMd" title="동의하고 계속하기">동의하고 계속하기</Link>
                         ) : (
@@ -189,7 +189,7 @@ const SignUp = () => {
                 <div className="subFooter mt50">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <div className="subFooterUtill">
-                        <a href="javascript:void(0)" title="공동인증서">공동인증서</a>
+                        <a href="#" title="공동인증서">공동인증서</a>
                         <a onClick={(e) => setEnrollmentProcessPop(true)} data-toggle="modal" title="업체등록절차">업체등록절차</a>
                         <a onClick={(e) => setBiddingGuidePop(true)} data-toggle="modal" title="입찰업무안내">입찰업무안내</a>
                     </div>

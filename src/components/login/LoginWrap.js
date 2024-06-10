@@ -94,11 +94,18 @@ function LoginWrap(props) {
     const onPwSearch = () => {
         setPwSearchPop(true);
     };
+
+    const handleKeyDown = (e) => {
+        if(e.key === "Enter") {
+            e.preventDefault();
+            onLogin();
+        }
+    }
     
     return (
-        <div class="loginWrap">
-            <div class="loginLeft">
-                <h1><img src={props.logoUrl} class="img-responsive" alt="일진그룹 로고" /></h1>
+        <div className="loginWrap" onKeyDown={handleKeyDown}>
+            <div className="loginLeft">
+                <h1><img src={props.logoUrl} className="img-responsive" alt="일진그룹 로고" /></h1>
 
                 <input
                     type="text"
@@ -122,7 +129,7 @@ function LoginWrap(props) {
                 <div className="loginFindWrap">
                     <input type="checkbox" id="chkID" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="loginCheckStyle"/>
                     <label htmlFor="chkID">아이디 저장</label>
-                    <ul class="loginFind">
+                    <ul className="loginFind">
                         <li>
                             <a onClick={onIdSearch} title="아이디 찾기">아이디 찾기</a>
                         </li>
@@ -131,17 +138,17 @@ function LoginWrap(props) {
                         </li>
                     </ul>
                 </div>
-                <div class="loginBtnWrap">
-                    <a onClick={onLogin} class="btnLoginPrimary" title="로그인">로그인</a>
-                    <a onClick={onSignUp} class="btnLoginOutline mt10" title="회원가입">회원가입</a>
+                <div className="loginBtnWrap">
+                    <a onClick={onLogin} className="btnLoginPrimary" title="로그인">로그인</a>
+                    <a onClick={onSignUp} className="btnLoginOutline mt10" title="회원가입">회원가입</a>
                 </div>
             </div>
-            <div class="loginRight">
+            <div className="loginRight">
                 <h2><span>투명</span>합니다.</h2>
                 <h2><span>함께</span>합니다.</h2>
                 <h2><span>미래</span>를 엽니다.</h2>
                 <h3>" CLEAR, UNITED, OPENING THE FUTURE "</h3>
-                <div class="loginRight">
+                <div className="loginRight">
                     <h3 style={{fontSize: '30px', color: '#F3B352', fontWeight: 550}}>IT HelpDesk</h3>
                     <h3 style={{marginTop: '5px', fontSize: '30px', fontWeight: 550}}>Tel : 080-707-9100</h3>
                 </div>
