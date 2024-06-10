@@ -22,6 +22,7 @@ import './fontawesome-pro-6.1.1-web/css/all.min.css';
 import CustList from './modules/cust/view/CustList';
 import CustDetail from './modules/cust/view/CustDetail';
 import SaveCust from './modules/cust/view/SaveCust';
+import CustUser from './modules/cust/view/CustUser';
 import Item from './modules/info/views/Item';
 import GroupUser from './modules/info/views/GroupUser'
 import Company from './modules/statistics/views/Company';
@@ -72,6 +73,7 @@ const App = () => {
 								<Route path="/company/partner/management/:custCode" element={<CustDetail title={'업체상세'} isApproval={false} />}></Route>
 								<Route path="/company/partner/management/save" element={<SaveCust />}></Route>
 								<Route path="/company/partner/management/save/:custCode" element={<SaveCust />}></Route>
+								<Route path="/company/partner/user" element={<CustUser />}></Route>
 								<Route path="/info/group/item" element={<Item />}></Route>
 								<Route path="/info/group/user" element={<GroupUser />}></Route>
 								<Route path="/statistics/performance/company" element={<Company />}></Route>
