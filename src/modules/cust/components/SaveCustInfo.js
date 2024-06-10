@@ -4,12 +4,19 @@ import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as CommonUtils from 'components/CommonUtils';
 import filters from '../api/filters';
+import ItemPop from 'components/login/ItemPop';
+import AddrPop from 'components/AddrPop';
 
 const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 	// 세션정보
 	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
 	const [otherCustModal, setOtherCustModal] = useState(false)
 	const params = useParams();
+	
+	const [type, setType] = useState("type1");			// 업체 유형
+	const [itemPop, setItemPop] = useState(false);		// 품목 팝업
+	const [addrPop, setAddrPop] = useState(false);		// 주소 팝업
+
 
 	// custInfo의 input 데이터 setting
 	const handleChange = (e) => {
@@ -39,6 +46,32 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 		onChangeData('custInfo', id==='regnumFile' ? 'regnumPath' : id+'Path', '')
 	}
 	
+	// 업체유형 팝업 호출
+	const openItemPop = (type) => {
+		setType(type);
+		setItemPop(true);
+	}
+
+	// 업체유형 팝업 callback
+	const itemSelectCallback = (data) => {
+		if("type1" === type) {
+			onChangeData('custInfo', 'custType1', data.itemCode)
+			onChangeData('custInfo', 'custTypeNm1', data.itemName)
+		} else if("type2" === type) {
+			onChangeData('custInfo', 'custType2', data.itemCode)
+			onChangeData('custInfo', 'custTypeNm2', data.itemName)
+		}
+	}
+
+	const openAddrPop = () => {
+		setAddrPop(true);
+	}
+	
+    const addrPopCallback = (data) => {
+		onChangeData('custInfo', 'zipcode', data.zipcode)
+		onChangeData('custInfo', 'addr', data.addr)
+    }
+
 	return (
 		<>
 			{/* 회사 정보 */}
@@ -77,7 +110,25 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 				:
 				<>
 					<div className="flex align-items-center">
-						<div className="formTit flex-shrink0 width170px">승인 계열사</div>
+						<div className="formTit flex-shrink0 width170px">
+							승인 계열사
+							<i className="fas fa-question-circle toolTipSt ml5">
+								<div className="toolTipText" style={{width: "420px"}}>
+									<ul className="dList">
+										<li>
+											<div>
+												승인된 계열사의 입찰에만 참여할 수 있습니다.
+											</div>
+										</li>
+										<li>
+											<div>
+												승인 계열사에 없는 계열사의 입찰에 참여를 하려면 유선으로 해당 계열사에 등록요청 하시기 바랍니다.
+											</div>
+										</li>
+									</ul>
+								</div>
+							</i>
+						</div>
 						<div className="overflow-y-scroll boxStSm width100" style={{height:"80px"}} dangerouslySetInnerHTML={{__html : custInfo.interrelatedNm}} />
 					</div>
 				</>
@@ -90,15 +141,15 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 							<div className="flex align-items-center width100">
 								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm1} readOnly />
 								<input type="hidden" value={ custInfo.custType1 || '' }/>
-							<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
+							<a onClick={() => openItemPop('type1')} className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">업체유형 2</div>
 							<div className="flex align-items-center width100">
-									<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm2} readOnly />
-									<input type="hidden" value={ custInfo.custType2 || '' }/>
-								<a href="#" data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</a>
+								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm2} readOnly />
+								<input type="hidden" value={ custInfo.custType2 || '' }/>
+								<a onClick={() => openItemPop('type2')} className="btnStyle btnSecondary ml10" title="조회">조회</a>
 							</div>
 						</div>
 						</>
@@ -179,7 +230,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						<div className="width100">
 							<div className="flex align-items-center width100">
 								<input type="text"  name="zipcode" value={custInfo.zipcode || ''} className="inputStyle maxWidth-max-content readonly" placeholder="주소 조회 클릭" readOnly onChange={handleChange}/>
-								<a href="#"data-toggle="modal" data-target="#addrPop" className="btnStyle btnSecondary flex-shrink0 ml10" title="주소 조회">주소 조회</a>
+								<a onClick={openAddrPop} className="btnStyle btnSecondary flex-shrink0 ml10" title="주소 조회">주소 조회</a>
 							</div>
 							<div className="mt5"><input type="text" name="addr" value={custInfo.addr || ''} className="inputStyle readonly" placeholder="" readOnly onChange={handleChange} /></div>
 							<div className="mt5"><input type="text" name="addrDetail" value={custInfo.addrDetail || ''} className="inputStyle" placeholder="상세 주소 입력" onChange={handleChange}/></div>
@@ -192,8 +243,8 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
-								{custInfo.regnumFileName != '' && custInfo.regnumFileName != null && custInfo.regnumFileName != undefined ?
-									<div className="uploadPreview" >
+								{!CommonUtils.isEmpty(custInfo.regnumFileName)
+								?	<div className="uploadPreview" >
 										<p>
 											{ custInfo.regnumFileName }
 											<button className='file-remove' onClick={() => onRemoveFile('regnumFile')}>삭제</button>
@@ -230,16 +281,16 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
-							{custInfo.bfileName != '' && custInfo.bfileName != null && custInfo.bfileName != undefined ?
-									<div className="uploadPreview" >
+							{!CommonUtils.isEmpty(custInfo.bFileName)
+								?	<div className="uploadPreview" >
 										<p>
-											{ custInfo.bfileName }
-											<button className='file-remove' onClick={() => onRemoveFile('bfile')}>삭제</button>
+											{ custInfo.bFileName }
+											<button className='file-remove' onClick={() => onRemoveFile('bFile')}>삭제</button>
 										</p>
 									</div>
 								:
 									<div className="upload-box">
-									<input type="file" id="bfile" onChange={onAttachFile} />
+									<input type="file" id="bFile" onChange={onAttachFile} />
 										<div className="uploadTxt">
 											<i className="fa-regular fa-upload"></i>
 											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
@@ -251,7 +302,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 						</div>
 					</div>
 				
-					{isEdit &&
+					{(loginInfo.custType === 'inter' && isEdit) &&
 						<div className="flex align-items-center mt20">
 							<div className="formTit flex-shrink0 width170px">상태</div>
 							<div className="width100">{ filters.onSetCustStatusStr(custInfo.certYn) }</div>
@@ -263,6 +314,12 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 			{otherCustModal &&
 				<OtherCustListPop setOtherCustModal={setOtherCustModal} onChangeData={onChangeData} />
 			}
+			{/* 업체유형 팝업 */}
+			{!isEdit &&
+				<ItemPop itemPop={itemPop} setItemPop={setItemPop} popClick={itemSelectCallback} />
+			}
+			{/* 주소조회 팝업 */}
+			<AddrPop addrPop={addrPop} setAddrPop={setAddrPop} addrPopClick={addrPopCallback} />
 		</>
 	)
 }

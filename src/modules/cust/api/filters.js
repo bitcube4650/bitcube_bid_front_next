@@ -17,7 +17,7 @@ const filters = {
 		}else if(val == 'D'){
 			return '삭제'
 		}else{
-			return '';
+			return '미승인';
 		}
 	}
 }

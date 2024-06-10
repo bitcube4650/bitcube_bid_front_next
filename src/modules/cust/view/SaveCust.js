@@ -19,8 +19,9 @@ const SaveCust = () => {
 		url : '/api/v1/cust/management/'
 	});
 
-	let [custInfo, setCustInfo] = useState({
-		idCheck : false
+	const [custInfo, setCustInfo] = useState({
+		idCheck : false,
+		interrelatedCustCode : loginInfo.custCode
 	});
 
 	let isEdit = false;
@@ -63,16 +64,21 @@ const SaveCust = () => {
 		// 법인번호
 		onChangeData('custInfo',	'presJuminNo1',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(0,6) : '')
 		onChangeData('custInfo',	'presJuminNo2',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(6,13) : '')
+		
+		// 첨부파일
+		onChangeData('custInfo',	'regnumFile',	!CommonUtils.isEmpty(result.data.regnumFileName) ? result.data.regnumFileName : null)
+		onChangeData('custInfo',	'bFile',		!CommonUtils.isEmpty(result.data.bFileName) ? result.data.bFileName : null)
+
 	})
 
 	const onValidation = () => {
 		// 등록인 경우에만 체크
-		// if(!isEdit){
-		// 	if(CommonUtils.isEmpty(custInfo.custType1)){
-		// 		Swal.fire('', '업체유형 1을 선택해주세요.', 'warning')
-		// 		return false;
-		// 	}
-		// }
+		if(!isEdit){
+			if(CommonUtils.isEmpty(custInfo.custType1)){
+				Swal.fire('', '업체유형 1을 선택해주세요.', 'warning')
+				return false;
+			}
+		}
 
 		if(CommonUtils.isEmpty(custInfo.custName)){
 			Swal.fire('', '회사명을 입력해주세요.', 'warning')
@@ -128,10 +134,10 @@ const SaveCust = () => {
 			return false;
 		}
 
-		// if(CommonUtils.isEmpty(custInfo.zipcode) || CommonUtils.isEmpty(custInfo.addr) || CommonUtils.isEmpty(custInfo.addrDetail)){
-		// 	Swal.fire('', '회사주소를 입력해주세요.', 'warning')
-		// 	return false;
-		// }
+		if(CommonUtils.isEmpty(custInfo.zipcode) || CommonUtils.isEmpty(custInfo.addr) || CommonUtils.isEmpty(custInfo.addrDetail)){
+			Swal.fire('', '회사주소를 입력해주세요.', 'warning')
+			return false;
+		}
 
 		if(CommonUtils.isEmpty(custInfo.regnumFileName)){
 			Swal.fire('', '사업자등록증을 첨부해주세요.', 'warning')
@@ -228,9 +234,9 @@ const SaveCust = () => {
 	const onSaveCallBack = async() => {
 		try {
 			let formData = new FormData();
-			formData.append('regnumFile', custInfo.regnumFile != null && custInfo.regnumFileName != '' ? custInfo.regnumFile : null);
-			formData.append('bFile',  custInfo.bfile != null && custInfo.bfileName != '' ? custInfo.bfile : null);
-			formData.append('data', new Blob([JSON.stringify(custInfo)], { type: 'application/json' }));
+			formData.append('regnumFile',	typeof custInfo.regnumFile === "string" ? null : custInfo.regnumFile);
+			formData.append('bFile',		typeof custInfo.bFile === "string" ? null : custInfo.bFile);
+			formData.append('data',			new Blob([JSON.stringify(custInfo)], { type: 'application/json' }));
 
 			const response = await axios.post('/api/v1/cust/save', formData, {
 				headers : 'multipart/form-data'
@@ -280,24 +286,35 @@ const SaveCust = () => {
 					</div>
 				</div>
 				}
+				{/* 업체 정보 */}
 				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData}/>
-				{/* 계열사 관리 항목(업체 수정에만 조회) */}
+				
 				{loginInfo.custType === 'inter'
-				?	<>
+				?
+				// 계열사 사용자 로그인시 조회
+					<>
+					{/*계열사 관리항목 업체 수정시 조회 */}
 					{isEdit &&
 						<SaveManagementInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />					
-					}					
+					}
+					{/* 관리자 정보 */}
 					<SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />
+
+					{/* 업체 정보 등록 및 수정 버튼 */}
 					<div className="text-center mt50">
 						<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
 						<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
 					</div>
 					</>
-				:	<>
+				:
+				// 협력사사용자(관리자) 로그인시 조회
+					<>
+						{/* 협력사 정보 수정 버튼 */}
 						<div className="text-center mt50">
 							<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
 							<button className="btnStyle btnPrimary" title='저장' onClick={onSave}>저장</button>
 						</div>
+						{/* 협력사 사용자 로그인시 관리자 정보 조회 */}
 						<AdminInfo custInfo={custInfo} />
 					</>
 				}

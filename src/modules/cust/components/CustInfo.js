@@ -38,7 +38,25 @@ const CustDetail = ({isApproval, custInfo}) => {
 					</div>
 				:
 					<div className="flex align-items-center">
-						<div className="formTit flex-shrink0 width170px">승인 계열사</div>
+						<div className="formTit flex-shrink0 width170px">
+							승인 계열사
+							<i className="fas fa-question-circle toolTipSt ml5">
+								<div className="toolTipText" style={{width: "420px"}}>
+									<ul className="dList">
+										<li>
+											<div>
+												승인된 계열사의 입찰에만 참여할 수 있습니다.
+											</div>
+										</li>
+										<li>
+											<div>
+												승인 계열사에 없는 계열사의 입찰에 참여를 하려면 유선으로 해당 계열사에 등록요청 하시기 바랍니다.
+											</div>
+										</li>
+									</ul>
+								</div>
+							</i>
+						</div>
 						<div className="overflow-y-scroll boxStSm width100" style={{height:"80px"}} dangerouslySetInnerHTML={{__html : custInfo.interrelatedNm}} />
 					</div>
 				}
@@ -99,11 +117,11 @@ const CustDetail = ({isApproval, custInfo}) => {
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">회사소개 및 기타자료</div>
 					<div className="width100">
-						<a className="textUnderline" onClick={() => fnDownloadFile(custInfo.bfilePath, custInfo.bfileName)}>{ custInfo.bfileName }</a>
+						<a className="textUnderline" onClick={() => fnDownloadFile(custInfo.bFilePath, custInfo.bFileName)}>{ custInfo.bFileName }</a>
 					</div>
 				</div>
 				{/* 승인 업체 상세에서는 미조회 */}
-				{!isApproval &&
+				{loginInfo.custType === "inter"&&
 				<>
 					<div className="flex align-items-center mt20">
 						<div className="formTit flex-shrink0 width170px">상태</div>

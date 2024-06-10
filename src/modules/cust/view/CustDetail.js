@@ -108,25 +108,31 @@ const CustDetail = ({title, isApproval}) => {
 		{/* contents */}
 		<div className="contents">
 			<div className="formWidth">
+				{/* 업체 정보 */}
 				<CustInfo isApproval={isApproval} custInfo={custInfo} />
-				{loginInfo.custType === "inter" ?
-					/* 계열사 사용자 계열사 관리 항목 조회 */
+				
+				{/* 계열사 사용자 로그인 */}
+				{loginInfo.custType === "inter" 
+				?	
 					(!isApproval &&
 					<>
-						{/* 승인 업체 상세에서는 미조회 */}
+						{/* 계열사 관리 항목 */}
+						{/* 승인 업체 상세에서는 계열사 관리 항목 미조회 */}
 						<ManagementInfo custInfo={custInfo} />
 					</>
 					)
-					: 
+				: 
 					/* 협력사 사용자인 경우 회원탈퇴 및 수정 버튼 */
 					<div className="text-center mt30">
 						<button className="btnStyle btnOutlineRed" onClick={onCheckPwd}>회원탈퇴</button>
 						<Link to={`/company/partner/management/save/${custInfo.custCode}`} className="btnStyle btnPrimary" title="수정">수정</Link>
 					</div>
 				}
+
+				{/* 관리자 정보 */}
 				<AdminInfo custInfo={custInfo} />
 			</div>
-			{/* 계열사 사용자 수정 및 삭제 버튼 */}
+			{/* 계열사 사용자 조회 버튼 */}
 			{loginInfo.custType == 'inter' &&
 				<div className="text-center mt50">
 					<button onClick={onMoveList} className="btnStyle btnOutlineRed" title="취소">취소</button>
@@ -136,12 +142,14 @@ const CustDetail = ({title, isApproval}) => {
 					{(loginInfo.userAuth == '2' || loginInfo.userAuth == '4') && 
 						(
 							!isApproval ?
-							<>
+							<>	
+								{/* 업체 정보 화면 내 버튼 */}
 								<button className="btnStyle btnRed" title="삭제" onClick={() => {setDeletePop(true); setDeleteType("delete");}}>삭제</button>
 								<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정">수정 이동</Link>
 							</>
 							:
 							<>
+								{/* 업체 승인 화면 내 버튼 */}
 								<button className="btnStyle btnRed" title="반려" onClick={() => {setDeletePop(true); setDeleteType("refuse");}}>반려</button>
 								<button className="btnStyle btnPrimary" title="승인" onClick={onApproval}>승인</button>
 							</>
@@ -152,8 +160,9 @@ const CustDetail = ({title, isApproval}) => {
 				</div>
 			}
 		</div>
-		{/* 업체 반려 및 삭제 팝업 */}
+		{/* 업체 반려/삭제/탈퇴시 호출 팝업 */}
 		<DeleteCustPop deletePop={deletePop} setDeletePop={setDeletePop} deleteType={deleteType} custCode={custCode} onMoveList={onMoveList}/>
+		{/* 비밀번호 확인 공통팝업 */}
 		<UserPasswordComfirm srcUserId={loginInfo.userId} GroupUserPasswordComfirmOpen={pwdCheckPop} setGroupUserPasswordComfirmOpen={setPwdCheckPop} onUserDetailPop={onCheckPwdCallback}/>
 	</div>
   )
