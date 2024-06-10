@@ -43,7 +43,6 @@ const GroupUser = () => {
     //조회조건
     const [srcData, setSrcData] = useState({
         interrelatedCustCode    : "",
-        title                   : "",
         useYn                   : "",
         userName                : "",
         userId                  : "",

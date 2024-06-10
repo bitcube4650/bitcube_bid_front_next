@@ -261,7 +261,7 @@ const GroupUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setG
 
 
     return (
-        <Modal className="modalStyle" show={groupUserDetailPopOpen} onHide={onClosePop} size='lg'>
+        <Modal  className={`modalStyle ${groupUserDetailPopOpen ? 'modal-cover' : ''}`} show={groupUserDetailPopOpen} onHide={onClosePop} size='lg'>
             <Modal.Body>
                 <a onClick={onClosePop} className="ModalClose" data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">사용자 
