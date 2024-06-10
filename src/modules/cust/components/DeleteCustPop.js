@@ -5,12 +5,12 @@ import Swal from 'sweetalert2'
 import * as CommonUtils from 'components/CommonUtils';
 
 /**
- * 업체 반려 및 삭제시 사유 작성 팝업
+ * 업체 반려 및 삭제, 탈퇴시 사유 작성 팝업
  * @returns 
  */
-const DeleteCustPop = ({deletePop, setDeletePop, isApproval, custCode, onMoveList}) => {
+const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveList}) => {
 	const [etc, setEtc] = useState("")
-	const title = isApproval ? '반려' : '삭제'
+	const title = deleteType === "refuse" ? '반려' : (deleteType === "delete" ? "삭제" : "회원탈퇴")
 
 	// 반려 사유 팝업 호출
 	const onRefuse = () => {
@@ -89,35 +89,81 @@ const DeleteCustPop = ({deletePop, setDeletePop, isApproval, custCode, onMoveLis
 			onMoveList();
 		}
 	}
+	
+	// 업체 탈퇴 처리
+	const onLeave = async() => {
+		if(CommonUtils.isEmpty(etc)){
+			Swal.fire('', '탈퇴 사유를 입력해주세요.', 'warning')
+			return;
+		}
+
+		Swal.fire({
+			title: "",
+			text : '탈퇴 하시겠습니까?',
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#004B9E",
+			confirmButtonText: "회원탈퇴",
+			cancelButtonColor: "#b70b2e",
+			cancelButtonText : '취소',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onLeaveCallback()
+			}
+		})
+	}
+
+	const onLeaveCallback = async() => {
+		const response = await axios.post('/api/v1/cust/leave', {
+			custCode : custCode,
+			etc : etc,
+		})
+		
+		let result = response.data
+		if(result.code == 'ERROR'){
+			Swal.fire('', result.msg, 'success');
+		} else {
+			// 로그아웃
+		}
+	}
 
 	return (
 		<Modal className='fade modalStyle' id="deleteCustPop" show={deletePop} dialogClassName="modal-m">
 			<Modal.Body>
 			<button data-dismiss="modal" title="닫기" className="ModalClose" onClick={() => setDeletePop(false)}><i className="fa-solid fa-xmark"></i></button>
-			<h2 className="modalTitle">업체{isApproval ? `등록 ${title}` : ` ${title}`}</h2>
+			<h2 className="modalTitle">
+				{
+					deleteType === "refuse" ? '업체등록 반려' :(deleteType === "delete" ? '업체 삭제' : '회원 탈퇴')
+				}
+			</h2>
 			<div className="modalTopBox">
 				<ul>
 					<li>
-						{isApproval
+						{deleteType === "refuse"
 						?	<div>
 								업체 등록을 반려합니다.<br />
 								아래 반려 사유를 입력해 주십시오.<br />
 								반려 처리 시 반려사유 내용으로 업체에게 발송 됩니다.
 							</div>
 						:
-						<div>
-							삭제사유를 작성되어야 삭제할 수 있습니다.<br />
-							삭제 후 다시 정상으로 되 돌릴 수 없습니다.<br />
-							삭제 하시겠습니까?
-						</div>
-}
+							(deleteType === "delete"
+							?	<div>
+									삭제사유를 작성되어야 삭제할 수 있습니다.<br />
+									삭제 후 다시 정상으로 되 돌릴 수 없습니다.
+								</div>
+							:	<div>
+									탈퇴사유를 입력해 주십시오.<br/>
+									탈퇴처리 시 로그아웃 처리 되고 다시 로그인 할 수 없습니다	
+								</div>
+							)
+						}
 					</li>
 				</ul>
 			</div>
-			<textarea placeholder={isApproval ? '반려사유 필수 입력' : '삭제사유 필수 입력'} className="textareaStyle height150px mt20" onChange={(e) => setEtc(e.target.value)}></textarea>
+			<textarea placeholder={deleteType === "refuse" ? '반려사유 필수 입력' :(deleteType === "delete" ? '삭제사유 필수 입력' : '탈퇴사유 필수 입력')} className="textareaStyle height150px mt20" onChange={(e) => setEtc(e.target.value)}></textarea>
 			<div className="modalFooter">
 				<button data-dismiss="modal" title="취소" className="modalBtnClose" onClick={() => setDeletePop(false)}>취소</button>
-				<button data-toggle="modal" title={title} className="modalBtnCheck" onClick={isApproval? onRefuse : onDelete}>{title}</button>
+				<button data-toggle="modal" title={title} className="modalBtnCheck" onClick={deleteType === "refuse" ? onRefuse :(deleteType === "delete" ? onDelete : onLeave)}>{title}</button>
 			</div>
 			</Modal.Body>
 		</Modal>

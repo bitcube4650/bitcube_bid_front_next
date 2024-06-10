@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as CommonUtils from 'components/CommonUtils';
 import filters from '../api/filters';
-import axios from 'axios';
 
 const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 	// 세션정보
@@ -36,22 +35,6 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 		onChangeData('custInfo', id, null)
 		onChangeData('custInfo', id+'Name', '')
 		onChangeData('custInfo', id==='regnumFile' ? 'regnumPath' : id+'Path', '')
-	}
-
-	const onIdCheck = async () => {
-		const response = await axios.post('/api/v1/cust/idcheck', custInfo)
-		var result = response.data;
-
-		if(result.code === 'OK'){
-			Swal.fire('', '사용 가능한 아이디 입니다.', 'info');
-			onChangeData('custInfo', 'idCheck', true)
-		} else if(result.code == 'DUP') {
-			Swal.fire('', '이미 등록된 아이디입니다.', 'error');
-			onChangeData('custInfo', 'idCheck', false)
-		} else {
-			Swal.fire('', '입력한 아이디를 사용할 수 있습니다.', 'error');
-			onChangeData('custInfo', 'idCheck', false)
-		}
 	}
 	
 	return (

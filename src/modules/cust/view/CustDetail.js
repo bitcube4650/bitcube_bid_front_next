@@ -17,6 +17,7 @@ const CustDetail = ({title, isApproval}) => {
 	// 업체 정보
 	const [custInfo, setCustInfo] = useState({});
 	const [deletePop, setDeletePop] = useState(false)
+	const [deleteType, setDeleteType] = useState("")			// 삭제 유형(반려, 삭제, 탈퇴)
 
 	// 업체 상세 정보 조회
 	const onInit = useCallback(async() => {
@@ -60,6 +61,7 @@ const CustDetail = ({title, isApproval}) => {
 		})
 	}
 
+	// 승인 callback
 	const onApprovalCallBack = async() => {
 		const response = await axios.post('/api/v1/cust/approval', {
 			custCode : custCode,
@@ -73,6 +75,13 @@ const CustDetail = ({title, isApproval}) => {
 			Swal.fire('', '승인처리되었습니다.', 'success');
 			onMoveList();
 		}
+	}
+
+	// 비밀번호 확인
+	const onCheckPwd = () => {
+		// 비밀번호 확인 후 탈퇴 팝업 호출
+		setDeletePop(true);
+		setDeleteType("leave")
 	}
 
 
@@ -105,7 +114,7 @@ const CustDetail = ({title, isApproval}) => {
 					: 
 					/* 협력사 사용자인 경우 회원탈퇴 및 수정 버튼 */
 					<div className="text-center mt30">
-						<buttn className="btnStyle btnOutlineRed">회원탈퇴</buttn>
+						<button className="btnStyle btnOutlineRed" onClick={onCheckPwd}>회원탈퇴</button>
 						<Link to={`/company/partner/management/save/${custInfo.custCode}`} className="btnStyle btnPrimary" title="수정">수정</Link>
 					</div>
 				}
@@ -122,12 +131,12 @@ const CustDetail = ({title, isApproval}) => {
 						(
 							!isApproval ?
 							<>
-								<button className="btnStyle btnRed" title="삭제" onClick={() => setDeletePop(true)}>삭제</button>
+								<button className="btnStyle btnRed" title="삭제" onClick={() => {setDeletePop(true); setDeleteType("delete");}}>삭제</button>
 								<Link to={`/company/partner/management/save/${custCode}`} className="btnStyle btnPrimary" title="수정">수정 이동</Link>
 							</>
 							:
 							<>
-								<button className="btnStyle btnRed" title="반려" onClick={() => setDeletePop(true)}>반려</button>
+								<button className="btnStyle btnRed" title="반려" onClick={() => {setDeletePop(true); setDeleteType("refuse");}}>반려</button>
 								<button className="btnStyle btnPrimary" title="승인" onClick={onApproval}>승인</button>
 							</>
 						)
@@ -138,7 +147,7 @@ const CustDetail = ({title, isApproval}) => {
 			}
 		</div>
 		{/* 업체 반려 및 삭제 팝업 */}
-		<DeleteCustPop deletePop={deletePop} setDeletePop={setDeletePop} isApproval={isApproval} custCode={custCode} onMoveList={onMoveList}/>
+		<DeleteCustPop deletePop={deletePop} setDeletePop={setDeletePop} deleteType={deleteType} custCode={custCode} onMoveList={onMoveList}/>
 	</div>
   )
 }

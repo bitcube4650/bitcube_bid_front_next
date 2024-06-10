@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 
 //todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
@@ -89,12 +90,16 @@ const Menu = () => {
                         </ul>
                     </div>
                 </li>
-                <li style={{ display: ((userCustType === 'inter' && (userAuth === '1' || userAuth === '2' || userAuth === '4')) || (userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} className={(path === ('/company/partner/approval' || '/company/partner/management')? 'active' : '')}>      
+                <li style={{ display: ((userCustType === 'inter' && (userAuth === '1' || userAuth === '2' || userAuth === '4')) || (userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} className={((path === '/company/partner/approval') || path.indexOf('/company/partner/management') > -1) ? 'active' : ''}>      
                     <a id="company" href="#!" onClick={onClickMenu}><span><i className="fa-light fa-buildings"></i></span>업체정보</a>
                     <div className={(targetId === "company" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
-                        <ul>
+                        <ul style={{ display: ((userCustType === 'inter' && (userAuth === '1' || userAuth === '2' || userAuth === '4'))) ? 'block' : 'none' }} > 
                             <li className={(path === ('/company/partner/approval') ? 'active' : '')}><a href="/company/partner/approval">업체승인</a></li>
                             <li className={(path === ('/company/partner/management') ? 'active' : '')}><a href="/company/partner/management">업체관리</a></li>
+                        </ul>
+                        <ul style={{ display: ((userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} > 
+                            <li className={(path === (`/company/partner/management/${loginInfo.custCode}`) ? 'active' : '')}><a href={`/company/partner/management/${loginInfo.custCode}`}>자사정보</a></li>
+                            <li className={(path === ('/company/partner/user') ? 'active' : '')}><a href="/company/partner/user">사용자관리</a></li>
                         </ul>
                     </div>
                 </li>

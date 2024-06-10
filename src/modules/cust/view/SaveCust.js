@@ -284,16 +284,14 @@ const SaveCust = () => {
 				{/* 계열사 관리 항목(업체 수정에만 조회) */}
 				{loginInfo.custType === 'inter'
 				?	<>
-					(isEdit &&
+					{isEdit &&
 						<SaveManagementInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />					
-					)
-					(
-						<SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />
-						<div className="text-center mt50">
-							<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
-							<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
-						</div>
-					)
+					}					
+					<SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />
+					<div className="text-center mt50">
+						<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
+						<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
+					</div>
 					</>
 				:	<>
 						<div className="text-center mt50">
