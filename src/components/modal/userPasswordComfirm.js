@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import React, { useState, useCallback } from 'react';
+import { Modal } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
 import GroupUserDetailPop from './GroupUserDatail'
-import GroupUserPasswordComfirm from '../components/GroupUserPasswordComfirm'
+import GroupUserPasswordComfirm from '../../../../src/components/modal/userPasswordComfirm'
 import InterrelatedCustCodeSelect from '../components/InterrelatedCustCodeSelect'
 import Swal from 'sweetalert2'; // 공통 팝업창
 
