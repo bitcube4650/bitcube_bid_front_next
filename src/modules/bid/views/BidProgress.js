@@ -126,11 +126,14 @@ const BidProgress = () => {
                 autoComplete="off"
               />
             </div>
-            <a 
+            <button 
             className="btnStyle btnSearch" 
-            onClick={onSearch}
+            onClick={ ()=>{
+                onSearch()
+              }
+            }
               >검색
-            </a>
+            </button>
           </div>
         </div>
 
@@ -147,17 +150,14 @@ const BidProgress = () => {
           </select>
         </div>
         <div>
-           <a
+           <button
               onClick={moveSave}
               className="btnStyle btnPrimary"
               title="입찰계획등록"
               >입찰계획등록
-            </a> 
+            </button> 
         </div>
       </div>
-
-
-
       <table className="tblSkin1 mt10">
         <colgroup>
             <col style={{width:'12%'}} />
@@ -194,10 +194,7 @@ const BidProgress = () => {
           <div className="col-xs-12">
               <Pagination onChangeSrcData={onChangeSrcData} list={progressList} />
           </div>
-    </div>
-
-
-        
+    </div>        
       </div>
     </div>
   )

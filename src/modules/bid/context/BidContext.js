@@ -11,7 +11,8 @@ export const BidProvider = ({ children }) => {
       //BidBasicInfo.js에서 사용
 
       biName : '',  // 입찰명
-      itemName : '', // 품목
+      itemCode : '', // 품목 Code
+      itemName : '', // 품목 이름
       biModeCode : 'A', // 입찰방식
       bidJoinSpec : '', // 입찰참가자격 
       specialCond : '', // 특수조건
@@ -19,7 +20,6 @@ export const BidProvider = ({ children }) => {
       spotTime : '', // 현장설명 시간
       spotArea : '', // 현장설명장소
       succDeciMethCode : '', // 낙찰자결정방법
-      custContent : [], // 입찰참가업체
       amtBasis : '', // 금액기준
       payCond : '', //결제조건
       bdAmt : '', // 예산금액
@@ -43,7 +43,7 @@ export const BidProvider = ({ children }) => {
       estStartDate : '', // 제출시작 일시
       estStartTime : '', // 제출시작 시간
       estCloseDate : '', // 제출시작 일시
-      estClosetime : '', // 제출시작 시간
+      estCloseTime : '', // 제출시작 시간
       estOpener : '', // 개찰자 이름
       estOpenerCode : '', // 개찰자ID
       gongoId :'', // 입찰공고자 이름
@@ -60,21 +60,25 @@ export const BidProvider = ({ children }) => {
     }
   )
 
-  const [custContent, setCustContent] = useState([])
+  const [custContent, setCustContent] = useState([]) // 입찰참가업체
 
-  const [tableContent, setTableContent] = useState([])
+  const [custUserName,setCustUserName] = useState([]) // 입찰참가업체 뒤에 표시할 사용자 이름
 
-  const [insFile, setInsFile] = useState(null)
+  const [custUserInfo,setCustUserInfo] = useState([]) // 입찰참가업체 클릭 시 표시할 데이터 정보
 
-  const [innerFiles, setInnerFiles] = useState([])
+  const [tableContent, setTableContent] = useState([]) // 세부내역 직접입력
 
-  const [outerFiles, setOuterFiles] = useState([])
+  const [insFile, setInsFile] = useState(null) // 세부내역 파일등록
+
+  const [innerFiles, setInnerFiles] = useState([]) // 첨부파일 (대내용)
+
+  const [outerFiles, setOuterFiles] = useState([]) // 첨부파일 (대외용)
 
   
 
 
   return (
-    <BidContext.Provider value={{viewType, setViewType, bidContent, setBidContent, custContent, setCustContent, tableContent, setTableContent, insFile, setInsFile, innerFiles, setInnerFiles, outerFiles, setOuterFiles}}>
+    <BidContext.Provider value={{viewType, setViewType, bidContent, setBidContent, custContent, setCustContent, custUserName, setCustUserName, custUserInfo, setCustUserInfo, tableContent, setTableContent, insFile, setInsFile, innerFiles, setInnerFiles, outerFiles, setOuterFiles}}>
       {children}
     </BidContext.Provider>
   );

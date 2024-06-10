@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BidSaveBasicInfo from '../components/BidSaveBasicInfo';
 import BidSaveAddRegist from '../components/BidSaveAddRegist';
@@ -7,11 +7,28 @@ import { BidContext } from '../context/BidContext';
 const BidProgressSave = () => {
   const navigate = useNavigate();
 
-  const {viewType} = useContext(BidContext);
+  const {viewType, bidContent,setBidContent} = useContext(BidContext);
 
   const moveBidProgress =()=>{
     navigate('/bid/progress');
   }
+
+  useEffect(() => {
+    if (viewType === '등록') {
+      const currentDate = new Date();
+      let currentHours = currentDate.getHours();
+      currentHours = currentHours < 10 ? '0' + currentHours : currentHours;
+
+      const hours = `${currentHours}:00`;
+
+      setBidContent({
+        ...bidContent,
+        spotTime: hours,
+        estStartTime: hours,
+        estCloseTime: hours,
+      });
+    }
+  }, []);
   
   return (
     <div className="conRight">

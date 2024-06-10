@@ -10,26 +10,11 @@ function BidProgressList(props) {
 
     return (
         <tr>
-
-            {/* <td>{ props.progresslist.biNo }</td>
-            <td className="text-left">
-                <a onClick={ onNoticeDetail } className="textUnderline notiTitle" title="입찰계획 상세">
-                    { props.progresslist.bco == 'ALL'?<span>[공통] </span>:"" }
-                    { props.progresslist.btitle }
-                </a>
-            </td>
-            <td>
-                { props.progresslist.bfile?<i className="fa-regular fa-file-lines notiFile"></i>:"" }
-            </td>
-            <td>{ props.progresslist.buserName }</td>
-            <td>{ props.progresslist.bdate }</td>
-            <td className="end">{ props.progresslist.bcount }</td> */}
-
             <td className="textUnderline" onClick={onBidProgressDetail}>
-                <a style={{cursor: 'pointer'}}>{data.biNo}</a>
+                <button style={{cursor: 'pointer'}}>{data.biNo}</button>
             </td>
             <td className="textUnderline text-left" onClick={onBidProgressDetail}>
-                <a style={{cursor: 'pointer'}}>{data.biName}</a>
+                <button style={{cursor: 'pointer'}}>{data.biName}</button>
             </td >
             <td >
               <i className="fa-regular fa-timer"></i>{data.estStartDate}

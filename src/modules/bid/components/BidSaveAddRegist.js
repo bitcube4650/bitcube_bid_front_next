@@ -3,10 +3,15 @@ import BidSaveExtraFile from './BidSaveExtraFile'
 import Calendar from '../../../components/Calendar'
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
+import BidUserList from './BidUserList';
 
 const BidSaveAddRegist = (props) => { 
 
   const {bidContent, setBidContent, insFile,setInsFile, tableContent, setTableContent} = useContext(BidContext);
+
+
+  const [userType, setUserType] = useState('');
+  const [isBidUserListModal, setIsBidUserListModal] = useState(false);
 
   const onChangeAddRegist = (e) => {
     setBidContent({
@@ -94,6 +99,61 @@ const BidSaveAddRegist = (props) => {
     setInsFile(null)
    }
 
+   const onUserListSelect = (type) =>{
+    setUserType(type)
+    setIsBidUserListModal(true)
+   }
+
+  const onChangeInsModeCode = ()=> {
+      Swal.fire({
+          title: '내역방식 변경',          
+          text: '내역방식을 변경하면 이전에 선택한 세부내역이 초기화됩니다.\n 변경 하시겠습니까?',  
+          icon: 'question',                // success / error / warning / info / question
+          confirmButtonColor: '#3085d6',  // 기본옵션
+          confirmButtonText: '변경',      // 기본옵션
+          showCancelButton: true,         // conrifm 으로 하고싶을떄
+          cancelButtonColor: '#d33',      // conrifm 에 나오는 닫기버튼 옵션
+          cancelButtonText: '취소'        // conrifm 에 나오는 닫기버튼 옵션
+      }).then(result => {
+          // 만약 Promise리턴을 받으면,
+          if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+            if(bidContent.insModeCode === '1'){
+              setBidContent({
+                ...bidContent,
+                insModeCode : '2'
+            })
+            }else{
+              setBidContent({
+                ...bidContent,
+                insModeCode : '1'
+            })
+            }
+          }
+      });
+    };
+
+    const onRemoveOpenAtt = (num) =>{
+
+      if(num === 1){
+
+        setBidContent({
+          ...bidContent,
+          openAtt1 : '',
+          openAtt1Code : ''
+        })
+
+      }else{
+
+        setBidContent({
+          ...bidContent,
+          openAtt2 : '',
+          openAtt2Code : ''
+        })
+
+      }
+
+    }
+
   return (
     <div>
         <h3 className="h3Tit mt50">입찰공고 추가 등록 사항</h3>
@@ -107,7 +167,7 @@ const BidSaveAddRegist = (props) => {
               <div className="flex align-items-center width100">
                 <Calendar calendarId="startDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
-                name="estStartTime" onChange={onChangeAddRegist}>
+                name="estStartTime" onChange={onChangeAddRegist} value={bidContent.estStartTime}>
                   <option value="">시간 선택</option>
                   <option value="01:00">01:00</option>
                   <option value="02:00">02:00</option>
@@ -142,7 +202,7 @@ const BidSaveAddRegist = (props) => {
               <div className="flex align-items-center width100">
                 <Calendar calendarId="closeDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
-                name="estClosetime" onChange={onChangeAddRegist}>
+                name="estCloseTime" onChange={onChangeAddRegist} value={bidContent.estCloseTime}>
                   <option value="">시간 선택</option>
                   <option value="01:00">01:00</option>
                   <option value="02:00">02:00</option>
@@ -187,6 +247,7 @@ const BidSaveAddRegist = (props) => {
                 <button
                   className="btnStyle btnSecondary ml10"
                   title="선택"
+                  onClick={()=>{onUserListSelect('개찰자')}}
                   >선택</button
                 >
               </div>
@@ -199,15 +260,13 @@ const BidSaveAddRegist = (props) => {
                   name="gongoId"
                   className="inputStyle"
                   placeholder=""
-                 // v-model="bidContent.gongoId"
                   disabled
                   value={bidContent.gongoId}
                 />
                 <button
-                  // data-toggle="modal"
-                  // data-target="#bidUserPop"
                   className="btnStyle btnSecondary ml10"
                   title="선택"
+                  onClick={()=>{onUserListSelect('입찰공고자')}}
                   >선택</button
                 >
               </div>
@@ -227,10 +286,10 @@ const BidSaveAddRegist = (props) => {
                   value={bidContent.estBidder}
                 />
                 <button
-                  data-toggle="modal"
-                  data-target="#biddingUserPop"
                   className="btnStyle btnSecondary ml10"
-                  title="선택">선택
+                  title="선택"
+                  onClick={()=>{onUserListSelect('낙찰자')}}
+                  >선택
                   </button>
               </div>
             </div>
@@ -252,9 +311,13 @@ const BidSaveAddRegist = (props) => {
                     disabled
                   />
                   
-                  {bidContent.openAtt1Code && <i class="fa-regular fa-xmark textHighlight ml5"></i>}
+                  {bidContent.openAtt1Code && <i onClick={()=>onRemoveOpenAtt(1)} className="fa-regular fa-xmark textHighlight ml5"></i>}
 
-                  <button className="btnStyle btnSecondary ml10" title="선택">선택</button>
+                  <button 
+                  className="btnStyle btnSecondary ml10" 
+                  title="선택"
+                  onClick={()=>{onUserListSelect('입회자1')}}
+                  >선택</button>
                 </div>
               </div>
               <div className="flex align-items-center width100 ml80">
@@ -269,8 +332,12 @@ const BidSaveAddRegist = (props) => {
                     style={{ marginRight: bidContent.openAtt2Code ? '5px' : '0' }}
                     disabled
                   />
-                  {bidContent.openAtt2Code && <i class="fa-regular fa-xmark textHighlight ml5"></i>}
-                  <button className="btnStyle btnSecondary ml10" title="선택">선택</button>
+                  {bidContent.openAtt2Code && <i onClick={()=>onRemoveOpenAtt(2)}  className="fa-regular fa-xmark textHighlight ml5"></i>}
+                  <button 
+                  className="btnStyle btnSecondary ml10" 
+                  title="선택"
+                  onClick={()=>{onUserListSelect('입회자2')}}
+                  >선택</button>
                 </div>
               </div>
             </div>
@@ -284,20 +351,20 @@ const BidSaveAddRegist = (props) => {
                 <input
                   type="radio"
                   name="insModeCode"
-                  value="1"
+                  value={bidContent.insModeCode}
                   id="bm2_1"
                   className="radioStyle"
                   checked={bidContent.insModeCode === '1'}
-                  onChange={onChangeAddRegist}
+                  onChange={onChangeInsModeCode}
                 /><label htmlFor="bm2_1">파일등록</label>
                 <input
                   type="radio"
                   name="insModeCode"
-                  value="2"
+                  value={bidContent.insModeCode}
                   id="bm2_2"
                   className="radioStyle"
                   checked={bidContent.insModeCode === '2'}
-                  onChange={onChangeAddRegist}
+                  onChange={onChangeInsModeCode}
                 /><label htmlFor="bm2_2">내역직접등록</label>
               </div>
             </div>
@@ -307,6 +374,7 @@ const BidSaveAddRegist = (props) => {
                 <input
                   type="text"
                   name="supplyCond"
+                  value={bidContent.supplyCond}
                   className="inputStyle"
                   placeholder=""
                   onChange={onChangeAddRegist}
@@ -448,16 +516,16 @@ const BidSaveAddRegist = (props) => {
             ))}
               </tbody>
             </table>
-            <p className="text-right mt10">
+            <p className="mt10" style={{textAlign: 'right'}}>
               <strong>총합계 : {calculateTotalSum()}</strong>
             </p>
           </div>
           }
-
-
           </div>
 
         <BidSaveExtraFile/>
+          {/* 개찰자,입찰공고자,낙찰자,입회자1,입회자2 공통 사용자 조회*/}
+          <BidUserList isBidUserListModal={isBidUserListModal} setIsBidUserListModal={setIsBidUserListModal} type={userType}/> 
         </div>
     </div>
   )

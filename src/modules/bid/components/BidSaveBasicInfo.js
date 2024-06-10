@@ -4,6 +4,8 @@ import BidPast from './BidPast';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
+import BidCustList from './BidCustList';
+import BidCustUserList from './BidCustUserList';
 
 const BidSaveBasicInfo = (props) => {
 
@@ -11,49 +13,38 @@ const BidSaveBasicInfo = (props) => {
   const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
   const userCustCode = loginInfo.custCode
 
-  const {viewType, bidContent, setBidContent, custContent, setCustContent} = useContext(BidContext);
+  const {viewType, bidContent, setBidContent, custContent, setCustContent, custUserName, setCustUserName, custUserInfo, setCustUserInfo} = useContext(BidContext);
 
-    //로그인 정보에서 custCode가 롯데일 때 롯데 분류군 데이터 가져오기
-    const getLotteCodeList = useCallback(async() => {
-      try {
-  
-          const response = await axios.post('/api/v1/bid/progressCodeList');
-          
-          const data = response.data.data
-          setBidContent({
-            ...bidContent,
-            lotteDeptList : data.filter(list => list.colCode === 'MAT_DEPT'),
-            lotteProcList : data.filter(item => item.colCode === 'MAT_PROC'), 
-            lotteClsList	: data.filter(item => item.colCode === 'MAT_CLS')
-        })
-  
-      } catch (error) {
-        Swal.fire('조회에 실패하였습니다.', '', 'error');
-          console.log(error);
-      }
-    },[])
-  
-    useEffect(() => {
-      if(userCustCode === '02'){
-        getLotteCodeList()
-      }
-    },[])
+  const [isBidPastModal, setIsBidPastModal] = useState(false);
+  const [isBidCustListModal, setIsBidCustListModal] = useState(false);
+  const [isBidCustUserListModal, setIsBidCustUserListModal] = useState(false);
+  const [custCode, setcustCode] = useState(false);
 
-    useEffect(() => {
-      if(viewType === '등록'){
+  //로그인 정보에서 custCode가 롯데일 때 롯데 분류군 데이터 가져오기
+  const getLotteCodeList = useCallback(async() => {
+    try {
 
-        //등록할 때는 loginInfo에서 정보를 가져 옴
+        const response = await axios.post('/api/v1/bid/progressCodeList');
+        
+        const data = response.data.data
         setBidContent({
           ...bidContent,
-          createUserName : loginInfo.userName,
-          createUser : loginInfo.userId, 
-          gongoId : loginInfo.userName, 
-          gongoIdCode : loginInfo.userId,
-        })
-      }else{
+          lotteDeptList : data.filter(list => list.colCode === 'MAT_DEPT'),
+          lotteProcList : data.filter(item => item.colCode === 'MAT_PROC'), 
+          lotteClsList	: data.filter(item => item.colCode === 'MAT_CLS')
+      })
 
-      }
-    },[])
+    } catch (error) {
+      Swal.fire('조회에 실패하였습니다.', '', 'error');
+      console.log(error);
+    }
+  },[])
+  
+  useEffect(() => {
+    if(userCustCode === '02'){
+      getLotteCodeList()
+    }
+  },[])
 
   const onChangeBasicInfo = (e) => {
     setBidContent({
@@ -73,6 +64,62 @@ const BidSaveBasicInfo = (props) => {
     }
   };
 
+  const onChangeBiModeCode= ()=> {
+    if(bidContent.biModeCode === 'A'){
+      Swal.fire({
+          title: '입찰방식 변경',          
+          text: '일반경쟁입찰을 선택하면 입찰 등록되어 있는 \n모든 협력업체를 대상으로 하고 선택된 입찰참가업체가 초기화 됩니다.\n일반경쟁입찰으로 변경하시겠습니까?',  
+          icon: 'question',                // success / error / warning / info / question
+          confirmButtonColor: '#3085d6',  // 기본옵션
+          confirmButtonText: '변경',      // 기본옵션
+          showCancelButton: true,         // conrifm 으로 하고싶을떄
+          cancelButtonColor: '#d33',      // conrifm 에 나오는 닫기버튼 옵션
+          cancelButtonText: '취소'        // conrifm 에 나오는 닫기버튼 옵션
+      }).then(result => {
+          // 만약 Promise리턴을 받으면,
+          if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+              setBidContent({
+                ...bidContent,
+                biModeCode : 'B'
+            })
+          }
+          //지명경쟁입찰에서 일반경쟁입찰로 변경 시 입찰참가업체 정보 초기화
+          setCustUserName([])
+
+          setCustContent([])
+    
+          setCustUserInfo([])
+      });
+    }else{
+      setBidContent({
+        ...bidContent,
+        biModeCode : 'A'
+      })
+    
+   }
+  }
+
+  const onBidPastModal = ()=>{
+    setIsBidPastModal(true)
+  }
+
+
+  const onBidCustListModal = ()=>{
+    setIsBidCustListModal(true)
+  }
+
+  const onRemoveCust = ( custCode)=>{
+    
+    setCustUserInfo(custUserInfo.filter(item => item.custCode !== custCode));
+    setCustUserName(custUserName.filter(item => item.custCode !== custCode));
+    setCustContent(custContent.filter(item => item.custCode !== custCode));
+  }
+
+  const onCustUserDetail = (custCode)=>{
+    setcustCode(custCode)
+    setIsBidCustUserListModal(true)
+  }
+
   return (
     <div>
         <h3 className="h3Tit">입찰 기본 정보</h3>
@@ -85,13 +132,15 @@ const BidSaveBasicInfo = (props) => {
                 className="btnStyle btnOutlineBlue"
                 title="과거입찰 가져오기"
                 style={{marginLeft:'0px'}}
+                onClick={()=>{
+                    onBidPastModal()
+                  }
+                }
                 >과거입찰 가져오기
                 </button>
               :
               ''
             }
-
-
             </div>
           </div>
 
@@ -103,6 +152,7 @@ const BidSaveBasicInfo = (props) => {
               <input
                 type="text"
                 name="biName"
+                value={bidContent.biName}
                 className="inputStyle"
                 onChange={onChangeBasicInfo}
                 maxLength="50"
@@ -137,30 +187,21 @@ const BidSaveBasicInfo = (props) => {
             <div className="width100">
               <input
                 type="radio"
-                value='A'
+                value={bidContent.biModeCode}
                 id="bm1_1"
                 name="biModeCode"
                 className="radioStyle"
                 checked={bidContent.biModeCode === 'A'}
-                onChange={onChangeBasicInfo}
-                // v-model="bidContent.biModeCode"
-                // v-bind:data-target="
-                //   bidContent.biModeCode === 'B' ? '#bmGeneral' : ''
-                // "
+                onChange={onChangeBiModeCode}
               /><label htmlFor="bm1_1">지명경쟁입찰</label>
               <input
                 type="radio"
-                value='B'
+                value={bidContent.biModeCode}
                 id="bm1_2"
                 name="biModeCode"
                 className="radioStyle"
-                onChange={onChangeBasicInfo}
+                onChange={onChangeBiModeCode}
                 checked={bidContent.biModeCode === 'B'}
-                // v-model="bidContent.biModeCode"
-                // data-toggle="modal"
-                // v-bind:data-target="
-                //   bidContent.biModeCode === 'A' ? '#bmGeneral' : ''
-                // "
               /><label htmlFor="bm1_2">일반경쟁입찰</label>
             </div>
           </div>
@@ -176,6 +217,7 @@ const BidSaveBasicInfo = (props) => {
                 className="inputStyle"
                 onChange={onChangeBasicInfo}
                 maxLength="100"
+                value={bidContent.bidJoinSpec}
               />
             </div>
           </div>
@@ -187,6 +229,7 @@ const BidSaveBasicInfo = (props) => {
                 className="textareaStyle boxOverflowY"
                 name="specialCond"
                 onChange={onChangeBasicInfo}
+                value={bidContent.specialCond}
               ></textarea>
             </div>
           </div>
@@ -208,6 +251,7 @@ const BidSaveBasicInfo = (props) => {
               <select
                 className="inputStyle ml10"
                 name="spotTime"
+                value={bidContent.spotTime}
                 onChange={onChangeBasicInfo}
                 style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
               >
@@ -250,6 +294,7 @@ const BidSaveBasicInfo = (props) => {
                 className="inputStyle"
                 onChange={onChangeBasicInfo}
                 maxLength="80"
+                value={bidContent.spotArea}
               />
             </div>
           </div>
@@ -263,6 +308,7 @@ const BidSaveBasicInfo = (props) => {
                 name="succDeciMethCode"
                 className="selectStyle maxWidth200px"
                 onChange={onChangeBasicInfo}
+                value={bidContent.succDeciMethCode}
               >
                 <option value="1">최저가</option>
                 <option value="2">최고가</option>
@@ -283,9 +329,43 @@ const BidSaveBasicInfo = (props) => {
               {bidContent.biModeCode === 'A'
               ? 
               //입찰방식이 지명경쟁입찰일 때
-              bidContent.custContent.length === 0 
-              ? <button>선택된 참가업체 없음</button>
-              : <button>데이터 있음</button>
+              custContent.length === 0 
+              ? 
+              <button>선택된 참가업체 없음</button>
+
+              : 
+              <div>
+              {custContent.map((val, idx) => (
+                <div key={idx}>
+                  <button
+                    onClick={() => {
+                      onCustUserDetail(val.custCode);
+                    }}
+                    className="textUnderline"
+                  >
+                    {val.custName}
+                  </button>
+                  {custUserName.map((data, dataIdx) => (
+                    <span key={dataIdx}>{val.custCode === data.custCode ? ` ${data.userName}` : ''}</span>
+                  ))}
+                  <i
+                    className="fa-regular fa-xmark textHighlight ml5"
+                   onClick={() => onRemoveCust( val.custCode)}
+                  ></i>
+                  {/* Uncomment if you want to add a separator except for the last element */}
+                  {/* {idx !== custContent.length - 1 && <span>, </span>} */}
+                </div>
+              ))}
+            </div>
+
+  
+                  
+
+
+
+
+
+
 
               : <button>가입회원사 전체</button>}
    
@@ -308,13 +388,15 @@ const BidSaveBasicInfo = (props) => {
                   {/* <i className="fa-regular fa-xmark textHighlight ml5"></i> */}
                 </div>
                 </div>
+              {bidContent.biModeCode === 'A'
+              &&
               <button
-                data-toggle="modal"
-                data-target="#custPop"
                 className="btnStyle btnSecondary ml10"
                 title="업체선택"
-                >업체선택</button
-              >
+                onClick={()=>{onBidCustListModal()}}
+                >업체선택
+                </button>
+                }
             </div>
           </div>
           {/* <div className="flex align-items-center mt20">
@@ -340,6 +422,7 @@ const BidSaveBasicInfo = (props) => {
                 className="inputStyle"
                 onChange={onChangeBasicInfo}
                 maxLength="100"
+                value={bidContent.amtBasis}
               />
             </div>
           </div>
@@ -352,6 +435,7 @@ const BidSaveBasicInfo = (props) => {
                 className="inputStyle"
                 onChange={onChangeBasicInfo}
                 maxLength="50"
+                value={bidContent.payCond}
               />
             </div>
           </div>
@@ -446,7 +530,14 @@ const BidSaveBasicInfo = (props) => {
     </>
 
         }
+          {/* 과거입찰 가져오기  */}
+          <BidPast isBidPastModal={isBidPastModal} setIsBidPastModal={setIsBidPastModal}/>
 
+          {/* 업체 조회 */}
+          <BidCustList isBidCustListModal={isBidCustListModal} setIsBidCustListModal={setIsBidCustListModal}/>
+
+          {/* 협력사 사용자 */}
+          <BidCustUserList isBidCustUserListModal={isBidCustUserListModal} setIsBidCustUserListModal={setIsBidCustUserListModal} srcCustCode={custCode} type="edit"/> 
     </div>
   )
 }
