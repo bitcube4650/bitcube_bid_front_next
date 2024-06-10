@@ -52,6 +52,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
       }, [srcCustCode]);
 
 
+      // 팝업 오픈시만 실행
       useEffect(() => {
         if (isBidCustUserListModal && srcCustCode) {
           setAllChecked(false)
@@ -77,6 +78,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
           fetchInitialData();
         }
 
+        // 팝업이 업체 조회에서가 아니라 입찰참가 업체에서 클릭 시 
         if(type === 'edit'){
           const custUserInfoData = custUserInfo.filter(item => item.custCode === srcCustCode)
           setSelectedUserIds(custUserInfoData)
@@ -105,6 +107,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
       }
     };
 
+    // 업체의 사용자 정보 저장 후 모달 닫기
     const onSaveCustUser = ()=> {
       
       if(selectedUserIds.length > 0){
@@ -140,8 +143,6 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
           )
 
         }else if(type === 'edit'){
-
-
           const resetCustUserInfo = custUserInfo.filter(item => item.custCode !== srcCustCode)
           const resetCustUserName = custUserName.filter(item => item.custCode !== srcCustCode)
           
@@ -157,8 +158,6 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
           )
 
         }
-
-
 
        onBidCustUserListModalHide()
       }else{

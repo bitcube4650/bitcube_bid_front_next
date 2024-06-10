@@ -47,6 +47,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
     }, [srcData]);
 
 
+    //팝업 오픈 시에만 실행
     useEffect(() => {
       if (isBidCustListModal) {
         const initialSrcData = {
@@ -73,6 +74,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
       setIsBidCustUserListModal(true)
     }
     
+    // 업체 선택 후 업체 정보로 협력사 사용자 팝업 오픈 함수
     const onBidCustSelect = (srcCustCode,srcCustName) => {
       const hasCustCode = custContent.some(item => item.custCode === srcCustCode);
       setCustCode(srcCustCode)
@@ -86,11 +88,10 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
       }
 
     }
-
     
   return (
     <div>
-      <Modal className="modalStyle" show={isBidCustListModal} onHide={onBidCustListModalHide} size="xl">
+      <Modal className={`modalStyle ${isBidCustUserListModal ? 'modal-cover' : ''}`} show={isBidCustListModal} onHide={onBidCustListModalHide} size="xl">
           <Modal.Body>
               <button className="ModalClose" title="닫기" onClick={()=>{onBidCustListModalHide()}}
               ><i className="fa-solid fa-xmark"></i
@@ -190,7 +191,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
           </Modal.Body>
       </Modal>
 
-      {/* 협력사 사용자 */}
+      {/* 협력사 사용자 팝업 */}
       <BidCustUserList isBidCustUserListModal={isBidCustUserListModal} setIsBidCustUserListModal={setIsBidCustUserListModal} srcCustCode={custCode} srcCustName={custName} type="save"/> 
     </div>
   )

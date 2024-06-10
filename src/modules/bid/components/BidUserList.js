@@ -230,7 +230,7 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
                     <Pagination onChangeSrcData={onChangeSrcData} list={bidUserList} />
                     </div>
                 </div>
-                <div class="modalFooter">
+                <div className="modalFooter">
                     <button className="modalBtnClose" title="닫기" onClick={()=>{onBidUserListModalHide()}}>닫기</button>
                 </div>
 

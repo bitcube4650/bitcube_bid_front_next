@@ -12,21 +12,76 @@ const BidProgress = () => {
   const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
 
   const navigate = useNavigate();
-  const {viewType, setViewType, bidContent, setBidContent} = useContext(BidContext);
+  const {viewType, setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
   const moveSave = ()=>{
     setViewType('등록')
     navigate('/bid/progress/save');
     
     if(viewType === '등록'){
 
-      //등록할 때는 loginInfo에서 정보를 가져 옴
+      //등록으로 이동 시 state 초기화
       setBidContent({
         ...bidContent,
-        createUserName : loginInfo.userName,
-        createUser : loginInfo.userId, 
-        gongoId : loginInfo.userName, 
-        gongoIdCode : loginInfo.userId,
+
+        //밑에 4개의 변수는 등록 시 로그인 정보로 세팅
+        createUserName : loginInfo.userName, // 입찰담당자
+        createUser : loginInfo.userId, // 입찰담당자 및 입찰계획 생성자 ID
+        gongoId : loginInfo.userName, // 입찰공고자 이름
+        gongoIdCode : loginInfo.userId, // 입찰공고자 ID
+
+        biName : '',  // 입찰명
+        itemCode : '', // 품목 Code
+        itemName : '', // 품목 이름
+        biModeCode : 'A', // 입찰방식
+        bidJoinSpec : '', // 입찰참가자격 
+        specialCond : '', // 특수조건
+        spotDate : '', // 현장설명 일시
+        spotTime : '', // 현장설명 시간
+        spotArea : '', // 현장설명장소
+        succDeciMethCode : '', // 낙찰자결정방법
+        amtBasis : '', // 금액기준
+        payCond : '', //결제조건
+        bdAmt : '', // 예산금액
+        // 롯데일 때만 사용하는 변수들 loginInfo.custCode == '02', custName == '롯데에너지머티리얼즈'
+        lotteDeptList: [], // 롯데 분류군 사업부 리스트
+        lotteProcList: [], // 롯데 분류군 공정 리스트
+        lotteClsList: [], // 롯데 분류군 분류 리스트
+        matDept : '', // 사업부
+        matProc : '', // 공정
+        matCls : '', // 분류
+        matFactory : '', // 공장동
+        matFactoryLine : '', // 라인
+        matFactoryCnt : '', // 호기
+    
+        minDate : new Date().toISOString().slice(0, 10), // 캘린더 오늘 날짜 설정. 오늘 날짜부터 선택 가능하게 하기 위한 변수
+  
+        //BidSaveAddRegist에서 사용
+  
+        estStartDate : '', // 제출시작 일시
+        estStartTime : '', // 제출시작 시간
+        estCloseDate : '', // 제출시작 일시
+        estCloseTime : '', // 제출시작 시간
+        estOpener : '', // 개찰자 이름
+        estOpenerCode : '', // 개찰자ID
+        estBidder : '', // 낙찰자 이름
+        estBidderCode : '', // 낙찰자 ID
+        openAtt1 : '', // 입회자1 이름
+        openAtt1Code : '', // 입회자1 ID
+        openAtt2 : '', // 입회자2 이름
+        openAtt2Code : '', // 입회자2 ID
+        insModeCode : '1', // 내역방식
+        supplyCond : '',  // 납품조건
+  
       })
+
+      
+      setCustContent([]) // 입찰참가업체
+      setCustUserName([]) // 입찰참가업체 뒤에 표시할 사용자 이름
+      setCustUserInfo([]) // 입찰참가업체 클릭 시 표시할 데이터 정보
+      setTableContent([]) // 세부내역 직접입력
+      setInsFile(null)  // 세부내역 파일등록
+      setInnerFiles([]) // 첨부파일 (대내용)
+      setOuterFiles([]) // 첨부파일 (대외용)
     }else{
 
     }

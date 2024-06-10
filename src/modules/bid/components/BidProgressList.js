@@ -10,11 +10,11 @@ function BidProgressList(props) {
 
     return (
         <tr>
-            <td className="textUnderline" onClick={onBidProgressDetail}>
-                <button style={{cursor: 'pointer'}}>{data.biNo}</button>
+            <td onClick={onBidProgressDetail}>
+                <button className="textUnderline">{data.biNo}</button>
             </td>
-            <td className="textUnderline text-left" onClick={onBidProgressDetail}>
-                <button style={{cursor: 'pointer'}}>{data.biName}</button>
+            <td className="text-left" onClick={onBidProgressDetail}>
+                <button className='textUnderline'>{data.biName}</button>
             </td >
             <td >
               <i className="fa-regular fa-timer"></i>{data.estStartDate}
