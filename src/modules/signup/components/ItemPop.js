@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import Pagination from '../Pagination';
+import Pagination from '../../../components/Pagination';
 
 const ItemPop = ({itemPop, setItemPop, popClick}) => {
 

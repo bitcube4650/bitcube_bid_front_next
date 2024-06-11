@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as CommonUtils from 'components/CommonUtils';
 import filters from '../api/filters';
-import ItemPop from 'components/login/ItemPop';
+import ItemPop from '../../signup/components/ItemPop';
 import AddrPop from 'components/AddrPop';
 
 const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {

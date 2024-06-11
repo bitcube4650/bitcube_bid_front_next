@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
-import Login from './views/Login';
-import Main from './views/Main';
-import SignUp from './views/SignUp';
-import SignUpMain from './views/SignUpMain';
+import Login from './modules/login/views/Login'
+import Main from './modules/main/views/Main';
+import SignUp from './modules/signup/views/SignUp';
+import SignUpMain from './modules/signup/views/SignUpMain';
 import BidProgress from './modules/bid/views/BidProgress';
 import BidProgressSave from './modules/bid/views/BidProgressSave';
 import BidProgressDetail from './modules/bid/views/BidProgressDetail';

@@ -2,16 +2,12 @@ import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
-import LoginFailPop from "../login/LoginFailPop";
-import LoginNotAppPop from "../login/LoginNotAppPop";
-import IdSearchPop from "../login/IdSearchPop";
-import PwSearchPop from "../login/PwSearchPop";
+import LoginFailPop from "../components/LoginFailPop";
+import LoginNotAppPop from "../components/LoginNotAppPop";
+import IdSearchPop from "../components/IdSearchPop";
+import PwSearchPop from "../components/PwSearchPop";
 import Swal from 'sweetalert2';
 import axios from "axios"
-
-
-
-//todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
 function LoginWrap(props) {
     const [loginInfo, setLoginInfo] = useState({

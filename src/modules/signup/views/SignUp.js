@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/layout/Header';
+import Header from '../../../components/layout/Header';
 import EnrollmentProcessPop from '../components/EnrollmentProcess';
 import BiddingGuidePop from '../components/BiddingGuide';
 

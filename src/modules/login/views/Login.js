@@ -1,6 +1,6 @@
 import React from 'react';
-import LoginWrap from '../components/login/LoginWrap';
-import LoginFooter from '../components/login/LoginFooter';
+import LoginWrap from '../components/LoginWrap';
+import LoginFooter from '../components/LoginFooter';
 
 const Login = () => {
     const logoUrl = "../../images/bitcube_logo_black.png";
