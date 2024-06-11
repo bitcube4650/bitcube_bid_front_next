@@ -77,10 +77,6 @@ const faqPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
 
 	const save = (word)=>{
 
-		if(valueCheck()){
-			return false;
-		}
-
 		if(word == 'delete'){
 			Swal.fire({
 				title: '',              // 타이틀
@@ -112,6 +108,11 @@ const faqPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
 				}
 			});
 		}else{
+
+			if(valueCheck()){
+				return false;
+			}
+
 			Swal.fire({
 				title: '',              // 타이틀
 				text: "저장 하시겠습니까?",  // 내용
