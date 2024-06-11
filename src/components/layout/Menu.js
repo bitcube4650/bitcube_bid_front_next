@@ -86,7 +86,10 @@ const Menu = () => {
                             <li style={{ display: userCustType === 'inter' ? 'none' : 'block' }} className={(path === '/notice/faq/user' ? 'active' : '')}>
                                 <a href='/notice/faq/user'>FAQ-협력사</a>
                             </li>
-                            <li><a href="company === 'cust'? '/installFile/전자입찰_매뉴얼_업체.pdf' : '/installFile/전자입찰_매뉴얼_본사.pdf'" download="전자입찰_메뉴얼.pdf">메뉴얼</a></li>
+                            <li>
+                                <a href="../../installFile/전자입찰_매뉴얼_본사.pdf" style={{ display: (userCustType === 'inter')  ? 'block' : 'none' }} download="전자입찰_메뉴얼.pdf">메뉴얼</a>
+                                <a href="../../installFile/전자입찰_매뉴얼_업체.pdf" style={{ display: (userCustType === 'cust')  ? 'block' : 'none' }} download="전자입찰_메뉴얼.pdf">메뉴얼</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
