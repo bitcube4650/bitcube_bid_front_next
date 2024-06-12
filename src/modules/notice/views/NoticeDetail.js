@@ -36,6 +36,19 @@ const NoticeDetail = () => {
         navigate('/noticeEdit/' + bno, {state: {updateInsert: "update"}});
     }
 
+    async function onDownloadFile() {
+        const response = axios.post('/api/v1/notice/downloadFile',
+            { fileId: dataFromList.bfilePath },
+            { responseType : 'blob' });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", dataFromList.bfile); // 다운로드될 파일명 설정
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     return (
         <div className="conRight">
             <div className="conHeader">
@@ -81,8 +94,7 @@ const NoticeDetail = () => {
                         <div className="formTit flex-shrink0 width170px">첨부파일</div>
                         { dataFromList.bfilePath != null && dataFromList.bfilePath != '' &&
                             <div className="width100">
-                                {/* todo: downloadFile */}
-                                <a click="downloadFile" id="file-download" className="textUnderline">{ dataFromList.bfile }</a>
+                                <a onClick={ onDownloadFile } id="file-download" className="textUnderline">{ dataFromList.bfile }</a>
                             </div>
                         }
                     </div>

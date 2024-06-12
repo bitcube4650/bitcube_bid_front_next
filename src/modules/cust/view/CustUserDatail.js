@@ -2,9 +2,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
+import * as CommonUtils from 'components/CommonUtils';
 
 
-const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCustUserDetailPopOpen, onSearch}) => {
+const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCustUserDetailPopOpen, onSearch}) => {
+    console.log(CreateUser)
     const [CustUserDetailData, setCustUserDetailData] = useState({
         "isCreate"              : CreateUser,
         "userId"                : "",
@@ -13,18 +15,15 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
         "userName"              : "",
         "interrelatedCustCode"  : "",
         "userAuth"              : "",
-        "userInterrelatedList"  : [],
         "openauth"              : "",
         "bidauth"               : "",
         "userHp"                : "",
         "userTel"               : "",
         "userEmail"             : "",
         "userPosition"          : "",
-        "deptName"              : "",
+        "userBuseo"             : "",
         "useYn"                 : "Y",
     })
-    //소속계열사 리스트
-    const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState([])
     //사용자중복확인 체크 여부
     const [UserIdChkYn, setUserIdChkYn] = useState(false);
     
@@ -35,6 +34,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
         setCustUserDetailData((prevData) => ({
             ...prevData,
             [name]: value,
+            isCreate: CreateUser
         }));
     };
 
@@ -42,7 +42,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
     const onSrcUserDatail = useCallback(async () => {
         if (srcUserId != null) {
             try {
-                const srcUserDatailResponse = await axios.post("/api/v1/couser/userDetail", {
+                const srcUserDatailResponse = await axios.post("/api/v1/custuser/" + srcUserId, {
                     userId: srcUserId
                 });
                 setCustUserDetailData(srcUserDatailResponse.data.data);
@@ -61,7 +61,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
         if (!CreateUser && srcUserId != null) {
             onSrcUserDatail();
         }
-    }, [CreateUser, groupUserDetailPopOpen, onSrcUserDatail]);
+    }, [CreateUser, CustUserDetailPopOpen, onSrcUserDatail]);
 
     //팝업 닫기
     const onClosePop = useCallback( () => {
@@ -101,7 +101,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
         if( onValidate() === false ){
         } else {
             // 저장 api
-            const response = await axios.post("/api/v1/couser/userSave", CustUserDetailData);
+            const response = await axios.post("/api/v1/custuser/save", CustUserDetailData);
             if (response.data.code === 'OK') {
                 Swal.fire('', '저장되었습니다.', 'success');
                 onClosePop();
@@ -156,7 +156,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
             return false;
         } else {
             const phoneNumberRegex = /^\d{3}-\d{3,4}-\d{4}$/;
-            if (!phoneNumberRegex.test(CustUserDetailData.userHp)) {
+            if (!phoneNumberRegex.test(CommonUtils.onAddDashTel(CustUserDetailData.userHp))) {
                 Swal.fire('', '휴대폰번호 형식에 맞게 입력해주세요.', 'warning');
                 return false;
             }
@@ -166,7 +166,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
             return false;
         } else {
             const telNumberRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
-            if (!telNumberRegex.test(CustUserDetailData.userTel)) {
+            if (!telNumberRegex.test(CommonUtils.onAddDashTel(CustUserDetailData.userTel))) {
                 Swal.fire('', '유선전화 형식에 맞게 입력해주세요.', 'warning');
                 return false;
             }
@@ -186,13 +186,21 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
 
 
     return (
-        <Modal  className={`modalStyle ${groupUserDetailPopOpen ? 'modal-cover' : ''}`} show={groupUserDetailPopOpen} onHide={onClosePop} size='lg'>
+        <Modal  className={`modalStyle ${CustUserDetailPopOpen ? 'modal-cover' : ''}`} show={CustUserDetailPopOpen} onHide={onClosePop} size='lg'>
             <Modal.Body>
-                <Button onClick={onClosePop} className="ModalClose" data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></Button>
+                <a onClick={onClosePop} className="ModalClose" data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">사용자 
                     {( CreateUser? ' 등록' : ' 수정' )}
                 </h2>
-                <div className="flex align-items-center" style={{height : '50px'}}>
+                <div  className="flex align-items-center mt10">
+                    <div className="formTit flex-shrink0 width120px">이름 <span className="star">*</span></div>
+                    <div className="width100"><input type="text" name="userName" className="inputStyle" placeholder="" value={CustUserDetailData.userName} onChange={onSetCustUserData}/></div>
+                </div>
+                <div className="flex align-items-center mt10">
+                    <div className="formTit flex-shrink0 width120px">이메일 <span className="star">*</span></div>
+                    <div className="width100"><input type="text" name="userEmail" className="inputStyle" value={CustUserDetailData.userEmail} placeholder="james@iljin.co.kr" onChange={onSetCustUserData}/></div>
+                </div>
+                <div className="flex align-items-center mt10" style={{height : '50px'}}>
                     <div className="formTit flex-shrink0 width120px">로그인ID <span className="star">*</span></div>
                     {
                         CreateUser? 
@@ -208,75 +216,25 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
                         </div>
                     }
                 </div>
-                {
-                    CreateUser&& 
-                    <div className="flex align-items-center mt10">
-                        <div className="formTit flex-shrink0 width120px">비밀번호</div>
-                        <div className="width100">
-                            <input type="password" name="userPwd" className="inputStyle" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" autoComplete="new-password" onChange={onSetCustUserData}/>
-                        </div>
-                    </div>
-                }
-                {
-                    CreateUser&& 
-                    <div  className="flex align-items-center mt10">
-                        <div className="formTit flex-shrink0 width120px">비밀번호 확인</div>
-                        <div className="width100">
-                            <input type="password" name="userPwdConfirm" className="inputStyle" placeholder="비밀번호와 동일해야 합니다." autoComplete="new-password" onChange={onSetCustUserData}/>
-                        </div>
-                    </div>
-                }
-                <div  className="flex align-items-center mt10">
-                    <div className="formTit flex-shrink0 width120px">이름 <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userName" className="inputStyle" placeholder="" value={CustUserDetailData.userName} onChange={onSetCustUserData}/></div>
-                </div>
-                <div className="flex align-items-center mt10" style={{height : '50px'}}>
-                    <div className="formTi7t flex-shrink0 width120px">소속 계열사 <span className="star">*</span></div>
-                    {
-                        CreateUser?
-                        <div className="width100"  >
-                            {
-                                InterrelatedCustCodeList.length > 0 && (
-                                    <select name="interrelatedCustCode" className="selectStyle" onChange={onSetCustUserData}>
-                                        <option value="">선택</option>
-                                        {InterrelatedCustCodeList.map((option, index) => (
-                                            <option key={index} value={option.interrelatedCustCode}>
-                                                {option.interrelatedNm}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    )
-                            }
-                        </div>
-                        :
-                        <div className="width100">
-                            { CustUserDetailData.interrelatedNm }
-                        </div>
-                    }
-                </div>
                 <div className="flex align-items-center mt10">
-                    <div className="formTit flex-shrink0 width120px">사용권한 <span className="star">*</span></div>
+                    <div className="formTit flex-shrink0 width120px">비밀번호</div>
                     <div className="width100">
-                        <select name="userAuth" className="selectStyle" value={CustUserDetailData.userAuth} onChange={onSetCustUserData}>
-                            <option value="">선택</option>
-                            <option value="1">시스템관리자</option>
-                            <option value="2">각사관리자</option>
-                            <option value="3">일반사용자</option>
-                            <option value="4">감사사용자</option>
-                        </select>
+                        <input type="password" name="userPwd" className="inputStyle" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" autoComplete="new-password" onChange={onSetCustUserData}/>
+                    </div>
+                </div>
+                <div  className="flex align-items-center mt10">
+                    <div className="formTit flex-shrink0 width120px">비밀번호 확인</div>
+                    <div className="width100">
+                        <input type="password" name="userPwdConfirm" className="inputStyle" placeholder="비밀번호와 동일해야 합니다." autoComplete="new-password" onChange={onSetCustUserData}/>
                     </div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">휴대폰 ☎  <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userHp" className="inputStyle" value={CustUserDetailData.userHp} placeholder="숫자만" maxLength="13" onChange={onSetCustUserData}/></div>
+                    <div className="width100"><input type="text" name="userHp" className="inputStyle" value={CommonUtils.onAddDashTel(CustUserDetailData.userHp)} placeholder="숫자만" maxLength="13" onChange={onSetCustUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">유선전화 ☎  <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userTel" className="inputStyle" value={CustUserDetailData.userTel} placeholder="숫자만" maxLength="13" onChange={onSetCustUserData}/></div>
-                </div>
-                <div className="flex align-items-center mt10">
-                    <div className="formTit flex-shrink0 width120px">이메일 <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userEmail" className="inputStyle" value={CustUserDetailData.userEmail} placeholder="james@iljin.co.kr" onChange={onSetCustUserData}/></div>
+                    <div className="width100"><input type="text" name="userTel" className="inputStyle" value={CommonUtils.onAddDashTel(CustUserDetailData.userTel)} placeholder="숫자만" maxLength="13" onChange={onSetCustUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">직급</div>
@@ -284,11 +242,11 @@ const CustUserDetailPop = ({srcUserId, CreateUser, groupUserDetailPopOpen, setCu
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">부서</div>
-                    <div className="width100"><input type="text" name="deptName" className="inputStyle" value={CustUserDetailData.deptName} placeholder="" onChange={onSetCustUserData}/></div>
+                    <div className="width100"><input type="text" name="userBuseo" className="inputStyle" value={CustUserDetailData.userBuseo} placeholder="" onChange={onSetCustUserData}/></div>
                 </div>
                 <div className="modalFooter">
                     <Button onClick={onClosePop} className="modalBtnClose" title="취소">취소</Button>
-                    <Button onClick={onSaveCustUser} className="modalBtnCheck" title="삭제">삭제</Button>
+                    <Button onClick={onSaveCustUser} className="btnStyle btnOutlineRed" title="삭제">삭제</Button>
                     <Button onClick={onSaveCustUser} className="modalBtnCheck" title="저장">저장</Button>
                 </div>
             </Modal.Body>

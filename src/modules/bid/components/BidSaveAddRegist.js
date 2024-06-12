@@ -154,6 +154,21 @@ const BidSaveAddRegist = (props) => {
 
     }
 
+    
+  const onUpdateEstStartDay = (date) =>{
+    setBidContent({
+      ...bidContent,
+      estStartDay : date
+    })
+  }
+
+  const onUpdateEstEstCloseDay = (date) =>{
+    setBidContent({
+      ...bidContent,
+      estCloseDay : date
+    })
+  }
+
   return (
     <div>
         <h3 className="h3Tit mt50">입찰공고 추가 등록 사항</h3>
@@ -165,7 +180,7 @@ const BidSaveAddRegist = (props) => {
                 제출시작일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-                <Calendar calendarId="startDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
+                <Calendar onUpdateDate={onUpdateEstStartDay} calendarId="startDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estStartTime" onChange={onChangeAddRegist} value={bidContent.estStartTime}>
                   <option value="">시간 선택</option>
@@ -200,7 +215,7 @@ const BidSaveAddRegist = (props) => {
                 제출마감일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-                <Calendar calendarId="closeDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
+                <Calendar onUpdateDate={onUpdateEstEstCloseDay} calendarId="closeDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estCloseTime" onChange={onChangeAddRegist} value={bidContent.estCloseTime}>
                   <option value="">시간 선택</option>

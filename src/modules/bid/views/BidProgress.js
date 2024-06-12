@@ -13,11 +13,10 @@ const BidProgress = () => {
 
   const navigate = useNavigate();
   const {viewType, setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
-  const moveSave = ()=>{
-    setViewType('등록')
-    navigate('/bid/progress/save');
+  const moveSave = (type)=>{
+    setViewType(type)
     
-    if(viewType === '등록'){
+    if(type === '등록'){
 
       //등록으로 이동 시 state 초기화
       setBidContent({
@@ -30,12 +29,12 @@ const BidProgress = () => {
         gongoIdCode : loginInfo.userId, // 입찰공고자 ID
 
         biName : '',  // 입찰명
-        itemCode : '', // 품목 Code
-        itemName : '', // 품목 이름
+        itemCode : '01', // 품목 Code
+        itemName : '농업', // 품목 이름
         biModeCode : 'A', // 입찰방식
         bidJoinSpec : '', // 입찰참가자격 
         specialCond : '', // 특수조건
-        spotDate : '', // 현장설명 일시
+        spotDay : '', // 현장설명 일시
         spotTime : '', // 현장설명 시간
         spotArea : '', // 현장설명장소
         succDeciMethCode : '', // 낙찰자결정방법
@@ -57,9 +56,9 @@ const BidProgress = () => {
   
         //BidSaveAddRegist에서 사용
   
-        estStartDate : '', // 제출시작 일시
+        estStartDay : '', // 제출시작 일시
         estStartTime : '', // 제출시작 시간
-        estCloseDate : '', // 제출시작 일시
+        estCloseDay : '', // 제출시작 일시
         estCloseTime : '', // 제출시작 시간
         estOpener : '', // 개찰자 이름
         estOpenerCode : '', // 개찰자ID
@@ -71,9 +70,9 @@ const BidProgress = () => {
         openAtt2Code : '', // 입회자2 ID
         insModeCode : '1', // 내역방식
         supplyCond : '',  // 납품조건
+        interrelatedCustCode : loginInfo.custCode // 로그인한 계정의 custCode
   
       })
-
       
       setCustContent([]) // 입찰참가업체
       setCustUserName([]) // 입찰참가업체 뒤에 표시할 사용자 이름
@@ -85,6 +84,8 @@ const BidProgress = () => {
     }else{
 
     }
+
+        navigate('/bid/progress/save');
   }
 
 
@@ -206,7 +207,7 @@ const BidProgress = () => {
         </div>
         <div>
            <button
-              onClick={moveSave}
+              onClick={()=>moveSave('등록')}
               className="btnStyle btnPrimary"
               title="입찰계획등록"
               >입찰계획등록

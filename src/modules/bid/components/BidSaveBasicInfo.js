@@ -120,6 +120,13 @@ const BidSaveBasicInfo = (props) => {
     setIsBidCustUserListModal(true)
   }
 
+  const onUpdateSpotDay =(date) =>{
+    setBidContent({
+      ...bidContent,
+      spotDay : date
+    })
+  }
+
   return (
     <div>
         <h3 className="h3Tit">입찰 기본 정보</h3>
@@ -169,6 +176,7 @@ const BidSaveBasicInfo = (props) => {
                 type="text"
                 name="itemName"
                 className="inputStyle"
+                value={bidContent.itemName}
                 onChange={onChangeBasicInfo}
                 disabled
               />
@@ -241,11 +249,10 @@ const BidSaveBasicInfo = (props) => {
             </div>
             <div className="flex align-items-center width100">
               <Calendar
-                onUpdateDate={onChangeBasicInfo}
-                //name="spotDate"
-                //calendarId="spotDate"
+                inputRef="spotDay"
+                onUpdateDate={onUpdateSpotDay}
                 className="datepicker inputStyle maxWidth140px"
-                initDate={bidContent.spotDate}
+                initDate={bidContent.spotDay}
                 minDate={bidContent.minDate}
               />
               <select
@@ -468,19 +475,19 @@ const BidSaveBasicInfo = (props) => {
               분류군 <span className="star">*</span>
             </div>
             <div className="flex align-items-center width100">
-              <select name="matDept" className="selectStyle" onChange={onChangeBasicInfo}>
+              <select name="matDept" className="selectStyle" value={bidContent.matDept} onChange={onChangeBasicInfo}>
                 <option value=''>사업부를 선택 하세요.</option>
                 {bidContent.lotteDeptList.map((data) => (
                   <option key={data.codeVal} value={data.codeVal}>{data.codeName}</option>
                 ))}
               </select>
-              <select name="matProc" className="selectStyle" onChange={onChangeBasicInfo} style={{margin: '0 10px'}}>
+              <select name="matProc" className="selectStyle" value={bidContent.matProc} onChange={onChangeBasicInfo} style={{margin: '0 10px'}}>
                 <option value=''>공정을 선택 하세요.</option>
                 {bidContent.lotteProcList.map((data) => (
                   <option key={data.codeVal} value={data.codeVal}>{data.codeName}</option>
                 ))}
               </select>
-              <select name="matCls" className="selectStyle" onChange={onChangeBasicInfo}>
+              <select name="matCls" className="selectStyle" value={bidContent.matCls} onChange={onChangeBasicInfo}>
                 <option value=''>분류를 선택 하세요.</option>
                 {bidContent.lotteClsList.map((data) => (
                   <option key={data.codeVal} value={data.codeVal}>{data.codeName}</option>
@@ -495,6 +502,7 @@ const BidSaveBasicInfo = (props) => {
                 type="text"
                 name="matFactory"
                 className="inputStyle"
+                value={bidContent.matFactory}
                 onChange={onChangeBasicInfo}
                 maxLength="50"
               />
@@ -508,6 +516,7 @@ const BidSaveBasicInfo = (props) => {
                   type="text"
                   name="matFactoryLine"
                   className="inputStyle"
+                  value={bidContent.matFactoryLine}
                   onChange={onChangeBasicInfo}
                   maxLength="25"
                 />
@@ -520,6 +529,7 @@ const BidSaveBasicInfo = (props) => {
                   type="text"
                   name="matFactoryCnt"
                   className="inputStyle"
+                  value={bidContent.matFactoryCnt}
                   onChange={onChangeBasicInfo}
                   maxLength="25"
                 />

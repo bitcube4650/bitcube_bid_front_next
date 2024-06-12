@@ -9,7 +9,6 @@ import Swal from 'sweetalert2'; // 공통 팝업창
 const CustUser = () => {
     //세션 로그인 정보
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
-    console.log(loginInfo)
     // 사용자 등록 / 수정 여부
     const [CreateUser, setCreateUser] = useState(false)
     // 모달창 오픈 여부
@@ -53,7 +52,6 @@ const CustUser = () => {
     const onSearch = useCallback(async() => {
         try {
             const response = await axios.post("/api/v1/custuser/userListForCust", SrcData);
-            console.log(response)
             setCustUserList(response.data.data);
         } catch (error) {
             Swal.fire('', '조회에 실패하였습니다.', 'error');
@@ -62,7 +60,7 @@ const CustUser = () => {
     }, [SrcData]);
 
     useEffect(() => {
-        //onSearch();
+        onSearch();
     }, [SrcData.size, SrcData.page]);
 
     return (
@@ -72,9 +70,6 @@ const CustUser = () => {
                     <li>업체정보</li>
                     <li>사용자관리</li>
                 </ul>
-                <div>
-                    <Button onClick={ onCustUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</Button>
-                </div>
             </div>
             <div className="contents">
                 <div className="searchBox">
@@ -153,7 +148,8 @@ const CustUser = () => {
                 <CustUserDetailPop 
                     srcUserId={SrcUserIdChange} 
                     CreateUser={CreateUser}
-                    onUserDetailPop={onUserDetailPop} 
+                    CustUserDetailPopOpen={CustUserDetailPopOpen}
+                    setCustUserDetailPopOpen={setCustUserDetailPopOpen}
                     onSearch={onSearch}
                 />
             )}
