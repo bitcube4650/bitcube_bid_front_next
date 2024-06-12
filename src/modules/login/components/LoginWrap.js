@@ -59,14 +59,14 @@ function LoginWrap(props) {
             const loginData = response.data;
             if(response.status === 200) {
                 setCookie('loginInfo', JSON.stringify(loginData));
-                sessionStorage.setItem("loginInfo", JSON.stringify(response.data));
+                localStorage.setItem("loginInfo", JSON.stringify(loginData));
                 if (rememberMe) {
                     setCookie('rememberUserId', loginData.userId);
                 } else {
                     removeCookie('rememberUserId');
                 }
                 axios.defaults.headers['x-auth-token'] = loginData.token;
-                navigate("/main");
+                navigate("/");
             }
 
         } catch (err) {
