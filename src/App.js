@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState }from 'react';
+import axios from 'axios';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
+import Loading from 'components/Loading';
 import Login from './modules/login/views/Login'
 import Main from './modules/main/views/Main';
 import SignUp from './modules/signup/views/SignUp';
@@ -42,10 +44,33 @@ import AdminFaq from './modules/notice/views/AdminFaq';
 import UserFaq from './modules/notice/views/UserFaq';
 
 const App = () => {
+	const [loading, setLoading] = useState(false);
+
+	useEffect(()=>{
+		//axios 호출시 인터셉트
+		axios.interceptors.request.use(function (config) {
+			setLoading(true);
+
+			return config;
+		}, function (error) {
+			return Promise.reject(error);
+		});
+
+		//axios 호출 종료시 인터셉트
+		axios.interceptors.response.use(function (response) {
+			setLoading(false);
+			return response;
+		}, function (error) {
+			setLoading(false);
+			return Promise.reject(error);
+		});
+	},[]);
+
 	return (
 		<div className='Router'>
 			<BrowserRouter>
 				<ScrollToTop />
+				<Loading loading={ loading }/>
 				<ErrorBoundary> {/*Context를 사용할 때 ErrorBoundary를 사용해야 어떤 에러가 나오는지 표시됩니다.*/}
 					<BidProvider>
 						<Routes>

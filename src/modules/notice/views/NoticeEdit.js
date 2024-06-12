@@ -25,7 +25,7 @@ const NoticeEdit = () => {
         bcontent    : ""
     });
 
-    const [uploadFile, setUploadFile] = useState([]);
+    const [uploadFile, setUploadFile] = useState();
 
     async function onSelectDetail() {
         try {
@@ -37,6 +37,7 @@ const NoticeEdit = () => {
 
                 setDetailData({
                     ...responseData,
+                    ['fileName']: responseData.bfile,
                     ['interrelatedCustCodeArr']: responseData.interrelatedCodes.split(",")
                 });
                 if(responseData.interrelatedCodes) {    //계열사 정보가 있는 경우
@@ -153,6 +154,23 @@ const NoticeEdit = () => {
         }
     }
 
+    function onRemoveAttachFile() {
+        setDetailData({
+            ...detailData,
+            ['fileName']: null
+        });
+    }
+
+    function onChangeFile(e) {
+        setUploadFile(
+            e.target.files[0]
+        );
+        setDetailData({
+            ...detailData,
+            ['fileName']: e.target.files[0].name
+        });
+    }
+
     return (
         <div className="conRight">
             <div className="conHeader">
@@ -200,22 +218,21 @@ const NoticeEdit = () => {
                         <div className="formTit flex-shrink0 width170px">첨부파일</div>
                         <div className="width100">
                             <div className="upload-boxWrap">
-                                todo: 첨부처리
-                                {/*
-                                <div className="upload-box" v-show="!selectedFile">
-                                    <input type="file" ref="uploadedFile" id="file-input" change="changeFile" />
+                                { !detailData.fileName &&
+                                <div className="upload-box">
+                                    <input type="file" id="file-input" onChange={ onChangeFile } />
                                     <div className="uploadTxt">
                                         <i className="fa-regular fa-upload"></i>
                                         <div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
                                     </div>
-                                </div>
-                                <div className="uploadPreview" v-if="selectedFile">
+                                </div> }
+                                { detailData.fileName &&
+                                <div className="uploadPreview">
                                     <p>
-                                        {{ selectedFileName }}
-                                        <button className='file-remove' click="fnRemoveAttachFile()">삭제</button>
+                                        { detailData.fileName }
+                                        <button className='file-remove' onClick={ onRemoveAttachFile }>삭제</button>
                                     </p>
-                                </div>
-                                */}
+                                </div> }
                             </div>
                         </div>
                     </div>
