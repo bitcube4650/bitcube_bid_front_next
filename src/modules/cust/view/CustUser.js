@@ -26,7 +26,7 @@ const CustUser = () => {
     function onUserDetailPop(userId){
         setSrcUserIdChange(userId)
         setCreateUser(false)
-        setCustUserDetailPopOpen(true)   
+        setCustUserDetailPopOpen(true)
     }
     
     //조회 결과

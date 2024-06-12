@@ -6,7 +6,6 @@ import * as CommonUtils from 'components/CommonUtils';
 
 
 const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCustUserDetailPopOpen, onSearch}) => {
-    console.log(CreateUser)
     const [CustUserDetailData, setCustUserDetailData] = useState({
         "isCreate"              : CreateUser,
         "userId"                : "",
@@ -54,14 +53,16 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
 
     // 처음들어왓을때 값세팅 
     useEffect(() => {
-        setCustUserDetailData(prevState => ({
-            ...prevState,
-            isCreate: CreateUser
-        }));
-        if (!CreateUser && srcUserId != null) {
-            onSrcUserDatail();
+        if( CustUserDetailPopOpen ){
+            setCustUserDetailData(prevState => ({
+                ...prevState,
+                isCreate: CreateUser
+            }));
+            if (!CreateUser && srcUserId != null) {
+                onSrcUserDatail();
+            }
         }
-    }, [CreateUser, CustUserDetailPopOpen, onSrcUserDatail]);
+    }, []);
 
     //팝업 닫기
     const onClosePop = useCallback( () => {
@@ -109,6 +110,40 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
             } else {
                 Swal.fire('', '저장 중 오류가 발생했습니다.', 'warning');
             }
+        }
+    }
+
+    //삭제
+    const onDeleteCustUserConfirm =  () => {
+        Swal.fire({
+            title: '',
+            html: "삭제된 사용자는 로그인 하실 수 없습니다.<br/>사용자를 삭제 하시겠습니까?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: '확인',
+            cancelButtonColor: '#d33',
+            cancelButtonText: '닫기',
+            customClass: {
+              confirmButton: 'modalBtnCheck',
+              cancelButton: 'modalBtnClose'
+            }
+        }).then((result) => {
+            if(result.value){
+                onDeleteCustUser();
+            }
+        });
+    }
+
+    async function onDeleteCustUser(){
+        // 저장 api
+        const response = await axios.post("/api/v1/custuser/del", CustUserDetailData);
+        if (response.data.code === 'OK') {
+            Swal.fire('', '삭제되었습니다.', 'success');
+            onClosePop();
+            onSearch();
+        } else {
+            Swal.fire('', '삭제 중 오류가 발생했습니다.', 'warning');
         }
     }
 
@@ -246,7 +281,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
                 </div>
                 <div className="modalFooter">
                     <Button onClick={onClosePop} className="modalBtnClose" title="취소">취소</Button>
-                    <Button onClick={onSaveCustUser} className="btnStyle btnOutlineRed" title="삭제">삭제</Button>
+                    <Button onClick={onDeleteCustUserConfirm} className="btnStyle btnOutlineRed" title="삭제">삭제</Button>
                     <Button onClick={onSaveCustUser} className="modalBtnCheck" title="저장">저장</Button>
                 </div>
             </Modal.Body>
