@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import Swal from 'sweetalert2'
 import * as CommonUtils from 'components/CommonUtils';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * 업체 반려 및 삭제, 탈퇴시 사유 작성 팝업
@@ -10,6 +12,8 @@ import * as CommonUtils from 'components/CommonUtils';
  */
 const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveList}) => {
 	const [etc, setEtc] = useState("")
+	const navigate = useNavigate();
+	const [cookies, setCookie, removeCookie] = useCookies(['username']);
 	const title = deleteType === "refuse" ? '반려' : (deleteType === "delete" ? "삭제" : "회원탈퇴")
 
 	// 반려 사유 팝업 호출
@@ -124,6 +128,16 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 			Swal.fire('', result.msg, 'success');
 		} else {
 			// 로그아웃
+			axios.post("/logout", {}).then((response) => {
+				const status = response.status;
+				if(status == 200) {
+					removeCookie('loginInfo');
+					localStorage.clear();
+					navigate('/');
+				} else {
+					Swal.fire('', '로그아웃 처리에 실패하였습니다.', 'error');
+				}
+			});
 		}
 	}
 

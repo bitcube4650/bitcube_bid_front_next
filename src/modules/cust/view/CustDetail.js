@@ -12,7 +12,7 @@ const CustDetail = ({title, isApproval}) => {
 	const navigate = useNavigate();
 	const params = useParams();
 
-	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));		// 세션 정보
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));		// 세션 정보
 	const custCode = params.custCode										// 상세 조회할 업체 코드
 
 	const [custInfo, setCustInfo] = useState({});							// 업체 정보

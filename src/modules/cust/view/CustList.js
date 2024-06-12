@@ -4,14 +4,23 @@ import { Link, useLocation } from 'react-router-dom';
 import List from '../components/CustList';
 import Swal from 'sweetalert2';
 import Pagination from 'components/Pagination';
+import ItemPop from '../../signup/components/ItemPop';
+import * as CommonUtils from 'components/CommonUtils';
+import BidCustUserList from '../../bid/components/BidCustUserList';
 
 const CustList = () => {
 	const url = useLocation().pathname;
 	// url 파라미터에 certYn이 있으면 해당 값을 가져온다
 	const certYn = new URLSearchParams(useLocation().search).get("certYn")
 	// 세션정보
-	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
-	
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+	const [itemPop, setItemPop] = useState(false);		// 품목 팝업
+	const [isBidCustUserListModal, setIsBidCustUserListModal] = useState(false);
+	const [custCode, setCustCode] = useState('');
+
+	console.log(loginInfo)
+
+
 	let isApproval = false;								// 업체 승인 화면 여부
 	if(url.indexOf('approval') > -1) {
 		isApproval = true;
@@ -22,6 +31,8 @@ const CustList = () => {
 	const [srcData, setSrcData] = useState({			// 조회조건
 		custName : '',									// 업체명
 		certYn : certYn == 'D' ? 'D' : (isApproval ? 'N' : 'Y'),				// 업체 상태 (승인 요청인 경우 'N')
+		custTypeNm : '',
+		custType : '',
 		size : 10,										// 최대 조회건수
 		page : 0										// 페이지 위치
 	})
@@ -34,6 +45,15 @@ const CustList = () => {
 		setSrcData({
 			...srcData,
 			[name]: value
+		})
+	}
+
+	// 업체유형 팝업 callback
+	const itemSelectCallback = (data) => {
+		setSrcData({
+			...srcData,
+			custType : data.itemCode,
+			custTypeNm : data.itemName
 		})
 	}
 
@@ -51,6 +71,11 @@ const CustList = () => {
 			Swal.fire('', error, 'warning')
 		}
 	})
+	
+	const onUserListPop = (custCode) => {
+		setCustCode(custCode)
+		setIsBidCustUserListModal(true)
+	}
 
 	useEffect(() => {
 		onSearch();
@@ -118,10 +143,10 @@ const CustList = () => {
 						}
 						<div className="sbTit mr30 ml50">업체유형</div>
 						<div className="flex align-items-center">
-							<input type="text" placeholder="우측 검색 버튼을 클릭해 주세요" className="inputStyle width280px readonly" readOnly/>
-							<input type="hidden" />
-							<a href="#" data-toggle="modal" data-target="#itemPop" title="조회" className="btnStyle btnSecondary ml10">조회</a>
-							<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : "none"}}>삭제</button>
+							<input type="text" placeholder="우측 검색 버튼을 클릭해 주세요" className="inputStyle width280px readonly" name="custTypeNm" value={srcData.custTypeNm || ''} readOnly/>
+							<input type="hidden" name="custType" />
+							<button type="button"  title="조회" className="btnStyle btnSecondary ml10" onClick={() => {setItemPop(true)}}>조회</button>
+							<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : `${!CommonUtils.isEmpty(srcData.custType) ? "inline-flex" : "none"}`}} onClick={() => {setSrcData({...srcData, custType : '', custTypeNm : ''})}}>삭제</button>
 						</div>
 						<a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
 					</div>
@@ -181,7 +206,7 @@ const CustList = () => {
 							}
 						</tr>
 					</thead>
-					<List isApproval={isApproval} custList={custList} />
+					<List isApproval={isApproval} custList={custList} onUserListPop={onUserListPop} />
 				</table>
 				{/* pagination */}
 				<div className="row mt40">
@@ -191,6 +216,12 @@ const CustList = () => {
 				</div>
 				{/* // pagination */}
 			</div>
+			
+			{/* 품목 팝업 */}
+			<ItemPop itemPop={itemPop} setItemPop={setItemPop} popClick={itemSelectCallback} />
+			
+			{/* 협력사 사용자 팝업 */}
+			<BidCustUserList isBidCustUserListModal={isBidCustUserListModal} setIsBidCustUserListModal={setIsBidCustUserListModal} srcCustCode={custCode} /> 	
 		</div>
 	)
 }

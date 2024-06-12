@@ -9,7 +9,7 @@ import AddrPop from 'components/AddrPop';
 
 const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 	// 세션정보
-	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 	const [otherCustModal, setOtherCustModal] = useState(false)
 	const params = useParams();
 	

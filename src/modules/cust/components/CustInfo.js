@@ -24,7 +24,7 @@ const fnDownloadFile = async(filePath, fileName) => {
 
 const CustDetail = ({isApproval, custInfo}) => {
 	// 세션정보
-	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
 	return (
 		<>

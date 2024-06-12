@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import * as CommonUtils from 'components/CommonUtils';
 import filters from '../api/filters';
 
-const CustList = ({isApproval, custList}) => {
+const CustList = ({isApproval, custList, onUserListPop}) => {
 	return (
 		<tbody>
 			{
@@ -25,7 +25,9 @@ const CustList = ({isApproval, custList}) => {
 						<>
 						<td style={data.certYn == 'D' ? {color : 'red'} : {}}>{filters.onSetCustStatusStr(data.certYn)}</td>
 						<td>{data.createDate}</td>
-						<td className="end"><a title="조회" className="btnStyle btnSecondary btnSm" data-toggle="modal" data-target="#custUserPop">조회</a></td>
+						<td className="end">
+							<a title="조회" className="btnStyle btnSecondary btnSm" onClick={() => onUserListPop(data.custCode)}>조회</a>
+						</td>
 						</>
 						:
 						// 업체승인 리스트

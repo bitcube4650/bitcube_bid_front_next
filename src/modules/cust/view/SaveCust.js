@@ -12,7 +12,7 @@ const SaveCust = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	// 세션정보
-	const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
 	const [selCust, setSelCust] = useState({		// 선택된 업체(타 계열사 선택)
 		custCode : params?.custCode || '',
