@@ -29,12 +29,12 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
   const onSearch = useCallback(async () => {
     try {
       const response = await axios.post('/api/v1/bid/pastBidList', srcData);
-      setBidPastList(response.data);
+      setBidPastList(response.data.data);
     } catch (error) {
       Swal.fire('조회에 실패하였습니다.', '', 'error');
       console.log(error);
     }
-  }, [srcData]);
+  });
 
   useEffect(() => {
     if (isBidPastModal) {
@@ -48,13 +48,15 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
       const fetchInitialData = async () => {
         try {
           const response = await axios.post('/api/v1/bid/pastBidList', initialSrcData);
-          setBidPastList(response.data);
+          setBidPastList(response.data.data);
         } catch (error) {
           Swal.fire('조회에 실패하였습니다.', '', 'error');
           console.log(error);
         }
       };
       fetchInitialData();
+    }else{
+      onSearch()
     }
   }, [isBidPastModal]);
 
@@ -120,8 +122,8 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
             </tr>
           </thead>
           <tbody>
-            {bidPastList?.data?.content?.length > 0 ? (
-              bidPastList.data.content.map((item) => (
+            {bidPastList?.content?.length > 0 ? (
+              bidPastList.content.map((item) => (
                 <BidPastList key={item.biNo} bidPastList={item} onBidPastModalHide={onBidPastModalHide} />
               ))
             ) : (

@@ -39,7 +39,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
     const onSearch = useCallback(async () => {
       try {
         const response = await axios.post('/api/v1/bid/custList', srcData);
-        setBidCustList(response.data);
+        setBidCustList(response.data.data);
       } catch (error) {
         Swal.fire('조회에 실패하였습니다.', '', 'error');
         console.log(error);
@@ -60,7 +60,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
         const fetchInitialData = async () => {
           try {
             const response = await axios.post('/api/v1/bid/custList', initialSrcData);
-            setBidCustList(response.data);
+            setBidCustList(response.data.data);
           } catch (error) {
             Swal.fire('조회에 실패하였습니다.', '', 'error');
             console.log(error);
@@ -152,8 +152,8 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
               </thead>
               <tbody>
               {
-              bidCustList?.data?.content?.length > 0 ? (
-                  bidCustList.data.content.map((item) => (
+              bidCustList?.content?.length > 0 ? (
+                  bidCustList.content.map((item) => (
                     <tr key={item.custCode}>
                       <td>{item.custName}</td>
                       <td>{item.combinedAddr}</td>       

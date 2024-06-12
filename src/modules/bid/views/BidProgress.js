@@ -13,9 +13,10 @@ const BidProgress = () => {
 
   const navigate = useNavigate();
   const {viewType, setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
+
   const moveSave = (type)=>{
     setViewType(type)
-    
+    sessionStorage.setItem("viewType", type);
     if(type === '등록'){
 
       //등록으로 이동 시 state 초기화
@@ -109,7 +110,7 @@ const BidProgress = () => {
      const onSearch = useCallback(async() => {
          try {
              const response = await axios.post("/api/v1/bid/progressList", srcData);
-             setProgressList(response.data)
+             setProgressList(response.data.data)
          } catch (error) {
              Swal.fire('조회에 실패하였습니다.', '', 'error');
              console.log(error);
@@ -196,7 +197,7 @@ const BidProgress = () => {
       {/* 건수 */}
         <div className="flex align-items-center justify-space-between mt40">
         <div className="width100">
-          전체 : <span className="textMainColor"><strong>{progressList?.data?.totalElements ? progressList.data.totalElements.toLocaleString() : 0 }</strong>
+          전체 : <span className="textMainColor"><strong>{progressList?.totalElements ? progressList.totalElements.toLocaleString() : 0 }</strong>
           </span>건
           <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
             <option value="10">10개씩 보기</option>
@@ -235,8 +236,8 @@ const BidProgress = () => {
             </tr>
         </thead>
         <tbody>
-          {progressList?.data?.content?.length > 0 ? (
-            progressList.data.content.map((item) => (
+          {progressList?.content?.length > 0 ? (
+            progressList.content.map((item) => (
               <BidProgressList key={item.biNo} progressList={item} />
             ))
           ) : (

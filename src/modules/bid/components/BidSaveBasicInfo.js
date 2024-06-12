@@ -1,11 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import Calendar from '../../../components/Calendar';
 import BidPast from './BidPast';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
 import BidCustList from './BidCustList';
 import BidCustUserList from './BidCustUserList';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from "date-fns/locale";
+import { format } from 'date-fns';
 
 const BidSaveBasicInfo = (props) => {
 
@@ -23,7 +26,7 @@ const BidSaveBasicInfo = (props) => {
   //로그인 정보에서 custCode가 롯데일 때 롯데 분류군 데이터 가져오기
   const getLotteCodeList = useCallback(async() => {
     try {
-
+      
         const response = await axios.post('/api/v1/bid/progressCodeList');
         
         const data = response.data.data
@@ -120,12 +123,15 @@ const BidSaveBasicInfo = (props) => {
     setIsBidCustUserListModal(true)
   }
 
-  const onUpdateSpotDay =(date) =>{
+  const onUpdateSpotDay = useCallback((day) => {
+    const selectedDate = new Date(day)
+    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
     setBidContent({
-      ...bidContent,
-      spotDay : date
-    })
-  }
+        ...bidContent,
+        spotDay : formattedDate
+    });
+  })
+
 
   return (
     <div>
@@ -248,13 +254,7 @@ const BidSaveBasicInfo = (props) => {
               현장설명일시 <span className="star">*</span>
             </div>
             <div className="flex align-items-center width100">
-              <Calendar
-                inputRef="spotDay"
-                onUpdateDate={onUpdateSpotDay}
-                className="datepicker inputStyle maxWidth140px"
-                initDate={bidContent.spotDay}
-                minDate={bidContent.minDate}
-              />
+            <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.spotDay} onChange={(day) => onUpdateSpotDay(day)} dateFormat="yyyy-MM-dd"/>
               <select
                 className="inputStyle ml10"
                 name="spotTime"

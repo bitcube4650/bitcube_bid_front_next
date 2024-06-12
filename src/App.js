@@ -82,7 +82,7 @@ const App = () => {
 								<Route path="/main" element={<Main />}></Route>
 								<Route path="/bid/progress" element={<BidProgress />}></Route>
 								<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>
-								<Route path="/bid/progress/detail/:biNo" element={<BidProgressDetail />}></Route>
+								<Route path="/bid/progress/detail" element={<BidProgressDetail />}></Route>
 								<Route path="/bid/status" element={<BidStatus />}></Route>
 								<Route path="/bid/status/detail" element={<BidStatusDetail />}></Route>
 								<Route path="/bid/rebid" element={<Rebid />}></Route>

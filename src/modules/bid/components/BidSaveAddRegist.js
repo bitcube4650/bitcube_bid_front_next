@@ -4,6 +4,10 @@ import Calendar from '../../../components/Calendar'
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
 import BidUserList from './BidUserList';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from "date-fns/locale";
+import { format } from 'date-fns';
 
 const BidSaveAddRegist = (props) => { 
 
@@ -155,18 +159,23 @@ const BidSaveAddRegist = (props) => {
     }
 
     
-  const onUpdateEstStartDay = (date) =>{
+  const onUpdateEstStartDay = (day) =>{
+
+    const selectedDate = new Date(day)
+    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
     setBidContent({
       ...bidContent,
-      estStartDay : date
-    })
+      estStartDay : formattedDate
+    });
   }
 
-  const onUpdateEstEstCloseDay = (date) =>{
+  const onUpdateEstEstCloseDay = (day) =>{
+    const selectedDate = new Date(day)
+    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
     setBidContent({
       ...bidContent,
-      estCloseDay : date
-    })
+      estCloseDay : formattedDate
+    });
   }
 
   return (
@@ -180,7 +189,7 @@ const BidSaveAddRegist = (props) => {
                 제출시작일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-                <Calendar onUpdateDate={onUpdateEstStartDay} calendarId="startDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
+                <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estStartDay} onChange={(day) => onUpdateEstStartDay(day)} dateFormat="yyyy-MM-dd"/>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estStartTime" onChange={onChangeAddRegist} value={bidContent.estStartTime}>
                   <option value="">시간 선택</option>
@@ -215,7 +224,7 @@ const BidSaveAddRegist = (props) => {
                 제출마감일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-                <Calendar onUpdateDate={onUpdateEstEstCloseDay} calendarId="closeDate" className="datepicker inputStyle" minDate={bidContent.minDate}></Calendar>
+              <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estCloseDay} onChange={(day) => onUpdateEstEstCloseDay(day)} dateFormat="yyyy-MM-dd"/>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estCloseTime" onChange={onChangeAddRegist} value={bidContent.estCloseTime}>
                   <option value="">시간 선택</option>

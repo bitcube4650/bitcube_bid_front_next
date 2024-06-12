@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import BidAttSignPop from './BidAttSignPop';
 
 const BidCommonInfo = (props) => {
+    console.log(props)
     
     //세션 로그인 정보
     const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
@@ -53,6 +54,14 @@ const BidCommonInfo = (props) => {
         }else if(whoAtt == '2'){
             props.data.openAtt2Sign ='Y'
         }
+    }
+
+    if(props.BidProgressDetail){
+        
+        const bidContent = props.data[0]
+        //console.log(bidContent[0])
+        //console.log(bidContent[0])
+        //props.data.biNo =  data.biNo
     }
 
     return (

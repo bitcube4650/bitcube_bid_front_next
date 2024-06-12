@@ -11,13 +11,17 @@ const BidProgressSave = () => {
 
   const navigate = useNavigate();
 
-  const {viewType, bidContent, setBidContent,custContent,custUserInfo,tableContent, insFile,innerFiles, outerFiles} = useContext(BidContext);
-
-  const moveBidProgress =()=>{
+  const {viewType, setViewType, bidContent, setBidContent,custContent,custUserInfo,tableContent, insFile,innerFiles, outerFiles} = useContext(BidContext);
+  const onMoveBidProgress =()=>{
     navigate('/bid/progress');
   }
 
   useEffect(() => {
+    if(!viewType){
+      const sessionViewType = sessionStorage.getItem('viewType')
+      setViewType(sessionViewType)
+    }
+
     if (viewType === '등록') {
       const currentDate = new Date();
       let currentHours = currentDate.getHours();
@@ -33,6 +37,24 @@ const BidProgressSave = () => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    const spotDay = bidContent.spotDay
+    const spotTime = bidContent.spotTime
+    const estStartDay = bidContent.estStartDay
+    const estStartTime = bidContent.estStartTime
+    const estCloseDay = bidContent.estCloseDay
+    const estCloseTime = bidContent.estCloseTime
+    
+    setBidContent({
+      ...bidContent,
+      spotDate : `${spotDay} ${spotTime}`,
+      estStartDate : `${estStartDay} ${estStartTime}`,
+      estCloseDate : `${estCloseDay} ${estCloseTime}`,
+    })
+
+  }, [bidContent.spotDay, bidContent.spotTime, bidContent.estStartDay, bidContent.estStartTime, bidContent.estCloseDay, bidContent.estCloseTime])
+  
 
   const onSaveVali = ()=>{
 
@@ -119,17 +141,6 @@ const BidProgressSave = () => {
       Swal.fire('', '제출시작일시가 제출마감일시보다 큽니다.', 'warning')
       return false;
     }
-
-    console.log(`${spotDay} ${spotTime}`)
-    console.log(`${estStartDay} ${estStartTime}`)
-    console.log(`${estCloseDay} ${estCloseTime}`)
-
-    setBidContent({
-      ...bidContent,
-      spotDate : `${spotDay} ${spotTime}`,
-      estStartDate : `${estStartDay} ${estStartTime}`,
-      estCloseDate : `${estCloseDay} ${estCloseTime}`,
-    })
 
     if (!bidContent.estOpenerCode) {
       Swal.fire('', '개찰자를 선택해 주세요.', 'warning')
@@ -292,7 +303,7 @@ const BidProgressSave = () => {
       try {
         await axios.post(`/api/v1/bid/${type}Bid`, fd);
         Swal.fire('입찰계획이 저장되었습니다.', '', 'success');
-        moveBidProgress()
+        onMoveBidProgress()
         
       } catch (error) {
           Swal.fire('입찰계획 저장을 실패하였습니다.', '', 'error');
@@ -320,7 +331,7 @@ const BidProgressSave = () => {
           <BidSaveBasicInfo/>
           <BidSaveAddRegist/>
           <div className="text-center mt50">
-            <button title="목록" className="btnStyle btnOutline" onClick={()=>{moveBidProgress()}}>목록 </button> 
+            <button title="목록" className="btnStyle btnOutline" onClick={()=>{onMoveBidProgress()}}>목록 </button> 
             <button className="btnStyle btnPrimary" onClick={()=>onSaveConfirm()}>저장</button></div>
         </div>
       </div>

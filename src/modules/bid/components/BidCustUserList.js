@@ -37,7 +37,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
       const onSearch = useCallback(async () => {
         try {
           const response = await axios.post('/api/v1/custuser/userListForCust', srcData);
-          setBidCustUserList(response.data);
+          setBidCustUserList(response.data.data);
         } catch (error) {
           Swal.fire('조회에 실패하였습니다.', '', 'error');
           console.log(error);
@@ -69,7 +69,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
           const fetchInitialData = async () => {
             try {
               const response = await axios.post('/api/v1/custuser/userListForCust', initialSrcData);
-              setBidCustUserList(response.data);
+              setBidCustUserList(response.data.data);
             } catch (error) {
               Swal.fire('조회에 실패하였습니다.', '', 'error');
               console.log(error);
@@ -91,7 +91,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
         const isChecked = event.target.checked;
         setAllChecked(isChecked);
         if (isChecked) {
-            const allUserIds = bidCustUserList.data.content.map((item) => item);
+            const allUserIds = bidCustUserList.content.map((item) => item);
             setSelectedUserIds(allUserIds);
         } else {
             setSelectedUserIds([]);
@@ -222,8 +222,8 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
                     <tbody>
 
                     {
-                bidCustUserList?.data?.content?.length > 0 ? (
-                    bidCustUserList.data.content.map((item) => (
+                bidCustUserList?.content?.length > 0 ? (
+                    bidCustUserList.content.map((item) => (
 
                     <tr key={item.userId}>
                        {type && 
