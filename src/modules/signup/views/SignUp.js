@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../../../components/layout/Header';
 import EnrollmentProcessPop from '../components/EnrollmentProcess';
 import BiddingGuidePop from '../components/BiddingGuide';
 
@@ -17,7 +16,6 @@ const SignUp = () => {
 
     return (
         <div>
-            <Header />
             <div className="joinWrap">
                 <div className="inner">
                     <div className="joinTop">
