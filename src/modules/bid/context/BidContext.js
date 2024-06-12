@@ -4,6 +4,8 @@ export const BidContext = createContext();
 
 export const BidProvider = ({ children }) => {
 
+  //세션 로그인 정보
+
   const [viewType, setViewType] = useState('');
 
   const [bidContent, setBidContent] = useState(
@@ -16,8 +18,9 @@ export const BidProvider = ({ children }) => {
       biModeCode : 'A', // 입찰방식
       bidJoinSpec : '', // 입찰참가자격 
       specialCond : '', // 특수조건
-      spotDate : '', // 현장설명 일시
+      spotDay : '', // 현장설명 일시
       spotTime : '', // 현장설명 시간
+      spotDate : '', // 현장설명 일시 + 시간
       spotArea : '', // 현장설명장소
       succDeciMethCode : '', // 낙찰자결정방법
       amtBasis : '', // 금액기준
@@ -40,10 +43,12 @@ export const BidProvider = ({ children }) => {
 
       //BidSaveAddRegist에서 사용
 
-      estStartDate : '', // 제출시작 일시
+      estStartDay : '', // 제출시작 일시
       estStartTime : '', // 제출시작 시간
-      estCloseDate : '', // 제출시작 일시
-      estCloseTime : '', // 제출시작 시간
+      estStartDate : '', // 제출 시간 일시 + 시간
+      estCloseDay : '', // 제출마감 일시
+      estCloseTime : '', // 제출마감 시간
+      estCloseDate : '', // 제출마감 일시 + 시간
       estOpener : '', // 개찰자 이름
       estOpenerCode : '', // 개찰자ID
       gongoId :'', // 입찰공고자 이름
@@ -56,7 +61,7 @@ export const BidProvider = ({ children }) => {
       openAtt2Code : '', // 입회자2 ID
       insModeCode : '1', // 내역방식
       supplyCond : '',  // 납품조건
-
+      interrelatedCustCode : '' // 로그인 사용자의 custCode
     }
   )
 
