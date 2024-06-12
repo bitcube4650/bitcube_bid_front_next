@@ -16,7 +16,7 @@ function GroupUserListJS(props) {
                 </a>
             </td>
             <td>{ props.CustUser.userPosition }</td>
-            <td>{ props.CustUser.deptName }</td>
+            <td>{ props.CustUser.userBuseo }</td>
             <td>{ CommonUtils.onAddDashTel(props.CustUser.userTel) }</td>
             <td>{ CommonUtils.onAddDashTel(props.CustUser.userHp) }</td>
             <td>{ props.CustUser.userAuth === '1' ? '업체관리자' : '일반사용자' }</td>
