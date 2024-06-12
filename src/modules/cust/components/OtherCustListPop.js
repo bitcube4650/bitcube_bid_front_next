@@ -3,15 +3,19 @@ import Pagination from '../../../components/Pagination'
 import axios from 'axios'
 import { Modal } from 'react-bootstrap'
 import * as CommonUtils from 'components/CommonUtils';
+import ItemPop from '../../signup/components/ItemPop';
 
 const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 	const [srcData, setSrcData] = useState({			// 조회조건
 		custCode : '11',								// 업체코드
 		custName : '',
+		custType : '',
+		custTypeNm : '',
 		size : 10,										// 최대 조회건수
 		page : 0										// 페이지 위치
 	})
 	const [otherCustList, setOtherCustList] = useState([])
+	const [itemPop, setItemPop] = useState(false);		// 품목 팝업
 
 	const onChangeSrcData = (e) => {
 		const { name, value } = e.target;
@@ -20,7 +24,6 @@ const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 			[name]: value
 		})
 	}
-
 
 	// 업체 리스트 조회
 	const onSearch = useCallback(async() => {
@@ -34,13 +37,22 @@ const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 
 		setOtherCustModal(false)
 	}
+	
+	// 업체유형 팝업 callback
+	const itemSelectCallback = (data) => {
+		setSrcData({
+			...srcData,
+			custType : data.itemCode,
+			custTypeNm : data.itemName
+		})
+	}
 
 	useEffect(() => {
 		onSearch();
 	}, [srcData.size, srcData.page])
 
   return (
-	<Modal className='fade modalStyle' id="otherCustPop" show={setOtherCustModal} dialogClassName="modal-xl">
+	<Modal className={`modalStyle ${itemPop ? 'modal-cover' : ''}`} id="otherCustPop" show={setOtherCustModal} onHide={() => setOtherCustModal(false)} dialogClassName="modal-xl">
 		<Modal.Body>
 			<button className="ModalClose" data-dismiss="modal" title="닫기" onClick={() => setOtherCustModal(false)}><i className="fa-solid fa-xmark"></i></button>
 			<h2 className="modalTitle">타계열사 업체조회</h2>
@@ -54,11 +66,11 @@ const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 				<div className="flex align-items-center">
 					<div className="sbTit mr30">업체유형</div>
 					<div className="width150px">
-						<input type="text" className="inputStyle readonly" readOnly />
+						<input type="text" className="inputStyle readonly" name='custTypeNm' value={srcData.custTypeNm} readOnly />
 					</div>
-					<input type="hidden" />
-					<button data-toggle="modal" data-target="#itemPop" className="btnStyle btnSecondary ml10" title="조회">조회</button>
-					<button type="button" className="btnStyle btnOutline" title="삭제">삭제</button>
+					<input type="hidden"  name='custType' value={srcData.custType} />
+					<button className="btnStyle btnSecondary ml10" title="조회" onClick={()=>setItemPop(true)}>조회</button>
+					<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : `${!CommonUtils.isEmpty(srcData.custType) ? "inline-flex" : "none"}`}} onClick={() => {setSrcData({...srcData, custType : '', custTypeNm : ''})}}>삭제</button>
 					<div className="sbTit mr30 ml50">업체명</div>
 					<div className="width150px">
 						<input type="text" className="inputStyle" name="custName" value={srcData.custName} onChange={onChangeSrcData} onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
@@ -105,6 +117,9 @@ const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 			<div className="modalFooter">
 				<button className="modalBtnClose" data-dismiss="modal" title="닫기" onClick={() => setOtherCustModal(false)}>닫기</button>
 			</div>
+			
+			{/* 품목 팝업 */}
+			<ItemPop itemPop={itemPop} setItemPop={setItemPop} popClick={itemSelectCallback} />
 		</Modal.Body>
 	</Modal>
   )
