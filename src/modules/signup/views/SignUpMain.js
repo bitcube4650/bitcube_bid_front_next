@@ -4,7 +4,6 @@ import { Modal, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import Header from '../../../components/layout/Header';
 import ItemPop from '../components/ItemPop';
 import AddrPop from '../../../components/AddrPop';
 import * as CommonUtils from '../../../components/CommonUtils'
@@ -439,7 +438,6 @@ const SignUpMain = () => {
     
     return (
         <div>
-            <Header />
             <div className="joinWrap">
                 <div className="inner">
                     <div className="joinTop">

@@ -74,11 +74,11 @@ const App = () => {
 				<ErrorBoundary> {/*Context를 사용할 때 ErrorBoundary를 사용해야 어떤 에러가 나오는지 표시됩니다.*/}
 					<BidProvider>
 						<Routes>
-							<Route path="/login" element={<Login />}></Route>
-							<Route path="/" element={<Login />}></Route>
-							<Route path="/signUp" element={<SignUp />}></Route>
-							<Route path="/signUpMain" element={<SignUpMain />}></Route>
 							<Route element={<Layout />}>
+								<Route path="/login" element={<Login />}></Route>
+								<Route path="/" element={<Login />}></Route>
+								<Route path="/signUp" element={<SignUp />}></Route>
+								<Route path="/signUpMain" element={<SignUpMain />}></Route>
 								<Route path="/main" element={<Main />}></Route>
 								<Route path="/bid/progress" element={<BidProgress />}></Route>
 								<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>

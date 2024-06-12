@@ -26,7 +26,7 @@ const Menu = () => {
     };
     
     //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     // 운영사 / 협력사 구분
     const userCustType = loginInfo.custType;
     // 사용자 권한 1, 2, 3, 4
