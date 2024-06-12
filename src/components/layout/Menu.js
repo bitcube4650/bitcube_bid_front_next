@@ -53,7 +53,7 @@ const Menu = () => {
                     <a id="ebid" href="#!" onClick={onClickMenu} ><span><i className="fa-light fa-file-contract"></i></span>전자입찰</a>
                     <div className={(targetId === "ebid" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
-                            <li className={(path === ('/bid/progress') ? 'active' : '')}>
+                            <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/progress') ? 'active' : '')}>
                                 <a href="/bid/progress">입찰계획</a>
                             </li>
                             <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/Status') ? 'active' : '')}>
