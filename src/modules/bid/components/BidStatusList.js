@@ -6,12 +6,12 @@ const BidStatusList = (props) => {
 
     const navigate = useNavigate();
 
-    const clickBidDetail = (biNo) => {
+    const onClickBidDetail = (biNo) => {
         localStorage.setItem("biNo", biNo);
         navigate('/bid/status/detail');
     };
 
-    function IsPastDate(dateString) {
+    function fnIsPastDate(dateString) {
         const currentDate = new Date();
         const targetDate = new Date(dateString);
         return targetDate < currentDate;
@@ -20,16 +20,16 @@ const BidStatusList = (props) => {
     return (
          <tr>
             <td className="textUnderline">
-                <a style={{cursor: "pointer"}} onClick={() => clickBidDetail(props.val.biNo)}>{ props.val.biNo }</a>
+                <a href="#!" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)}>{ props.val.biNo }</a>
             </td>
             <td className="textUnderline text-left">
-                <a style={{cursor: "pointer"}} onClick={() => clickBidDetail(props.val.biNo)} >{ props.val.biName }</a>
+                <a href="#!" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)} >{ props.val.biName }</a>
             </td>
-            <td className={IsPastDate(props.val.estCloseDate) ? 'textHighlight' : ''}>
+            <td className={fnIsPastDate(props.val.estCloseDate) ? 'textHighlight' : ''}>
                 <i className="fa-regular fa-timer"></i>{ props.val.estCloseDate }
             </td>
             <td>{ ft.ftBiMode(props.val.biMode) }</td>
-            <td className={IsPastDate(props.val.estCloseDate) && props.val.ingTag != '개찰' ? 'textHighlight' : (props.val.ingTag == '개찰' ? 'blueHighlight' : '')}>{ props.val.ingTag }</td>
+            <td className={fnIsPastDate(props.val.estCloseDate) && props.val.ingTag !== '개찰' ? 'textHighlight' : (props.val.ingTag === '개찰' ? 'blueHighlight' : '')}>{ props.val.ingTag }</td>
             <td>{ ft.ftInsMode(props.val.insMode) }</td>
             <td>
                 <i className="fa-light fa-paper-plane-top"></i>

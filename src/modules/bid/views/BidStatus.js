@@ -1,10 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import List from '../components/BidStatusList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 const BidStatus = () => {
+
+    //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
+    const isMounted = useRef(true);
+
     //조회 결과
     const [list, setList] = useState([]);
 
@@ -22,22 +26,27 @@ const BidStatus = () => {
     const onChangeSrcData = (e) => {
         setSrcData({
             ...srcData,
-            [e.target.name]: (e.target.className == 'checkStyle') ? e.target.checked : e.target.value
+            [e.target.name]: (e.target.className === 'checkStyle') ? e.target.checked : e.target.value
         });
     }
 
     const onSearch = useCallback(async() => {
-        try {
-            const response = await axios.post("/api/v1/bidstatus/statuslist", srcData);
-            setList(response.data.data);
-        } catch (error) {
-            Swal.fire('', '조회에 실패하였습니다.', 'error');
-            console.log(error);
-        }
-    });
+        await axios.post("/api/v1/bidstatus/statuslist", srcData).then((response) =>{
+            if (response.data.code === "OK") {
+                setList(response.data.data);
+            } else {
+                Swal.fire('', '조회에 실패하였습니다.', 'error');
+            }
+        })
+    }, [srcData]);
 
+    //마운트 완료 후 검색
     useEffect(() => {
-        onSearch();
+        if (isMounted.current) {
+            isMounted.current = false;
+        } else {
+            onSearch();
+        }
     },[srcData.size, srcData.page]);
 
     return (
@@ -77,28 +86,28 @@ const BidStatus = () => {
                      {/* searchBox  */}
                     <div className="searchBox mt20">
                         <div className="flex align-items-center">
-                        <div className="sbTit mr30">입찰번호</div>
-                        <div className="width250px">
-                            <input type="text" className="inputStyle" onChange={onChangeSrcData} name="bidNo" maxLength="10" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
-                        </div>
-                        <div className="sbTit mr30 ml50">입찰명</div>
-                        <div className="width250px">
-                            <input type="text" className="inputStyle" onChange={onChangeSrcData} name="bidName" maxLength="50" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
-                        </div>
+                            <div className="sbTit mr30">입찰번호</div>
+                            <div className="width250px">
+                                <input type="text" className="inputStyle" onChange={onChangeSrcData} name="bidNo" maxLength="10" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
+                            </div>
+                            <div className="sbTit mr30 ml50">입찰명</div>
+                            <div className="width250px">
+                                <input type="text" className="inputStyle" onChange={onChangeSrcData} name="bidName" maxLength="50" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
+                            </div>
                         </div>
                         <div className="flex align-items-center height50px mt10">
-                        <div className="sbTit mr30">진행상태</div>
-                        <div className="flex align-items-center width100">
-                            <input type="checkbox" id="progress1-1" className="checkStyle" onClick={onChangeSrcData} name="rebidYn" defaultChecked={srcData.rebidYn} /><label htmlFor="progress1-1">입찰공고(재입찰 포함)</label>
-                            <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="dateOverYn" defaultChecked={srcData.dateOverYn} /><label htmlFor="progress1-2" className="ml50">입찰공고(개찰대상)</label>
-                            <input type="checkbox" id="progress1-3" className="checkStyle" onClick={onChangeSrcData} name="openBidYn" defaultChecked={srcData.openBidYn} /><label htmlFor="progress1-3" className="ml50">개찰(업체선정대상)</label>
-                        </div>
-                        <a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                            <div className="sbTit mr30">진행상태</div>
+                            <div className="flex align-items-center width100">
+                                <input type="checkbox" id="progress1-1" className="checkStyle" onClick={onChangeSrcData} name="rebidYn" defaultChecked={srcData.rebidYn} /><label htmlFor="progress1-1">입찰공고(재입찰 포함)</label>
+                                <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="dateOverYn" defaultChecked={srcData.dateOverYn} /><label htmlFor="progress1-2" className="ml50">입찰공고(개찰대상)</label>
+                                <input type="checkbox" id="progress1-3" className="checkStyle" onClick={onChangeSrcData} name="openBidYn" defaultChecked={srcData.openBidYn} /><label htmlFor="progress1-3" className="ml50">개찰(업체선정대상)</label>
+                            </div>
+                            <a href="#!" className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                         </div>
                     </div>
                     {/* searchBox  */}
 
-                    <div className="width100">
+                    <div className="width100 mt10">
                         전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
                         <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
                             <option value="10">10개씩 보기</option>
@@ -107,7 +116,6 @@ const BidStatus = () => {
                             <option value="50">50개씩 보기</option>
                         </select>
                     </div>
-
                     
                     <table className="tblSkin1 mt10">
                         <colgroup>
@@ -134,7 +142,7 @@ const BidStatus = () => {
                         </thead>
                         <tbody>
                             { list.content?.map((data) => <List key={data.biNo} val={data} />) }
-                            { (list.content == null || list.content.length == 0)&&
+                            { (list.content === undefined || list.content === null || list.content.length === 0)&&
                                 <tr>
                                     <td className="end" colSpan="8">조회된 데이터가 없습니다.</td>
                                 </tr> }

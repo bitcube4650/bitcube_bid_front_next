@@ -28,7 +28,7 @@ const BidCommonInfo = (props) => {
 
     //입회자 서명 팝업 오픈
     const onOpenAttSignPop = (att, attSignId, signYn) => {
-        if(signYn == 'N'){
+        if(signYn === 'N'){
             let currDate = new Date();
             let currDateTime = currDate.getTime();
             let estStartDate = new Date(props.data.estStartDate);
@@ -48,19 +48,11 @@ const BidCommonInfo = (props) => {
     }
 
     const onAttSignUpdate = (whoAtt) => {
-        if(whoAtt == '1'){
+        if(whoAtt === '1'){
             props.data.openAtt1Sign ='Y'
-        }else if(whoAtt == '2'){
+        }else if(whoAtt === '2'){
             props.data.openAtt2Sign ='Y'
         }
-    }
-
-    if(props.BidProgressDetail){
-        
-        const bidContent = props.data[0]
-        //console.log(bidContent[0])
-        //console.log(bidContent[0])
-        //props.data.biNo =  data.biNo
     }
 
     return (
@@ -112,8 +104,8 @@ const BidCommonInfo = (props) => {
                     <div className="width100">
                         <div className="overflow-y-scroll boxStSm width100" style={{height:"50px"}}>
                             { props.data.custList?.map((cust, idx) => 
-                                <a key={idx} onClick={()=>onOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
-                                {props.data.custList.length != (idx+1) &&
+                                <a href="#!" key={idx} onClick={()=>onOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
+                                {props.data.custList.length !== (idx+1) &&
                                 <span>, </span>
                                 }
                                 </a>
@@ -125,7 +117,7 @@ const BidCommonInfo = (props) => {
                     { props.data.biMode === 'B' &&
                         <div className="flex align-items-center width100">
                             <div className="boxStSm width100 boxOverflowY">
-                                <a>가입회원사 전체</a>
+                                <a href="#!">가입회원사 전체</a>
                             </div>
                         </div>
                     }
@@ -141,10 +133,10 @@ const BidCommonInfo = (props) => {
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width170px">예산금액</div>
                     <div className="width100">{ Ft.numberWithCommas(props.data.bdAmt) } 
-                    { (props.data.bdAmt != null && props.data.bdAmt != undefined && props.data.bdAmt != '') &&
+                    { (props.data.bdAmt !== undefined && props.data.bdAmt !== null &&props.data.bdAmt !== '') &&
                         <span>원</span>
                     }
-                    { (props.data.ingTag == 'A5' && props.data.realAmt != undefined && props.data.realAmt != null && props.data.realAmt != '' && ( props.data.createUser == userId || props.data.gongoId == userId)) &&
+                    { (props.data.realAmt !== undefined && props.data.realAmt !== null && props.data.realAmt !== '' && props.data.ingTag === 'A5' && ( props.data.createUser === userId || props.data.gongoId === userId)) &&
                     <span> ( 실제 계약금액 : { Ft.numberWithCommas(props.data.realAmt) } 원 )</span>
                     }
                     </div>
@@ -222,34 +214,34 @@ const BidCommonInfo = (props) => {
                 <div className="flex align-items-center mt20">
                     <div className="flex align-items-center width100">
                         <div className="formTit flex-shrink0 width170px">입회자1</div>
-                        { props.attSign == 'N' &&
+                        { props.attSign === 'N' &&
                         <div className="width100">{ props.data.openAtt1 }</div>
                         }
 
-                        { props.attSign == 'Y' &&
+                        { props.attSign === 'Y' &&
                         <div className="width100">{ props.data.openAtt1 }
-                            { props.data.openAtt1Id == userId && 
-                            <span style={ props.data.openAtt1Sign != 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={() => onOpenAttSignPop('1', props.data.openAtt1Id, props.data.openAtt1Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
+                            { props.data.openAtt1Id === userId && 
+                            <span style={ props.data.openAtt1Sign !== 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={() => onOpenAttSignPop('1', props.data.openAtt1Id, props.data.openAtt1Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
                             }
-                            { (props.data.openAtt1Id != userId && props.data.openAtt1Id != null && props.data.openAtt1Id != '' ) &&
-                            <span style={{ color:props.data.openAtt1Sign != 'Y' ? 'red' : '' }}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
+                            { (props.data.openAtt1Id !== userId && props.data.openAtt1Id != null && props.data.openAtt1Id !== '' ) &&
+                            <span style={{ color:props.data.openAtt1Sign !== 'Y' ? 'red' : '' }}>{ Ft.ftOpenAttSign(props.data.openAtt1Sign) }</span>
                             }
                         </div>
                         }
                     </div>
                     <div className="flex align-items-center width100 ml80">
                         <div className="formTit flex-shrink0 width170px">입회자2</div>
-                        { props.attSign == 'N' &&
+                        { props.attSign === 'N' &&
                         <div className="width100">{ props.data.openAtt2 }</div>
                         }
 
-                        { props.attSign == 'Y' &&
-                        <div className="width100" v-else-if="attSign == 'Y'">{ props.data.openAtt2 }
-                            { props.data.openAtt2Id == userId &&
-                            <span style={ props.data.openAtt2Sign != 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={ () => onOpenAttSignPop('2', props.data.openAtt2Id, props.data.openAtt2Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
+                        { props.attSign === 'Y' &&
+                        <div className="width100">{ props.data.openAtt2 }
+                            { props.data.openAtt2Id === userId &&
+                            <span style={ props.data.openAtt2Sign !== 'Y' ? {color: 'red',cursor: 'pointer', textDecoration: 'underline'} : {} } onClick={ () => onOpenAttSignPop('2', props.data.openAtt2Id, props.data.openAtt2Sign)}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
                             }
-                            { (props.data.openAtt2Id != userId && props.data.openAtt2Id != null && props.data.openAtt2Id != '') &&
-                            <span style={{ color:props.data.openAtt2Sign != 'Y' ? 'red' : '' }}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
+                            { (props.data.openAtt2Id !== userId && props.data.openAtt2Id !== null && props.data.openAtt2Id !== '') &&
+                            <span style={{ color:props.data.openAtt2Sign !== 'Y' ? 'red' : '' }}>{ Ft.ftOpenAttSign(props.data.openAtt2Sign) }</span>
                             }
                         </div>
                         }
@@ -268,13 +260,13 @@ const BidCommonInfo = (props) => {
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width170px">세부내역</div>
                     
-                    { props.data.insMode == '1' && 
+                    { props.data.insMode === '1' && 
                     <div className="width100">
-                        { props.data.specFile?.map((specFile, idx) => <a key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
+                        { props.data.specFile?.map((specFile, idx) => <a href="#!" key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
                     </div>
                     }
 
-                    { props.data.insMode == '2' && 
+                    { props.data.insMode === '2' && 
                     <div className="width100">
                         <table className="tblSkin1">
                             <colgroup>
@@ -311,18 +303,18 @@ const BidCommonInfo = (props) => {
                     <div className="formTit flex-shrink0 width170px">첨부파일</div>
                     <div className="width100">
                         { props.data.fileList?.map((file, idx) => 
-                            <div key={idx} className={file.fileFlag == '1' ? 'textHighlight' : ''}>
-                                <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
+                            <div key={idx} className={file.fileFlag === '1' ? 'textHighlight' : ''}>
+                                <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a href="#!" onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
                             </div>) }
                     </div>
                 </div>
-                { (props.data.ingTag == 'A3' && props.data.whyA3 != '' ) &&
+                { (props.data.ingTag === 'A3' && props.data.whyA3 !== '' ) &&
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width170px">재입찰사유</div>
                     <div className="width100">{ props.data.whyA3 }</div>
                 </div>
                 }
-                { (props.data.ingTag == 'A7' && props.data.whyA7 != '' ) &&
+                { (props.data.ingTag === 'A7' && props.data.whyA7 !== '' ) &&
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width170px">유찰사유</div>
                     <div className="width100">{ props.data.whyA7 }</div>

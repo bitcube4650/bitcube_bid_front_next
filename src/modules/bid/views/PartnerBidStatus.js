@@ -1,10 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import List from '../components/PartnerBidStatusList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 const PartnerBidStatus = () => {
+
+    //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
+    const isMounted = useRef(true);
 
     //조회 결과
     const [list, setList] = useState([]);
@@ -24,22 +27,27 @@ const PartnerBidStatus = () => {
     const onChangeSrcData = (e) => {
         setSrcData({
             ...srcData,
-            [e.target.name]: (e.target.className == 'checkStyle') ? e.target.checked : e.target.value
+            [e.target.name]: (e.target.className === 'checkStyle') ? e.target.checked : e.target.value
         });
     }
 
     const onSearch = useCallback(async() => {
-        try {
-            const response = await axios.post("/api/v1/bidPtStatus/statuslist", srcData);
-            setList(response.data.data);
-        } catch (error) {
-            Swal.fire('', '조회에 실패하였습니다.', 'error');
-            console.log(error);
-        }
-    });
+        await axios.post("/api/v1/bidPtStatus/statuslist", srcData).then((response) =>{
+            if (response.data.code === "OK") {
+                setList(response.data.data);
+            } else {
+                Swal.fire('', '조회에 실패하였습니다.', 'error');
+            }
+        })
+    }, [srcData]);
 
+    //마운트 완료 후 검색
     useEffect(() => {
-        onSearch();
+        if (isMounted.current) {
+            isMounted.current = false;
+        } else {
+            onSearch();
+        }
     },[srcData.size, srcData.page]);
 
     return (
@@ -84,12 +92,12 @@ const PartnerBidStatus = () => {
                             <input type="checkbox" id="s1-1" className="checkStyle" onClick={onChangeSrcData} name="esmtYnN" defaultChecked={srcData.esmtYnN} /><label htmlFor="s1-1">미투찰(재입찰 포함)</label>
                             <input type="checkbox" id="s1-2" className="checkStyle" onClick={onChangeSrcData} name="esmtYnY" defaultChecked={srcData.esmtYnY} /><label htmlFor="s1-2" className="ml50">투찰</label>
                         </div>
-                        <a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                        <a href="#!" className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}
 
-                <div className="width100">
+                <div className="width100 mt10">
                     전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
                     <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
                         <option value="10">10개씩 보기</option>
@@ -123,7 +131,7 @@ const PartnerBidStatus = () => {
                     </thead>
                     <tbody>
                         { list.content?.map((data) => <List key={data.biNo} data={data} />) }
-                        { (list.content == null || list.content.length == 0)&&
+                        { (list.content === undefined || list.content === null || list.content.length === 0)&&
                         <tr>
                             <td className="end" colSpan="8">조회된 데이터가 없습니다.</td>
                         </tr> }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import axios from 'axios';
 import Ft from '../api/filters';
 import { useNavigate } from 'react-router-dom';
@@ -11,38 +11,42 @@ import Modal from 'react-bootstrap/Modal';
 
 const Rebid = () => {
 
+    //마운트 여부
+    const isMounted = useRef(true);
+
     const navigate = useNavigate();
 
+    //재입찰 마감시간
     const [estCloseDay, setEstCloseDay] = useState('');
     const [estCloseTime, setEstCloseTime] = useState('');
-    const [data, setData] = useState({})
-    const [reCustList, setReCustList] = useState([]);
-    const [whyA3, setWhyA3] = useState('');
-    const [reBidPop, setReBidPop] = useState(false);
 
-    const onChgEstCloseDay = useCallback((day) => {
+    //데이터
+    const [data, setData] = useState({})
+
+    //재입찰 대상업체 리스트
+    const [reCustList, setReCustList] = useState([]);
+
+    //재입찰 팝업 및 사유
+    const [reBidPop, setReBidPop] = useState(false);
+    const [whyA3, setWhyA3] = useState('');
+
+    //재입찰 마감일 변경
+    const onChgEstCloseDay = (day) => {
         const selectedDate = new Date(day)
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
         setEstCloseDay(formattedDate);
-    })
-    const onChgEstCloseTime = useCallback((e) => {
-        setEstCloseTime(e.target.value);
-    })
-    const onChgWhyA3 = useCallback((e) => {
-        setWhyA3(e.target.value);
-    })
+    }
 
     //데이터 조회
-    const onSearch = useCallback(async() => {
+    const onSearch = async() => {
 
         let params = {
             biNo : localStorage.getItem('biNo')
         }
 
         await axios.post('/api/v1/bidstatus/statusDetail', params).then((response) => {
-            if(response.data.status != '999'){
+            if(response.data.code === 'OK'){
                 let result = response.data.data;
-                console.log(result);
 
                 let spotDate = result.spotDate;
                 let estStartDate = result.estStartDate;
@@ -63,12 +67,15 @@ const Rebid = () => {
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
             }
         });
-    });
+    };
     
     useEffect(() => {
-        onSearch();
-        let reCustCodeStr = localStorage.getItem('reCustCode');
-        setReCustList(reCustCodeStr.split(",").map(Number))
+        if (isMounted.current) {
+            onSearch();
+            let reCustCodeStr = localStorage.getItem('reCustCode');
+            setReCustList(reCustCodeStr.split(",").map(Number))
+            isMounted.current = false;
+          }
     },[]);
 
     //재입찰 제출마감일시 변경 확인 validation 
@@ -83,7 +90,7 @@ const Rebid = () => {
         }
 
         setReBidPop(true);
-    })
+    },[estCloseDay, estCloseTime])
 
     //재입찰 저장
     const onSave = useCallback(() =>{
@@ -116,7 +123,7 @@ const Rebid = () => {
         }
 
         axios.post("/api/v1/bidstatus/rebid", params).then((response) => {
-            if (response.data.code == "OK") {
+            if (response.data.code === "OK") {
                 setReBidPop(false);
                 Swal.fire('', '재입찰 처리 하였습니다.', 'success');
                 onMovePage();
@@ -125,12 +132,12 @@ const Rebid = () => {
                 Swal.fire('', '재입찰 중 오류가 발생했습니다.', 'error');
             }
         });
-    })
+    },[estCloseDay, estCloseTime, data, whyA3, reCustList])
 
     //페이지 이동
-    const onMovePage = useCallback(()=>{
+    const onMovePage = () => {
         navigate('/bid/status');
-    })
+    }
 
     return (
         <>
@@ -213,10 +220,10 @@ const Rebid = () => {
                                     <div>
                                         { reCustList?.map((data, idx2) =>
                                         <div>
-                                            {data == val.custCode &&
+                                            {data === val.custCode &&
                                             <>
-                                            <a>{ val.custName }</a>
-                                            {(data == val.custCode && idx2 !== reCustList.length - 1) &&
+                                            <a href="#!">{ val.custName }</a>
+                                            {(data === val.custCode && idx2 !== reCustList.length - 1) &&
                                                 <span>,</span>
                                             }
                                             </>
@@ -253,7 +260,7 @@ const Rebid = () => {
                             </div>
                         </div>
 
-                        {data.interrelatedCustCode == '02' &&
+                        {data.interrelatedCustCode === '02' &&
                         <>
                         <h3 className="h3Tit mt50" >입찰분류</h3>
                         <div className="boxSt mt20" >
@@ -303,7 +310,7 @@ const Rebid = () => {
                                     <div className="formTit flex-shrink0 width170px">제출마감일시 <span className="star">*</span></div>
                                     <div className="flex align-items-center width100">
                                         <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={estCloseDay} onChange={(date) => onChgEstCloseDay(date)} dateFormat="yyyy-MM-dd"/>
-                                        <select className="inputStyle ml10" key={estCloseTime} defaultValue={estCloseTime} onChange={onChgEstCloseTime} style={{background:"url('/images/selectArw.png') no-repeat right 15px center",maxWidth: "110px"}}>
+                                        <select className="inputStyle ml10" key={estCloseTime} defaultValue={estCloseTime} onChange={(e)=>setEstCloseTime(e.target.value)} style={{background:"url('/images/selectArw.png') no-repeat right 15px center",maxWidth: "110px"}}>
                                             <option value="">시간 선택</option>
                                             <option value="01:00">01:00</option>
                                             <option value="02:00">02:00</option>
@@ -440,8 +447,8 @@ const Rebid = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {data.specInput?.map((val)=>
-                                            <tr>
+                                            {data.specInput?.map((val, idx)=>
+                                            <tr key={idx}>
                                                 <td><input type="text" className="inputStyle inputSm" defaultValue={val.name} disabled/> </td>
                                                 <td><input type="text" className="inputStyle inputSm" defaultValue={val.ssize} disabled/></td>
                                                 <td><input type="text" className="inputStyle inputSm" defaultValue={val.orderQty} disabled/></td>
@@ -453,7 +460,7 @@ const Rebid = () => {
                                         </tbody>
                                     </table>
                                     <p className="text-right mt10">
-                                        <strong v-text="fnAllSum(data.specInput)"></strong>
+                                        <strong>{ Ft.ftAllSum(data.specInput) }</strong>
                                     </p>
                                 </div>
                             </div>
@@ -476,8 +483,8 @@ const Rebid = () => {
                                     <div className="upload-boxWrap">
                                         <div className="upload-box">
                                             <div className="uploadTxt">
-                                            {data.fileList?.map((file)=> {
-                                                if(file.fileFlag == 0) return <><i className="fa-regular fa-upload"></i><div>{ file.fileNm }</div></>
+                                            {data.fileList?.map((file, idx) => {
+                                                if(file.fileFlag === '0') {return <><i className="fa-regular fa-upload"></i><div key={idx}>{ file.fileNm }</div></>} else { return <></>}
                                             })}
                                             </div>
                                         </div>
@@ -504,8 +511,8 @@ const Rebid = () => {
                                     <div className="upload-boxWrap">
                                         <div className="upload-box">
                                             <div className="uploadTxt">
-                                                {data.fileList?.map((file)=> {
-                                                    if(file.fileFlag == 1) return <><i className="fa-regular fa-upload"></i><div>{ file.fileNm }</div></>
+                                                {data.fileList?.map((file, idx)=> {
+                                                    if(file.fileFlag === '1') {return <><i className="fa-regular fa-upload"></i><div key={idx}>{ file.fileNm }</div></>} else { return <></>}
                                                 })}
                                             </div>
                                         </div>
@@ -516,8 +523,8 @@ const Rebid = () => {
                             </div>
                         </div>
                         <div className="text-center mt50">
-                            <a className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                            <a onClick={onValidation} className="btnStyle btnPrimary" title="재입찰" >재입찰</a>
+                            <a href="#!" className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                            <a href="#!" onClick={onValidation} className="btnStyle btnPrimary" title="재입찰" >재입찰</a>
                         </div>
                     </div>
                 </div>
@@ -526,7 +533,7 @@ const Rebid = () => {
                 {/* 재입찰  */}
                 <Modal className="modalStyle" id="reBidding" show={reBidPop} onHide={()=>setReBidPop(false)} keyboard={true}>
                     <Modal.Body>
-                        <a className="ModalClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                        <a href="#!" className="ModalClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                         <h2 className="modalTitle">재입찰</h2>
                         <div className="modalTopBox">
                             <ul>
@@ -537,10 +544,10 @@ const Rebid = () => {
                                 </li>
                             </ul>
                         </div>
-                        <textarea className="textareaStyle height150px mt20" placeholder="재입찰 사유 필수 입력 (200자 이내)" defaultValue={whyA3} onChange={onChgWhyA3}></textarea>
+                        <textarea className="textareaStyle height150px mt20" placeholder="재입찰 사유 필수 입력 (200자 이내)" defaultValue={whyA3} onChange={(e)=>setWhyA3(e.target.value)}></textarea>
                         <div className="modalFooter">
-                            <a className="modalBtnClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="취소">취소</a>
-                            <a className="modalBtnCheck" title="재입찰" onClick={onSave}>재입찰</a>
+                            <a href="#!" className="modalBtnClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="취소">취소</a>
+                            <a href="#!" className="modalBtnCheck" title="재입찰" onClick={onSave}>재입찰</a>
                         </div>
                     </Modal.Body>
                 </Modal>

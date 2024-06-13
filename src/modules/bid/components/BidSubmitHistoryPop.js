@@ -1,11 +1,14 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 import Ft from '../api/filters';
 import Pagination from '../../../components/Pagination';
 
 const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop, setSubmitHistPop}) => {
+
+    //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
+    const isMounted = useRef(true);
 
     //조회 결과
     const [list, setList] = useState([]);
@@ -20,20 +23,25 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
 
     const onSearch = useCallback(async() => {
         await axios.post("/api/v1/bidstatus/submitHist", srcData).then((response) => {
-            if (response.data.code != "OK") {
+            if (response.data.code !== "OK") {
                 Swal.fire('', response.data.msg, 'error');
             } else {
                 setList(response.data.data.content);
             }
         })
-    });
+    }, [srcData]);
 
-    const onClosePop = useCallback(() => {
+    const onClosePop = () => {
         setSubmitHistPop(false);
-    })
+    }
 
+    //마운트 완료 후 검색
     useEffect(() => {
-        onSearch();
+        if (isMounted.current) {
+            isMounted.current = false;
+        } else {
+            onSearch();
+        }
     },[srcData]);
 
     const onChangeSrcData = (e) => {
@@ -46,7 +54,7 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
     return (
         <Modal className="modalStyle" id="submitHistPop" show={submitHistPop} onHide={onClosePop} keyboard={true} size="lg">
             <Modal.Body>
-                <a className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a href="#!" className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">제출 이력</h2>
                 <table className="tblSkin1 mt20">
                     <colgroup>
@@ -81,7 +89,7 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
                 </div>
                 {/* //pagination */}
                 <div className="modalFooter">
-                    <a className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
+                    <a href="#!" className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
                 </div>
             </Modal.Body>
         </Modal>

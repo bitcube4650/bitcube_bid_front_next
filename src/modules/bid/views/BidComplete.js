@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import List from '../components/BidCompleteList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
@@ -10,6 +10,10 @@ import { ko } from "date-fns/locale";
 import Ft from '../api/filters';
 
 const BidComplete = () => {
+
+    //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
+    const isMounted = useRef(true);
+
     //조회 결과
     const [list, setList] = useState([]);
 
@@ -28,41 +32,46 @@ const BidComplete = () => {
     const onChangeSrcData = (e) => {
         setSrcData({
             ...srcData,
-            [e.target.name]: (e.target.className == 'checkStyle') ? e.target.checked : e.target.value
+            [e.target.name]: (e.target.className === 'checkStyle') ? e.target.checked : e.target.value
         });
     }
 
     const onSearch = useCallback(async() => {
-        try {
-            const response = await axios.post("/api/v1/bidComplete/list", srcData);
-            setList(response.data.data);
-        } catch (error) {
-            Swal.fire('', '조회에 실패하였습니다.', 'error');
-            console.log(error);
-        }
-    });
+        await axios.post("/api/v1/bidComplete/list", srcData).then((response) =>{
+            if (response.data.code === "OK") {
+                setList(response.data.data);
+            } else {
+                Swal.fire('', '조회에 실패하였습니다.', 'error');
+            }
+        })
+    }, [srcData]);
 
+    //마운트 완료 후 검색
     useEffect(() => {
-        onSearch();
+        if (isMounted.current) {
+            isMounted.current = false;
+        } else {
+            onSearch();
+        }
     },[srcData.size, srcData.page]);
 
-    const onChgStartDate = useCallback((day) => {
+    const onChgStartDate = (day) => {
         const selectedDate = new Date(day)
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
         setSrcData({
             ...srcData,
             startDate: formattedDate
         });
-    })
+    }
 
-    const onChgEndDate = useCallback((day) => {
+    const onChgEndDate = (day) => {
         const selectedDate = new Date(day)
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
         setSrcData({
             ...srcData,
             endDate: formattedDate
         });
-    })
+    }
     
     return (
         <div className="conRight">
@@ -107,12 +116,12 @@ const BidComplete = () => {
                         <div style={{ width:'320px'}}>
                             <input type="text" onChange={onChangeSrcData} name="biName" className="inputStyle" placeholder="" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
-                        <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
+                        <a href="#!" onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}
 
-                <div className="width100">
+                <div className="width100 mt10">
                     전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
                     <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
                         <option value="10">10개씩 보기</option>
@@ -145,7 +154,7 @@ const BidComplete = () => {
                     </thead>
                     <tbody>
                         { list.content?.map((data) => <List key={data.biNo} data={data} />) }
-                        { (list.content == null || list.content.length == 0)&&
+                        { (list.content === undefined || list.content === null || list.content.length === 0)&&
                             <tr>
                                 <td className="end" colSpan="7">조회된 데이터가 없습니다.</td>
                             </tr> }

@@ -5,6 +5,7 @@ const api = {
 
     //파일 다운로드 파라미터 셋팅
     fnCustSpecFileDown(fileNm, filePath){
+        console.log("fileNm : " + fileNm + " | filePath : " + filePath);
         if(!Ft.isEmpty(fileNm) && !Ft.isEmpty(filePath)){
             let fileInfo = {
                 filePath : filePath
