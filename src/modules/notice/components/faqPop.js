@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 const faqPop = forwardRef(({ isOpen, onClose, onSearch }, ref) => {
 
 	//세션 로그인 정보
-    const [loginInfo, setLoginInfo] = useState(JSON.parse(sessionStorage.getItem("loginInfo")));
+    const [loginInfo, setLoginInfo] = useState(JSON.parse(localStorage.getItem("loginInfo")));
 	const [faqId, setFaqId] = useState('');
     const [detail, setDetail] = useState({ title: '', faqType: '', admin: 'Y', useYn: 'Y', updateInsert: '' });
 
