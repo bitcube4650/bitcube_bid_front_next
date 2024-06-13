@@ -51,7 +51,7 @@ const Layout = () => {
                             <div className="contentWrap">
                                 <Menu />
                                 <div className="conRightWrap">
-                                    <PartnerMain />
+                                    <Main />
                                     <Footer />
                                 </div>
                             </div>
