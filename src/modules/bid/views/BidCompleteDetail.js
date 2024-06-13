@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import CmmnInfo from '../components/BidCommonInfo'
@@ -11,7 +11,8 @@ import BidResultReport from '../components/BidResultReport';
 
 const BidCompleteDetail = () => {
 
-    const navigate = useNavigate();
+    //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
+    const isMounted = useRef(true);
 
     //조회 결과
     const [data, setData] = useState({});
@@ -21,19 +22,19 @@ const BidCompleteDetail = () => {
     const userId = loginInfo.userId;
 
     //데이터 조회
-    const onSearch = useCallback(async() => {
+    const onSearch = async() => {
         let params = {
             biNo : localStorage.getItem('biNo')
         }
 
         await axios.post('/api/v1/bidComplete/detail', params).then((response) => {
-            if(response.data.status != '999'){
+            if(response.data.code === 'OK'){
                 setData(response.data.data);
             }else{
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
             }
         });
-    });
+    };
 
     //실제계약금액 팝업
     const [realAmtPop, setRealAmtPop] = useState(false);
@@ -54,24 +55,26 @@ const BidCompleteDetail = () => {
         ,	biNo : localStorage.getItem('biNo')
         }
         axios.post("/api/v1/bidComplete/updRealAmt", params).then((response) => {
-            if(response.data.code == 'OK'){
-                data.realAmt = letRealAmt;
+            if(response.data.code === 'OK'){
+                setData({...data,
+                    realAmt: letRealAmt
+                });
                 Swal.fire('', '실제계약금액을 저장하였습니다.', 'success');
                 setRealAmtPop(false);
             }else{
                 Swal.fire('', response.data.msg, 'warning');
             }
         });
-    })
+    },[realAmt])
 
     //업체 견적사항 이벤트
     const onEvent = useCallback( (event, cust) => {
-        if(cust.esmtYn == '2' && data.estOpenDate == null){
+        if(cust.esmtYn === '2' && data.estOpenDate === null){
             Swal.fire('', '복호화되지 않아 상세를 불러올 수 없습니다.', 'warning');
-        }else if(cust.esmtYn == '2' && data.estOpenDate != null){
-            if(data.insMode == '1'){
+        }else if(cust.esmtYn === '2' && data.estOpenDate !== null){
+            if(data.insMode === '1'){
                 Api.fnCustSpecFileDown(cust.fileNm, cust.filePath);
-            }else if(data.insMode == '2'){
+            }else if(data.insMode === '2'){
                 let detailView = event.target.closest('tr').nextSibling;
                 if(detailView.style.display === '' || detailView.style.display==='none'){
                     detailView.style.display = "table-row";
@@ -80,26 +83,30 @@ const BidCompleteDetail = () => {
                 }
             }
         }
-    })
+    }, [data.insMode, data.estOpenDate])
 
     //페이지 이동
-    const onMovePage = useCallback(()=>{
+    const navigate = useNavigate();
+    const onMovePage = () => {
         navigate('/bid/complete');
-    })
+    }
 
     //업체 제출 이력
     const [submitHistPop, setSubmitHistPop] = useState(false);
     const [histCust, setHistCust] = useState({});
-    const onShowCustSubmitHist = useCallback((cust) =>{
+    const onShowCustSubmitHist = (cust) =>{
         setHistCust(cust);
         setSubmitHistPop(true);
-    });
+    };
 
     //입찰결과 보고서 팝업
     const [reportPop, setReportPop] = useState(false);
 
     useEffect(() => {
-        onSearch();
+        if (isMounted.current) {
+            onSearch();
+            isMounted.current = false;
+        }
     },[]);
 
     return (
@@ -148,11 +155,11 @@ const BidCompleteDetail = () => {
                                 <>
                                 <tr key={idx}>
                                     <td className="text-left">
-                                        <a onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
+                                        <a href="#!" onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
                                     </td>
                                     <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
                                     <td>
-                                        <a onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn == '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
+                                        <a href="#!" onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
                                     </td>
                                     <td>{ cust.submitDate }</td>
                                     <td>{ cust.presName }</td>
@@ -206,10 +213,10 @@ const BidCompleteDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
-                        <a onClick={()=>setReportPop(true)} className="btnStyle btnSecondary" title="입찰결과 보고서">입찰결과 보고서</a>
-                        { ( data.ingTag == 'A5' && data.createUser == userId ) &&
-                        <a onClick={()=>setRealAmtPop(true)} className="btnStyle btnPrimary" title="실제 계약금액">실제 계약금액
+                        <a href="#!" onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
+                        <a href="#!" onClick={()=>setReportPop(true)} className="btnStyle btnSecondary" title="입찰결과 보고서">입찰결과 보고서</a>
+                        { ( data.ingTag === 'A5' && data.createUser === userId ) &&
+                        <a href="#!" onClick={()=>setRealAmtPop(true)} className="btnStyle btnPrimary" title="실제 계약금액">실제 계약금액
                             <i className="fas fa-question-circle toolTipSt ml5">
                                 <div className="toolTipText" style={{width: "480px"}}>
                                     <ul className="dList">
@@ -230,7 +237,7 @@ const BidCompleteDetail = () => {
             {realAmtPop && 
             <Modal className="modalStyle" id="realAmtSave" show={realAmtPop} onHide={()=>setRealAmtPop(false)} keyboard={true}>
                 <Modal.Body>
-                    <a onClick={()=>setRealAmtPop(false)} className="ModalClose" data-dismiss="modal" title="닫기">
+                    <a href="#!" onClick={()=>setRealAmtPop(false)} className="ModalClose" data-dismiss="modal" title="닫기">
                         <i className="fa-solid fa-xmark"></i>
                     </a>
                     <h2 className="modalTitle">실제 계약금액</h2>
@@ -248,8 +255,8 @@ const BidCompleteDetail = () => {
                         <div className="width100"><input type="text" className="inputStyle inputSm" defaultValue={realAmt} onChange={(e)=> setRealAmt(e.target.value)} placeholder="숫자만 입력"/></div>
                     </div>
                     <div className="modalFooter">
-                        <a className="modalBtnClose" onClick={()=>setRealAmtPop(false)} data-dismiss="modal" title="취소">취소</a>
-                        <a className="modalBtnCheck" data-toggle="modal" title="저장" onClick={onSave}>저장</a>
+                        <a href="#!" className="modalBtnClose" onClick={()=>setRealAmtPop(false)} data-dismiss="modal" title="취소">취소</a>
+                        <a href="#!" className="modalBtnCheck" data-toggle="modal" title="저장" onClick={onSave}>저장</a>
                     </div>
                 </Modal.Body>
             </Modal>

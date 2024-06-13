@@ -9,19 +9,16 @@ const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }
     const navigate = useNavigate();
 
     const [succDetail, setSuccDetail] = useState("");
-    const onSuccDetail = useCallback((e) => {
-        setSuccDetail(e.target.value);
-    });
 
     //팝업닫기
-    const onClosePop = useCallback(() => {
+    const onClosePop = () => {
         setSuccPop(false);
-    })
+    }
 
     //페이지 이동
-    const onMovePage = useCallback(()=>{
+    const onMovePage = ()=>{
         navigate('/bid/status');
-    })
+    }
 
     const bidSucc = useCallback(() =>{
         let params = {
@@ -31,7 +28,7 @@ const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }
         ,   biName : biName                //메일전송에 사용
         }
         axios.post("/api/v1/bidstatus/bidSucc", params).then((response) => {
-            if (response.data.code != "OK") {
+            if (response.data.code !== "OK") {
                 Swal.fire('', "낙찰 처리중 오류가 발생했습니다.", 'warning');
             }else{
                 Swal.fire('', "낙찰 처리했습니다.", 'success');
@@ -39,12 +36,12 @@ const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }
                 onMovePage();
             }
         });
-    })
+    }, [succDetail])
 
     return (
         <Modal className="modalStyle" id="bidSucc" show={succPop} onHide={onClosePop} keyboard={true}>
             <Modal.Body>
-                <a className="ModalClose" data-dismiss="modal" onClick={onClosePop} title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a href="#!" className="ModalClose" data-dismiss="modal" onClick={onClosePop} title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">낙찰</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -53,10 +50,10 @@ const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }
                         </li>
                     </ul>
                 </div>
-                <textarea className="textareaStyle height150px mt20" placeholder="추가합의 사항(필수아님)" value={succDetail} onChange={onSuccDetail}></textarea>
+                <textarea className="textareaStyle height150px mt20" placeholder="추가합의 사항(필수아님)" value={succDetail} onChange={(e) => setSuccDetail(e.target.value)}></textarea>
                 <div className="modalFooter">
-                    <a className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="취소">취소</a>
-                    <a className="modalBtnCheck" title="낙찰" onClick={bidSucc}>낙찰</a>
+                    <a href="#!" className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="취소">취소</a>
+                    <a href="#!" className="modalBtnCheck" title="낙찰" onClick={bidSucc}>낙찰</a>
                 </div>
             </Modal.Body>
         </Modal>

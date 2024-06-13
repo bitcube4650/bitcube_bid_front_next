@@ -1,16 +1,16 @@
 const filters = {
     ftBiMode(val){
-        if(val == 'A'){ return '지명경쟁입찰'}
-        else if(val == 'B'){ return '일반경쟁입찰'}
+        if(val === 'A'){ return '지명경쟁입찰'}
+        else if(val === 'B'){ return '일반경쟁입찰'}
         else return val;
     },
     ftInsMode(val){
-        if(val == '1'){ return '파일등록'}
-        else if(val == '2'){ return '직접입력'}
+        if(val === '1'){ return '파일등록'}
+        else if(val === '2'){ return '직접입력'}
     },
     ftIngTag(val){
-        if(val == 'A5'){ return '입찰완료'}
-        else if(val == 'A7'){ return '유찰'}
+        if(val === 'A5'){ return '입찰완료'}
+        else if(val === 'A7'){ return '유찰'}
     },
     numberWithCommas(val) {
         if(!val) return '';
@@ -20,22 +20,22 @@ const filters = {
         }
     },
     ftFileFlag(val){
-        if(val == '0'){ return '대내용'}
-        else if(val == '1'){ return '대외용'}
+        if(val === '0'){ return '대내용'}
+        else if(val === '1'){ return '대외용'}
     },
     ftSuccYn(val){
-        if(val == 'Y'){ return '낙찰'}
-        else if(val == 'N'){ return ''}
+        if(val === 'Y'){ return '낙찰'}
+        else if(val === 'N'){ return ''}
     },
     ftEsmtYn(val){
-        if(val == '0'){ return ''}
-        else if(val == '1'){ return '공고확인'}
-        else if(val == '2'){ return '상세'}
+        if(val === '0'){ return ''}
+        else if(val === '1'){ return '공고확인'}
+        else if(val === '2'){ return '상세'}
     },
     ftOpenAttSign(val){
-        if(val == 'Y'){
+        if(val === 'Y'){
             return '[서명 확인]'
-        }else if(val == 'N'){
+        }else if(val === 'N'){
             return '[서명 미확인]'
         }else{
             return '';
@@ -56,7 +56,7 @@ const filters = {
         else {
             let esmtCurr = this.defaultIfEmpty(cust.esmtCurr, '');
             let esmtAmt = cust.esmtAmt;
-            return esmtCurr + (esmtCurr != '' ? ' ' : '') + esmtAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return esmtCurr + (esmtCurr !== '' ? ' ' : '') + esmtAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
     },
     //소숫점처리 및 콤마
@@ -67,11 +67,39 @@ const filters = {
             return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
     },
+    ftAllSum(spec){
+        let result = 0;
+        for(let i = 0 ; i < spec.length ; i++){
+            result = result + (spec[i].orderQty * spec[i].orderUc)
+        }
+        return "총합계 : " + result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") ;
+    },
+
+    ftCalcOrderUc(esmtUc, orderQty){
+        if(!this.isEmpty(esmtUc) && !this.isEmpty(orderQty)){
+            
+            let esmtReplace = esmtUc.replace(/[^-0-9]/g, '');
+            let result = this.fnRoundComma(esmtReplace / orderQty);
+
+            return result;
+        }else{
+            return '';
+        }
+    },
+
+    //소숫점처리 및 콤마
+    fnRoundComma(number){
+        if(this.isEmpty(number)) return ''
+        else {
+            number = Math.round(number);
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    },
 
     /**************************문자열 관련 Utils**************************/
     //빈 문자열 확인
     isEmpty(str){
-        if( str == "" || str == null || str == undefined || ( str != null && typeof str == "object" && !Object.keys(str).length)) return true;
+        if( str === "" || str === undefined || str === null || ( str !== null && typeof str === "object" && !Object.keys(str).length)) return true;
         else return false ;
     },
     //str이 빈값이 아니면 str 리턴 빈값이면 defaultStr 리턴

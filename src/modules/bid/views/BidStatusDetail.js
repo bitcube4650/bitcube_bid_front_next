@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import CmmnInfo from '../components/BidCommonInfo'
@@ -11,6 +11,9 @@ import BidSubmitHistoryPop from '../components/BidSubmitHistoryPop';
 import BidSuccessPop from '../components/BidSuccessPop';
 
 const BidStatusDetail = () => {
+
+    //마운트 여부
+    const isMounted = useRef(true);
 
     const navigate = useNavigate();
 
@@ -37,7 +40,7 @@ const BidStatusDetail = () => {
         } else {
             setCustCheck([]);
         }
-    },[custCheck])
+    },[data.custList])
 
     //유찰 팝업
     const [bidSaveFailPop, setBidSaveFailPop] = useState(false);
@@ -51,22 +54,22 @@ const BidStatusDetail = () => {
     const userId = loginInfo.userId;
 
     //데이터 조회
-    const onSearch = useCallback(async() => {
+    const onSearch = async() => {
         let params = {
             biNo : localStorage.getItem('biNo')
         }
 
         await axios.post('/api/v1/bidstatus/statusDetail', params).then((response) => {
-            if(response.data.status != '999'){
+            if(response.data.code === 'OK'){
                 setData(response.data.data);
             }else{
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
             }
         });
-    });
+    };
 
     //개찰 공인인증서 비밀번호
-    const [certPwd, setCertPwd] = useState('');
+    // const [certPwd, setCertPwd] = useState('');
 
     //개찰
     const onOpenBid = useCallback( () => {
@@ -84,27 +87,28 @@ const BidStatusDetail = () => {
         */
         let params = {
             biNo : data.biNo,
-            certPwd : certPwd
+            // certPwd : certPwd
+            certPwd : ''
         }
 
         axios.post("/api/v1/bidstatus/bidOpening", params).then((response) => {
-            if (response.data.code != "OK") {
-                Swal.fire('', '개찰 처리중 오류가 발생했습니다.', 'warning');
+            if (response.data.code !== "OK") {
+                Swal.fire('', '개찰 처리중 오류가 발생했습니다.', 'error');
             } else {
                 Swal.fire('', '개찰했습니다.', 'success');
                 onSearch();
             }
         });
-    })
+    },[data])
 
     //개찰 확인
     const onCheck = useCallback(()=> {
-        if(!Ft.isEmpty(data.openAtt1Id) && data.openAtt1Sign != 'Y'){
+        if(!Ft.isEmpty(data.openAtt1Id) && data.openAtt1Sign !== 'Y'){
             Swal.fire('', '입회자1의 서명이 필요합니다.', 'warning');
             return false;
         }
 
-        if(!Ft.isEmpty(data.openAtt2Id) && data.openAtt2Sign != 'Y'){
+        if(!Ft.isEmpty(data.openAtt2Id) && data.openAtt2Sign !== 'Y'){
             Swal.fire('', '입회자2의 서명이 필요합니다.', 'warning');
             return false;
         }
@@ -132,17 +136,17 @@ const BidStatusDetail = () => {
 
             }
         });
-    })
+    }, [data])
 
     //개찰결과 보고서
     const [reportPop, setReportPop] = useState(false);
-    const onOpenReportPop = useCallback(() => {
+    const onOpenReportPop = () => {
         setReportPop(true);
-    })
+    }
 
     //재입찰
     const onRebid = useCallback(() =>{
-        if(custCheck.length == 0){
+        if(custCheck.length === 0){
             Swal.fire('', '업체를 선택해주세요', 'warning');
             return false;
         }
@@ -162,52 +166,55 @@ const BidStatusDetail = () => {
                 navigate('/bid/rebid');
             }
         });
-    })
+    }, [custCheck])
 
     const onEvent = useCallback( (event, cust) => {
-        if(data.insMode == '1' && cust.esmtYn == '2'){
+        if(data.insMode === '1' && cust.esmtYn === '2'){
             Api.fnCustSpecFileDown(cust.fileNm, cust.filePath)
-        }else if(data.insMode == '2' && cust.esmtYn == '2'){
+        }else if(data.insMode === '2' && cust.esmtYn === '2'){
             let detailView = event.target.closest('tr').nextSibling;
-            if(detailView.style.display === '' || detailView.style.display==='none'){
+            if(detailView.style.display === '' || detailView.style.display === 'none'){
                 detailView.style.display = "table-row";
             }else{
                 detailView.style.display = 'none'
             }
         }
-    })
+    }, [data.insMode])
 
     //낙찰
     const [succPop, setSuccPop] = useState(false);
     const [succCust, setSuccCust] = useState({});
-    const onSuccSelect = useCallback((e,cust) =>{
+    const onSuccSelect = (cust) =>{
         setSuccCust(cust)
         setSuccPop(true);
-    })
+    }
 
     //업체 제출 이력
     const [submitHistPop, setSubmitHistPop] = useState(false);
     const [histCust, setHistCust] = useState({});
-    const onShowCustSubmitHist = useCallback((cust) =>{
+    const onShowCustSubmitHist = (cust) =>{
         setHistCust(cust);
         setSubmitHistPop(true);
-    });
+    };
 
     //페이지 이동
-    const onMovePage = useCallback(()=>{
+    const onMovePage = () => {
         navigate('/bid/status');
-    })
+    }
 
     useEffect(() => {
-        onSearch();
+        if (isMounted.current) {
+            onSearch();
+            isMounted.current = false;
+        }
     },[]);
 
     //상세 및 기타첨부파일 열람 시 알림창
-    const onRejectDetail = useCallback((cust) =>{
-        if(cust.esmtYn == 2){
+    const onRejectDetail = (cust) =>{
+        if(cust.esmtYn === '2'){
             Swal.fire('', '개찰 전 견적 내용은 확인할 수 없습니다.', 'warning');
         }
-    })
+    }
 
     return (
         <div className="conRight">
@@ -254,7 +261,7 @@ const BidStatusDetail = () => {
                                     <tr>
                                         <td className="text-left">{ cust.custName }</td>
                                         <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
-                                        <td><a onClick={()=>onRejectDetail(cust)} className={cust.esmtYn == '2' ? 'textUnderline textMainColor' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a></td>
+                                        <td><a href="#!" onClick={()=>onRejectDetail(cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a></td>
                                         <td>{ cust.submitDate }</td>
                                         <td>{ cust.damdangName }</td>
                                         <td className="end">
@@ -267,12 +274,12 @@ const BidStatusDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                        { (data.ingTag == 'A1' || data.ingTag == 'A3') && (data.bidAuth || data.openAuth || (data.createUser == userId)) &&
-                        <a onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
+                        <a href="#!" className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                        { (data.ingTag === 'A1' || data.ingTag === 'A3') && (data.bidAuth || data.openAuth || (data.createUser === userId)) &&
+                        <a href="#!" onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
-                        { ((data.ingTag == 'A1' || data.ingTag == 'A3') && data.openAuth && (data.estCloseCheck == 1)) && 
-                        <a onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
+                        { ((data.ingTag === 'A1' || data.ingTag === 'A3') && data.openAuth && (data.estCloseCheck === 1)) && 
+                        <a href="#!" onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
                         }
                     </div>
                     </>
@@ -312,11 +319,11 @@ const BidStatusDetail = () => {
                                         <label htmlFor={idx}></label>
                                     </td>
                                     <td className="text-left">
-                                        <a onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
+                                        <a href="#!" onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
                                     </td>
                                     <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
                                     <td>
-                                        <a onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn == '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
+                                        <a href="#!" onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
                                     </td>
                                     <td>{ cust.submitDate }</td>
                                     <td>{ cust.damdangName }</td>
@@ -326,8 +333,8 @@ const BidStatusDetail = () => {
                                         }
                                     </td>
                                     <td>
-                                        {(cust.esmtYn == '2' && (data.openAuth || data.bidAuth)) &&
-                                        <a onClick={(e)=>onSuccSelect(e,cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
+                                        {(cust.esmtYn === '2' && (data.openAuth || data.bidAuth)) &&
+                                        <a href="#!" onClick={()=>onSuccSelect(cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
                                         }
                                     </td>
                                 </tr>
@@ -369,13 +376,13 @@ const BidStatusDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                        <a className="btnStyle btnOutline" title="개찰결과 보고서" onClick={onOpenReportPop} >개찰결과 보고서</a>
-                        { (data.openAuth || data.bidAuth || (data.createUser == userId)) &&
-                        <a onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
+                        <a href="#!" className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                        <a href="#!" className="btnStyle btnOutline" title="개찰결과 보고서" onClick={onOpenReportPop} >개찰결과 보고서</a>
+                        { (data.openAuth || data.bidAuth || (data.createUser === userId)) &&
+                        <a href="#!" onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
-                        { ((data.createUser == userId) || data.openAuth) &&
-                        <a onClick={onRebid} className="btnStyle btnOutlineRed" title="선택업체 재입찰">선택업체 재입찰하러 가기</a>
+                        { ((data.createUser === userId) || data.openAuth) &&
+                        <a href="#!" onClick={onRebid} className="btnStyle btnOutlineRed" title="선택업체 재입찰">선택업체 재입찰하러 가기</a>
                         }
                     </div>
                     </>
