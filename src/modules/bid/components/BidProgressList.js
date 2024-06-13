@@ -5,8 +5,8 @@ function BidProgressList(props) {
     const navigate = useNavigate();
     const data = props.progressList
     const onBidProgressDetail = () =>{
-        navigate(`/bid/progress/detail/`);
-        sessionStorage.setItem("biNo", data.biNo);
+        navigate(`/bid/progress/detail`);
+        localStorage.setItem('biNo',data.biNo)
     }
 
     return (

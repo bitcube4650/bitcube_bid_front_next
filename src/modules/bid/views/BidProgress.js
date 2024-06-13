@@ -9,14 +9,14 @@ import { BidContext } from '../context/BidContext';
 const BidProgress = () => {
 
   //세션 로그인 정보
-  const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
 
   const navigate = useNavigate();
   const {viewType, setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
 
   const moveSave = (type)=>{
     setViewType(type)
-    sessionStorage.setItem("viewType", type);
+    localStorage.setItem("viewType", type);
     if(type === '등록'){
 
       //등록으로 이동 시 state 초기화

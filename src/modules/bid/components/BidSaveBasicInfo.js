@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 const BidSaveBasicInfo = (props) => {
 
   //세션 로그인 정보
-  const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
   const userCustCode = loginInfo.custCode
 
   const {viewType, bidContent, setBidContent, custContent, setCustContent, custUserName, setCustUserName, custUserInfo, setCustUserInfo} = useContext(BidContext);

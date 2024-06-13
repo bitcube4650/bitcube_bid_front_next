@@ -11,7 +11,8 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
 
     const [bidUserList, setBidUserList] = useState({})
 
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+    
     const userCustCode = loginInfo.custCode
 
     const [srcData, setSrcData] = useState({
@@ -37,7 +38,7 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
         const onSearch = useCallback(async () => {
         try {
             const response = await axios.post('/api/v1/bid/userList', srcData);
-            setBidUserList(response.data);
+            setBidUserList(response.data.data);
         } catch (error) {
             Swal.fire('조회에 실패하였습니다.', '', 'error');
             console.log(error);
@@ -59,16 +60,18 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
             const fetchInitialData = async () => {
             try {
                 const response = await axios.post('/api/v1/bid/userList', initialSrcData);
-                setBidUserList(response.data);
+                setBidUserList(response.data.data);
             } catch (error) {
                 Swal.fire('조회에 실패하였습니다.', '', 'error');
                 console.log(error);
             }
             };
             fetchInitialData();
+        }else{
+            onSearch()
         }
     
-          }, [isBidUserListModal]);
+          }, [isBidUserListModal,srcData.size, srcData.page]);
 
     const onUserSelect = (userData)=>{
         console.log(userData)
@@ -200,8 +203,8 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
                     <tbody>
 
                     {
-                bidUserList?.data?.content?.length > 0 ? (
-                    bidUserList.data.content.map((item) => (
+                bidUserList?.content?.length > 0 ? (
+                    bidUserList.content.map((item) => (
 
                     <tr key={item.userId}>
                         <td>{ item.deptName }</td>

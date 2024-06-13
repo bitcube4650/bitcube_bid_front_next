@@ -6,10 +6,9 @@ import Swal from 'sweetalert2';
 import BidAttSignPop from './BidAttSignPop';
 
 const BidCommonInfo = (props) => {
-    console.log(props)
     
     //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = localStorage.getItem("loginInfo")
     const userId = loginInfo.userId;
 
     //협력사 사용자 조회 팝업

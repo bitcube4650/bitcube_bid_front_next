@@ -12,8 +12,6 @@ const Layout = () => {
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
 
-    console.log(loginInfo);
-
     if(loginInfo == null) {
         if(location.pathname === '/') {
             return (

@@ -48,7 +48,7 @@ function BidPastList({bidPastList,onBidPastModalHide}) {
             }
           }
           
-          const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+          const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
           const userCustCode = loginInfo.custCode;
 
           //과거입찰 선택 시 세팅

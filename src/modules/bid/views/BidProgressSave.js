@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const BidProgressSave = () => {
-  const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
 
   const navigate = useNavigate();
 
@@ -18,8 +18,18 @@ const BidProgressSave = () => {
 
   useEffect(() => {
     if(!viewType){
-      const sessionViewType = sessionStorage.getItem('viewType')
+      const sessionViewType = localStorage.getItem('viewType')
       setViewType(sessionViewType)
+
+      setBidContent({
+          ...bidContent,
+          createUserName : loginInfo.userName, 
+          createUser : loginInfo.userId,
+          gongoId : loginInfo.userName, 
+          gongoIdCode : loginInfo.userId,
+          interrelatedCustCode : loginInfo.custCode
+        }        
+      )
     }
 
     if (viewType === '등록') {
