@@ -35,8 +35,6 @@ const GroupUser = () => {
         setGroupUserDetailPopOpen(true)   
     }
     
-    //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
     //조회 결과
     const [GroupUserList, setGroupUserList] = useState({})
     const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState({})

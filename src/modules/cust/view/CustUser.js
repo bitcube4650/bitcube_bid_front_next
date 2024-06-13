@@ -8,7 +8,7 @@ import Swal from 'sweetalert2'; // 공통 팝업창
 
 const CustUser = () => {
     //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     // 사용자 등록 / 수정 여부
     const [CreateUser, setCreateUser] = useState(false)
     // 모달창 오픈 여부
