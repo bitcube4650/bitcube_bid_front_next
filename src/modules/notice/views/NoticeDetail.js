@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'; // 공통 팝업창
 
 const NoticeDetail = () => {
     //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     const navigate = useNavigate();
     const { bno } = useParams();
     const [dataFromList, setDataFromList] = useState({});

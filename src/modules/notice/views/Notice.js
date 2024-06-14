@@ -9,7 +9,7 @@ const Notice = () => {
     const navigate = useNavigate();
 
     //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     //조회 결과
     const [noticeList, setNoticeList] = useState({});
     //조회조건

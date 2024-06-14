@@ -1,15 +1,28 @@
-import React from 'react';
-import axios from "axios"
+import React, { useCallback, useEffect, useState } from 'react';
+import axios from "axios";
+import NoticeList from 'modules/notice/components/NoticeList';
 
-//todo: 로그아웃 시 세션 삭제...sessionStorage.removeItem();
-//세션 체크 후 세션 없으면 로그인 화면으로 보내기
 //todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
 const Main = () => {
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
     const bidInfo = {};
     const partnerInfo = {};
-    const val = {};
+
+    //공지사항 조회 결과
+    const [noticeList, setNoticeList] = useState({});
+
+    const onSearch = useCallback(async() => {
+        try {
+            const noticeResponse = await axios.post("/api/v1/notice/noticeList", {size: 7, page: 0});
+            setNoticeList(noticeResponse.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    });
+
+    useEffect(() => {
+        onSearch();
+    },[]);
 
     return (
         <div className="conRight">
@@ -70,22 +83,12 @@ const Main = () => {
                         <div className="mainConBox" style={{height: '381.41px'}}>
                             <h2 className="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
                             <div className="notiList">
-                                <a href='#!'>
-                                    <span>메인 샘플 공지사항</span>
-                                    <span>1991-09-03</span>
-                                </a>
-                                {/* <a v-for="(val, idx) in listPage.content" click="setDetailData(val)" data-toggle="modal" data-target="#notiModal" title="해당 게시글 자세히 보기">
-                                    <span className="notiTit"><span v-if="val.bco == 'ALL'">[공통] </span>{ val.btitle }</span>
-                                    <span className="notiDate">{ val.bdate }</span>
-                                </a> */}
+                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} notice={notice} isMain='true' />) }
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {/*<NoticeDetailPopup dataFromMain="detailData" ref="noticePop" />
-
-            <pwdInit />*/}
         </div>
     );
 };
