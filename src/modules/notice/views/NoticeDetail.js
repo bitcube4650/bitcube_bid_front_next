@@ -36,6 +36,39 @@ const NoticeDetail = () => {
         navigate('/noticeEdit/' + bno, {state: {updateInsert: "update"}});
     }
 
+    function onNoticeDelConfirm() {
+        Swal.fire({
+            title: '공지사항 삭제',          // 타이틀
+            text: '공지를 삭제합니다. 삭제 하시겠습니까?',  // 내용
+            icon: 'warning',                // success / error / warning / info / question
+            confirmButtonColor: '#3085d6',  // 기본옵션
+            confirmButtonText: '삭제',      // 기본옵션
+            showCancelButton: true,         // conrifm 으로 하고싶을떄
+            cancelButtonColor: '#d33',      // conrifm 에 나오는 닫기버튼 옵션
+            cancelButtonText: '닫기'        // conrifm 에 나오는 닫기버튼 옵션
+        }).then(result => {
+            // 만약 Promise리턴을 받으면,
+            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                onNoticeDelete();
+            }
+         });
+    }
+
+    async function onNoticeDelete() {
+        try {
+            const response = await axios.post('/api/v1/notice/deleteNotice', { 'bno': bno });
+            if(response.data.status == 200) {
+                Swal.fire('', '삭제되었습니다.', 'success');
+                navigate("/notice");
+            } else {
+                Swal.fire('', response.data.msg, 'error');
+            }
+        } catch (error) {
+            Swal.fire('', '삭제에 실패하였습니다.', 'error');
+            console.log(error);
+        }
+    }
+
     async function onDownloadFile() {
         const response = axios.post('/api/v1/notice/downloadFile',
             { fileId: dataFromList.bfilePath },
@@ -115,7 +148,7 @@ const NoticeDetail = () => {
                         <a onClick={ onNoticeEdit } className="btnStyle btnOutline" title="수정 이동">수정</a>
                     }
                     { ((loginInfo.custType == 'inter' && loginInfo.userAuth == '1') || dataFromList.buserId == loginInfo.userId) &&
-                        <a data-toggle="modal" data-target="#notiDel" className="btnStyle btnOutlineRed" title="삭제">삭제</a>
+                        <a onClick={ onNoticeDelConfirm } className="btnStyle btnOutlineRed" title="삭제">삭제</a>
                     }
                 </div>
             </div>

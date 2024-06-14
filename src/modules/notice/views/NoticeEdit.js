@@ -37,10 +37,13 @@ const NoticeEdit = () => {
 
                 setDetailData({
                     ...responseData,
-                    ['fileName']: responseData.bfile,
-                    ['interrelatedCustCodeArr']: responseData.interrelatedCodes.split(",")
+                    ['fileName']: responseData.bfile
                 });
                 if(responseData.interrelatedCodes) {    //계열사 정보가 있는 경우
+                    setDetailData({
+                        ...responseData,
+                        ['interrelatedCustCodeArr']: responseData.interrelatedCodes.split(",")
+                    });
                     setAffiliateSelectData({
                         ...affiliateSelectData.show,
                         ["interrelatedCodes"] : responseData.interrelatedCodes.split(",")
