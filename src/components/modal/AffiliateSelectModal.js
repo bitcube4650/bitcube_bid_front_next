@@ -30,7 +30,7 @@ const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => 
         setAffiliateSelectData({...affiliateSelectData, ["show"]: false});
     })
 
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
     const [allAffiliateList, setAllAffiliateList] = useState([]);
     const [affiliateList, setAffiliateList] = useState([]);
