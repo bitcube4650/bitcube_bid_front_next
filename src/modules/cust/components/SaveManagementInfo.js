@@ -3,7 +3,7 @@ import React from 'react'
 const SaveManagementInfo = ({custInfo, onChangeData}) => {
 	// custInfo의 input 데이터 setting
 	const handleChange = (e) => {
-		onChangeData('custInfo', e.target.name, e.target.value)
+		onChangeData(e.target.name, e.target.value)
 	}
 
 	return (

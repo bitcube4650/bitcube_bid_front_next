@@ -7,7 +7,7 @@ import filters from '../api/filters';
 import ItemPop from '../../signup/components/ItemPop';
 import AddrPop from 'components/AddrPop';
 
-const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
+const SaveCustInfo = ({isEdit, custInfo, onChangeData, setSelCustCode}) => {
 	// 세션정보
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 	const [otherCustModal, setOtherCustModal] = useState(false)
@@ -20,7 +20,11 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 
 	// custInfo의 input 데이터 setting
 	const handleChange = (e) => {
-		onChangeData('custInfo', e.target.name, e.target.value)
+		let value = e.target.value
+		if(e.target.name === 'tel' || e.target.name === 'fax') value =  CommonUtils.onAddDashTel(value)
+		if(e.target.name === 'capital') value =  CommonUtils.onComma(value)
+
+		onChangeData(e.target.name, value)
 	}
 
 	// 첨부파일 추가
@@ -33,17 +37,17 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 			if (fileSize > maxSize) {
 				Swal.fire('', '파일 크기가 10MB를 초과하였습니다.', 'error');
 			} else {
-				onChangeData('custInfo', e.target.id, file)
-				onChangeData('custInfo', e.target.id+'Name', file.name)
+				onChangeData(e.target.id, file)
+				onChangeData(e.target.id+'Name', file.name)
 			}
 		}
 	}
 
 	// 첨부파일 삭제
 	const onRemoveFile = (id) => {
-		onChangeData('custInfo', id, null)
-		onChangeData('custInfo', id+'Name', '')
-		onChangeData('custInfo', id==='regnumFile' ? 'regnumPath' : id+'Path', '')
+		onChangeData(id, null)
+		onChangeData(id+'Name', '')
+		onChangeData(id==='regnumFile' ? 'regnumPath' : id+'Path', '')
 	}
 	
 	// 업체유형 팝업 호출
@@ -55,21 +59,23 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 	// 업체유형 팝업 callback
 	const itemSelectCallback = (data) => {
 		if("type1" === type) {
-			onChangeData('custInfo', 'custType1', data.itemCode)
-			onChangeData('custInfo', 'custTypeNm1', data.itemName)
+			onChangeData('custType1', data.itemCode)
+			onChangeData('custTypeNm1', data.itemName)
 		} else if("type2" === type) {
-			onChangeData('custInfo', 'custType2', data.itemCode)
-			onChangeData('custInfo', 'custTypeNm2', data.itemName)
+			onChangeData('custType2', data.itemCode)
+			onChangeData('custTypeNm2', data.itemName)
 		}
 	}
 
+	// 주소 조회 팝업
 	const openAddrPop = () => {
 		setAddrPop(true);
 	}
 	
+	// 주소 조회 callback
     const addrPopCallback = (data) => {
-		onChangeData('custInfo', 'zipcode', data.zipcode)
-		onChangeData('custInfo', 'addr', data.addr)
+		onChangeData('zipcode', data.zipcode)
+		onChangeData('addr', data.addr)
     }
 
 	return (
@@ -214,14 +220,14 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">대표전화 <span className="star">*</span></div>
 						<div className="width100">
-							<input type="text" name="tel" value={CommonUtils.onAddDashTel(custInfo.tel || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="tel" value={custInfo.tel || ''} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">팩스</div>
 						<div className="width100">
-							<input type="text" name="fax" value={CommonUtils.onAddDashTel(custInfo.fax || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<input type="text" name="fax" value={custInfo.fax || ''} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 						</div>
 					</div>
 					
@@ -239,7 +245,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 
 					
 					<div className="flex mt10">
-						<div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star">*</span></div>
+						<div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star" style={{display : (params?.custCode || '') !== '' ? '' : 'none' }} >*</span></div>
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<div className="upload-boxWrap">
@@ -312,7 +318,7 @@ const SaveCustInfo = ({isEdit, custInfo, onChangeData}) => {
 			</div>
 			{/* // 회사정보 */}
 			{otherCustModal &&
-				<OtherCustListPop setOtherCustModal={setOtherCustModal} onChangeData={onChangeData} />
+				<OtherCustListPop setOtherCustModal={setOtherCustModal} setSelCustCode={setSelCustCode} />
 			}
 			{/* 업체유형 팝업 */}
 			{!isEdit &&

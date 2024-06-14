@@ -5,17 +5,21 @@ import { Modal } from 'react-bootstrap'
 import * as CommonUtils from 'components/CommonUtils';
 import ItemPop from '../../signup/components/ItemPop';
 
-const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
-	const [srcData, setSrcData] = useState({			// 조회조건
-		custCode : '11',								// 업체코드
+/* 타계열사 업체 조회 팝업 */
+const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
+	// 세션정보
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+
+	const [srcData, setSrcData] = useState({						// 조회조건
+		custCode : loginInfo.custCode,
 		custName : '',
 		custType : '',
 		custTypeNm : '',
-		size : 10,										// 최대 조회건수
-		page : 0										// 페이지 위치
+		size : 10,													// 최대 조회건수
+		page : 0													// 페이지 위치
 	})
-	const [otherCustList, setOtherCustList] = useState([])
-	const [itemPop, setItemPop] = useState(false);		// 품목 팝업
+	const [otherCustList, setOtherCustList] = useState([])			// 타계열사 업체 리스트
+	const [itemPop, setItemPop] = useState(false);					// 품목 팝업
 
 	const onChangeSrcData = (e) => {
 		const { name, value } = e.target;
@@ -25,18 +29,11 @@ const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 		})
 	}
 
-	// 업체 리스트 조회
+	// 타계열사 업체 리스트 조회
 	const onSearch = useCallback(async() => {
 		const response = await axios.post('/api/v1/cust/otherCustList', srcData)
 		setOtherCustList(response.data.data); 
 	})
-
-	const selectCustCode = async(custCode) => {
-		onChangeData('selCust', 'custCode', custCode);
-		onChangeData('selCust', 'url', '/api/v1/cust/otherCustManagement/');
-
-		setOtherCustModal(false)
-	}
 	
 	// 업체유형 팝업 callback
 	const itemSelectCallback = (data) => {
@@ -94,14 +91,14 @@ const OtherCustListPop = ({setOtherCustModal, onChangeData}) => {
 				</thead>
 				<tbody>
 					{ otherCustList.content?.map(otherCust => (
-						<tr key={otherCust?.custCode}>
-							<td>{otherCust?.custName}</td>
-							<td className="text-left" dangerouslySetInnerHTML={{__html : otherCust?.custType1}}></td>
+						<tr key={otherCust.custCode}>
+							<td>{otherCust.custName}</td>
+							<td className="text-left" dangerouslySetInnerHTML={{__html : otherCust.custType1}}></td>
 							<td>{CommonUtils.onAddDashRegNum(otherCust.regnum)}</td>
 							<td>{otherCust.presName}</td>
 							<td>{otherCust.interrelatedNm}</td>
 							<td className="end">
-								<button className="btnStyle btnSecondary btnSm" title="선택" onClick={() => selectCustCode(otherCust?.custCode)}>선택</button>
+								<button className="btnStyle btnSecondary btnSm" title="선택" onClick={() => {setSelCustCode(otherCust.custCode); setOtherCustModal(false)}}>선택</button>
 							</td>
 						</tr>
 					))}

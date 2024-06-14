@@ -6,7 +6,10 @@ import axios from 'axios';
 const SaveAdminInfo = ({isEdit, custInfo, onChangeData}) => {
 	// custInfo의 input 데이터 setting
 	const handleChange = (e) => {
-		onChangeData('custInfo', e.target.name, e.target.value)
+		let value = e.target.value
+		if(e.target.name === 'userHp' || e.target.name === 'userTel') value =  CommonUtils.onAddDashTel(value)
+		
+		onChangeData(e.target.name, value)
 	}
 
 	const onIdCheck = async () => {
@@ -15,13 +18,13 @@ const SaveAdminInfo = ({isEdit, custInfo, onChangeData}) => {
 
 		if(result.code === 'OK'){
 			Swal.fire('', '사용 가능한 아이디 입니다.', 'info');
-			onChangeData('custInfo', 'idCheck', true)
+			onChangeData('idCheck', true)
 		} else if(result.code == 'DUP') {
 			Swal.fire('', '이미 등록된 아이디입니다.', 'error');
-			onChangeData('custInfo', 'idCheck', false)
+			onChangeData('idCheck', false)
 		} else {
 			Swal.fire('', '입력한 아이디를 사용할 수 있습니다.', 'error');
-			onChangeData('custInfo', 'idCheck', false)
+			onChangeData('idCheck', false)
 		}
 	}
 
@@ -75,13 +78,13 @@ const SaveAdminInfo = ({isEdit, custInfo, onChangeData}) => {
 			<div className="flex align-items-center mt10">
 				<div className="formTit flex-shrink0 width170px">휴대폰 <span className="star">*</span></div>
 				<div className="width100">
-					<input type="text" name="userHp" value={CommonUtils.onAddDashTel(custInfo.userHp || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+					<input type="text" name="userHp" value={custInfo.userHp || ''} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 				</div>
 			</div>
 			<div className="flex align-items-center mt10">
 				<div className="formTit flex-shrink0 width170px">유선전화 <span className="star">*</span></div>
 				<div className="width100">
-					<input type="text" name="userTel" value={CommonUtils.onAddDashTel(custInfo.userTel || '')} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
+					<input type="text" name="userTel" value={custInfo.userTel || ''} maxLength="13" className="inputStyle maxWidth-max-content" onChange={handleChange} />
 				</div>
 			</div>
 			<div className="flex align-items-center mt10">

@@ -12,14 +12,12 @@ const CustList = () => {
 	const url = useLocation().pathname;
 	// url 파라미터에 certYn이 있으면 해당 값을 가져온다
 	const certYn = new URLSearchParams(useLocation().search).get("certYn")
+	
 	// 세션정보
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 	const [itemPop, setItemPop] = useState(false);		// 품목 팝업
 	const [isBidCustUserListModal, setIsBidCustUserListModal] = useState(false);
 	const [custCode, setCustCode] = useState('');
-
-	console.log(loginInfo)
-
 
 	let isApproval = false;								// 업체 승인 화면 여부
 	if(url.indexOf('approval') > -1) {

@@ -16,7 +16,9 @@ const CustList = ({isApproval, custList, onUserListPop}) => {
 					// 업체 승인 : [업체명, 업체유형, 사업자등록번호, 대표이사, 담당자, 요청일시]
 					// 업체 관리 : [업체명, 업체유형, 사업자등록번호, 대표이사, 상태, 등록일시, 사용자 현황]
 					<tr key={data.custCode}>
-						<td className="text-left"><Link to={isApproval ? {pathname:`/company/partner/approval/${data.custCode}`} : {pathname:`/company/partner/management/${data.custCode}`}} className="textUnderline notiTitle">{data.custName}</Link></td>
+						<td className="text-left">
+							<Link to={isApproval ? {pathname:`/company/partner/approval/${data.custCode}`} : {pathname:`/company/partner/management/${data.custCode}`}} className="textUnderline notiTitle">{data.custName}</Link>
+						</td>
 						<td>{data.custType1}</td>
 						<td>{CommonUtils.onAddDashRegNum(data.regnum)}</td>
 						<td>{data.presName}</td>
@@ -26,7 +28,7 @@ const CustList = ({isApproval, custList, onUserListPop}) => {
 						<td style={data.certYn == 'D' ? {color : 'red'} : {}}>{filters.onSetCustStatusStr(data.certYn)}</td>
 						<td>{data.createDate}</td>
 						<td className="end">
-							<a title="조회" className="btnStyle btnSecondary btnSm" onClick={() => onUserListPop(data.custCode)}>조회</a>
+							<button title="조회" className="btnStyle btnSecondary btnSm" onClick={() => onUserListPop(data.custCode)}>조회</button>
 						</td>
 						</>
 						:

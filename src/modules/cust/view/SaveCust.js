@@ -11,64 +11,69 @@ import SaveAdminInfo from '../components/SaveAdminInfo';
 const SaveCust = () => {
 	const params = useParams();
 	const navigate = useNavigate();
-	// 세션정보
-	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
-	const [selCust, setSelCust] = useState({		// 선택된 업체(타 계열사 선택)
-		custCode : params?.custCode || '',
-		url : '/api/v1/cust/management/'
-	});
-
-	const [custInfo, setCustInfo] = useState({
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));			// 세션정보
+	const [selCustCode, setSelCustCode] = useState('')							// 타계열사 선택시 선택한 업체 코드
+	const [custInfo, setCustInfo] = useState({									// 업체 정보
 		idCheck : false,
 		interrelatedCustCode : loginInfo.custCode
-	});
+	})
 
-	let isEdit = false;
-	if(selCust?.custCode != '') isEdit = true;
+	let isEdit = (params?.custCode || '') === '' && selCustCode === '' ? false : true;
 	
 	// 자식 컴포넌트에서 입력한 input 데이터 data에 셋팅
-	const onChangeData = (type, name, value) => {
-		if(type == 'selCust') {
-			setSelCust(current => ({
-				...current,
-				[name] : value
-			}))
-		} else {
-			setCustInfo(current => ({
-				...current,
-				[name] : value
-			}))
-		}
+	const onChangeData = (name, value) => {
+		setCustInfo(current => ({
+			...current,
+			[name] : value
+		}))
 	}
 
 	// 취소
 	const onMove = () => {
-		{(params?.custCode || '') === ''
-			?	navigate('/company/partner/management')					// 업체 등록시업체 관리 리스트로 이동
-			:	navigate(`/company/partner/management/${selCust.custCode}`)		// 업체 수정시 업체 상세 리스트로 이동
+		let custCode = params?.custCode || ''
+		{custCode === '' 
+			?	navigate('/company/partner/management')						// 업체 등록시 업체 관리 리스트로 이동
+			:	navigate('/company/partner/management/'+custCode)			// 업체 수정시 업체 상세 리스트로 이동
 		}
 	};
 
 	// 업체 상세 정보 조회
 	const onInit = useCallback(async() => {
-		const response = await axios.post(loginInfo.custType === "inter" ? selCust.url+selCust.custCode : '/api/v1/cust/info', {})
+		let api = ''
+		if(loginInfo.custType === 'inter') {
+			// 계열사 권한 로그인
+			if(selCustCode !== '') api = '/api/v1/cust/otherCustManagement/'+selCustCode		// 타사 계열사 업체 상세 조회
+			else api = '/api/v1/cust/management/'+params?.custCode								// 업체 상세 조회
+		} else {
+			// 협력업체 로그인
+			api = '/api/v1/cust/info'															// 자사 정보 조회
+		}
+
+		const response = await axios.post(api, {})
 		const result = response.data;
-		setCustInfo(result.data);
 
-		// 사업자등록번호
-		onChangeData('custInfo',	'regnum1',		!CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(0,3) : '')
-		onChangeData('custInfo',	'regnum2',		!CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(3,5) : '')
-		onChangeData('custInfo',	'regnum3',		!CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(5,10) : '')
+		setCustInfo({
+			...result.data,
+			userHp			: !CommonUtils.isEmpty(result.data.userHp) ? CommonUtils.onAddDashTel(result.data.userHp) : '',
+			userTel			: !CommonUtils.isEmpty(result.data.userTel) ? CommonUtils.onAddDashTel(result.data.userTel) : '',
+			tel				: !CommonUtils.isEmpty(result.data.tel) ? CommonUtils.onAddDashTel(result.data.tel) : '',
+			fax				: !CommonUtils.isEmpty(result.data.fax) ? CommonUtils.onAddDashTel(result.data.fax) : '',
+			capital			: !CommonUtils.isEmpty(result.data.capital) ? CommonUtils.onComma(result.data.capital) : '',
 
-		// 법인번호
-		onChangeData('custInfo',	'presJuminNo1',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(0,6) : '')
-		onChangeData('custInfo',	'presJuminNo2',	!CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(6,13) : '')
-		
-		// 첨부파일
-		onChangeData('custInfo',	'regnumFile',	!CommonUtils.isEmpty(result.data.regnumFileName) ? result.data.regnumFileName : null)
-		onChangeData('custInfo',	'bFile',		!CommonUtils.isEmpty(result.data.bFileName) ? result.data.bFileName : null)
+			// 사업자 등록 번호
+			regnum1			: !CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(0,3) : '',
+			regnum2			: !CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(3,5) : '',
+			regnum3			: !CommonUtils.isEmpty(result.data.regnum) ? result.data.regnum.substring(5,10) : '',
 
+			// 법인번호
+			presJuminNo1	: !CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(0,6) : '',
+			presJuminNo2	: !CommonUtils.isEmpty(result.data.presJuminNo) ? result.data.presJuminNo.substring(6,13) : '',
+
+			// 첨부파일
+			regnumFile		: !CommonUtils.isEmpty(result.data.regnumFileName) ? result.data.regnumFileName : null,
+			bFile			: !CommonUtils.isEmpty(result.data.bFileName) ? result.data.bFileName : null
+		})
 	})
 
 	const onValidation = () => {
@@ -129,7 +134,7 @@ const SaveCust = () => {
 			return false;
 		}
 
-		if(CommonUtils.isEmpty(CommonUtils.onAddDashTel(custInfo.tel))){
+		if(CommonUtils.isEmpty(custInfo.tel)){
 			Swal.fire('', '대표전화를 입력해주세요.', 'warning')
 			return false;
 		}
@@ -138,8 +143,9 @@ const SaveCust = () => {
 			Swal.fire('', '회사주소를 입력해주세요.', 'warning')
 			return false;
 		}
-
-		if(CommonUtils.isEmpty(custInfo.regnumFileName)){
+		
+		// 업체 등록인 경우 사업자등록증 필수 아님
+		if((params?.custCode || '') !== '' && CommonUtils.isEmpty(custInfo.regnumFileName)){
 			Swal.fire('', '사업자등록증을 첨부해주세요.', 'warning')
 			return false;
 		}
@@ -172,18 +178,12 @@ const SaveCust = () => {
 				return false;
 			}
 	
-			if(CommonUtils.isEmpty(custInfo.userPwd)){
-				Swal.fire('', '관리자 비밀번호를 입력해주세요.', 'warning')
+			// 비밀번호 유효성 검사
+			if (!onPwdvaildation(custInfo.userPwd)) {
 				return false;
-			} else {
-				const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-				if (!pwdRegex.test(custInfo.userPwd)) {
-					Swal.fire({ type: "warning", text: "비밀번호는 최소 8자 이상, 숫자와 특수문자를 포함해야 합니다." });
-					return false;
-				}
 			}
 	
-			if(custInfo.userPwdConfirm != custInfo.userPwd){
+			if(custInfo.userPwdConfirm !== custInfo.userPwd){
 				Swal.fire('', '관리자 비밀번호와 동일하게 입력해주세요.', 'warning')
 				return false;
 			}
@@ -194,7 +194,7 @@ const SaveCust = () => {
 			return false;
 		} else {
 			const phoneNumberRegex = /^\d{3}-\d{3,4}-\d{4}$/;
-			if (!phoneNumberRegex.test(CommonUtils.onAddDashTel(custInfo.userHp))) {
+			if (!phoneNumberRegex.test(custInfo.userHp)) {
 				Swal.fire('', '휴대폰번호 형식에 맞게 입력해주세요.', 'warning');
 				return false;
 			}
@@ -205,12 +205,34 @@ const SaveCust = () => {
 			return false;
 		} else {
 			const telNumberRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
-			if (!telNumberRegex.test(CommonUtils.onAddDashTel(custInfo.userTel))) {
+			if (!telNumberRegex.test(custInfo.userTel)) {
 				Swal.fire('', '유선전화 형식에 맞게 입력해주세요.', 'warning');
 				return false;
 			}
 		}
 	}
+
+    const onPwdvaildation = (userPwd) => {
+        let password = !CommonUtils.isEmpty(userPwd) ? userPwd : "";
+		let hasUpperCase = /[A-Z]/.test(password);//대문자
+		let hasLowerCase = /[a-z]/.test(password);//소문자
+		let hasDigit = /\d/.test(password);//숫자
+		let hasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>]/.test(password);//특수문자
+
+		let isValidPassword = (hasLowerCase && hasUpperCase) || (hasLowerCase && hasDigit) || (hasLowerCase && hasSpecialChar)
+							|| (hasUpperCase && hasDigit) || (hasUpperCase && hasSpecialChar) || (hasDigit && hasSpecialChar)
+
+		let isValidLength = password.length >= 8 && password.length <= 16
+		if (!isValidPassword) {
+			Swal.fire('', '비밀번호는 대/소문자, 숫자, 특수문자중에서 2가지 이상 조합되어야 합니다.', 'warning');
+			return false;
+		} else if (!isValidLength) {
+			Swal.fire('', '비밀번호는 8자 이상 16자 이하로 작성해주세요.', 'warning');
+			return false;
+		}
+
+		return true;
+    };
 
 	const onSave = () => {
 		if(onValidation() === false) return;		// 유효성 검사
@@ -232,37 +254,33 @@ const SaveCust = () => {
 	}
 
 	const onSaveCallBack = async() => {
-		try {
-			let formData = new FormData();
-			formData.append('regnumFile',	typeof custInfo.regnumFile === "string" ? null : custInfo.regnumFile);
-			formData.append('bFile',		typeof custInfo.bFile === "string" ? null : custInfo.bFile);
-			formData.append('data',			new Blob([JSON.stringify(custInfo)], { type: 'application/json' }));
+		let formData = new FormData();
+		formData.append('regnumFile',	typeof custInfo.regnumFile === "string" ? null : custInfo.regnumFile);
+		formData.append('bFile',		typeof custInfo.bFile === "string" ? null : custInfo.bFile);
+		formData.append('data',			new Blob([JSON.stringify(custInfo)], { type: 'application/json' }));
 
-			const response = await axios.post('/api/v1/cust/save', formData, {
-				headers : 'multipart/form-data'
-			})
-			
-			let result = response.data;
-			if(result.code != 'ERROR'){
-				Swal.fire('', `${!isEdit ? '가입되었습니다.' : '수정되었습니다.'}`, 'success');
-				if(loginInfo.custType === 'inter') {
-					navigate('/company/partner/management')
-				} else {
-					navigate(`/company/partner/management/${loginInfo.custCode}`)
-				}
+		const response = await axios.post('/api/v1/cust/save', formData, {
+			headers : 'multipart/form-data'
+		})
+		
+		let result = response.data;
+		if(result.code != 'ERROR'){
+			Swal.fire('', `${!isEdit ? '가입되었습니다.' : '수정되었습니다.'}`, 'success');
+			if(loginInfo.custType === 'inter') {
+				navigate('/company/partner/management')
 			} else {
-				Swal.fire('', result.msg, 'error');
+				navigate(`/company/partner/management/${loginInfo.custCode}`)
 			}
-		} catch(error) {
-			Swal.fire('', error, 'error');
+		} else {
+			Swal.fire('', result.msg, 'error');
 		}
 	}
 
 	useEffect(() => {
-		if(selCust.custCode != '') {
+		if(isEdit) {
 			onInit();
 		}
-	}, [selCust.custCode])
+	}, [selCustCode, params.custCode])
 
 	return (
 		<div className="conRight">
@@ -287,7 +305,7 @@ const SaveCust = () => {
 				</div>
 				}
 				{/* 업체 정보 */}
-				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData}/>
+				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} setSelCustCode={setSelCustCode}/>
 				
 				{loginInfo.custType === 'inter'
 				?
