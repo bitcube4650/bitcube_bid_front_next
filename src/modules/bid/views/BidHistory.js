@@ -52,7 +52,7 @@ const BidHistory = () => {
         })
     }, [srcData]);
 
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
     const onLotteMatCode = () => {
         axios.post("/api/v1/bidComplete/lotteMatCode", {}).then((response) => {

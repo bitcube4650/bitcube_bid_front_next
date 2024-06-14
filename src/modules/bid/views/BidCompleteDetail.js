@@ -18,7 +18,7 @@ const BidCompleteDetail = () => {
     const [data, setData] = useState({});
 
     //세션 로그인 정보
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
     const userId = loginInfo.userId;
 
     //데이터 조회
