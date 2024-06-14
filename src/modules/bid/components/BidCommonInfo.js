@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Ft from '../api/filters';
 import Api from '../api/api';
-// import CustUserPop from './CustUserPop';
+import CustUserPop from './BidCustUserList';
 import Swal from 'sweetalert2';
 import BidAttSignPop from './BidAttSignPop';
 
@@ -14,6 +14,7 @@ const BidCommonInfo = (props) => {
     //협력사 사용자 조회 팝업
     const [custUserPop, setCustUserPop] = useState(false);
     const [custCode, setCustCode] = useState("");
+    const [custName, setCustName] = useState("");
     
     //입회자 서명
     const [whoAtt, setWhoAtt] = useState("");
@@ -21,9 +22,10 @@ const BidCommonInfo = (props) => {
     const [attPop, setAttPop] = useState(false);
 
     //협력사 사용자 조회 팝업 오픈
-    const onOpenCustUserPop = (custCode) => {
+    const onOpenCustUserPop = (cust) => {
         setCustUserPop(true);
-        setCustCode(custCode);
+        setCustCode(cust.custCode);
+        setCustName(cust.custName);
     }
 
     //입회자 서명 팝업 오픈
@@ -104,7 +106,7 @@ const BidCommonInfo = (props) => {
                     <div className="width100">
                         <div className="overflow-y-scroll boxStSm width100" style={{height:"50px"}}>
                             { props.data.custList?.map((cust, idx) => 
-                                <a href="#!" key={idx} onClick={()=>onOpenCustUserPop(cust.custCode)} className="textUnderline">{ cust.custName }
+                                <a href="#!" key={idx} onClick={()=>onOpenCustUserPop(cust)} className="textUnderline">{ cust.custName }
                                 {props.data.custList.length !== (idx+1) &&
                                 <span>, </span>
                                 }
@@ -327,7 +329,9 @@ const BidCommonInfo = (props) => {
             {/* 입회자 서명 */}
 
             {/* 협력사 사용자 */}
-            {/* <CustUserPop custCode={custCode} custUserPop={custUserPop} setCustUserPop={setCustUserPop} /> */}
+            {custUserPop && 
+            <CustUserPop key={'cust_'+props.data.biNo} srcCustCode={custCode} isBidCustUserListModal={custUserPop} setIsBidCustUserListModal={setCustUserPop} srcCustName={custName}/>
+            }
             {/* 협력사 사용자 */}
             
         </div>

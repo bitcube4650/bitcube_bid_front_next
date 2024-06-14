@@ -417,7 +417,7 @@ const BidStatusDetail = () => {
 
             {/* 낙찰 */}
             {succPop && 
-            <BidSuccessPop biNo={data.biNo} custCode={succCust.custCode} custName={succCust.custName} biName={data.biName} succPop={succPop} setSuccPop={setSuccPop} />
+            <BidSuccessPop key={'succ_'+data.biNo} biNo={data.biNo} custCode={succCust.custCode} custName={succCust.custName} biName={data.biName} succPop={succPop} setSuccPop={setSuccPop} />
             }
             {/* //낙찰 */}
              

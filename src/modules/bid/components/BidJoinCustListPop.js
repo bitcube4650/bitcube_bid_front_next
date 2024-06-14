@@ -13,7 +13,6 @@ const BidJoinCustListPop = ({ biNo, joinCustPop, setJoinCustPop }) => {
     const [popData, setPopData] = useState([]);
 
     const onSearch = async() => {
-        console.log(biNo);
         let params = {
             biNo : biNo
         }

@@ -38,7 +38,6 @@ const PartnerBidStatusDetail = () => {
 
     //데이터 조회
     const onSearch = async() => {
-        console.log("fdsfsd")
         let biNo = localStorage.getItem('biNo');
         let searchParams = {
             biNo : biNo
