@@ -1,29 +1,41 @@
-import React from 'react';
-import { Outlet, useLocation, Route, Routes } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import Menu from './Menu'
 import Header from './Header'
 import Footer from './Footer'
 import Main from '../../modules/main/views/Main';
+import Login from '../../modules/login/views/Login';
 import PartnerMain from '../../modules/main/views/PartnerMain';
 
 const Layout = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
+
+    useEffect(() => {
+        const publicPaths = ['/', '/SignUp', '/SignUpMain'];
+        if (loginInfo == null && !publicPaths.includes(location.pathname)) {
+            navigate('/');
+        } else if (loginInfo != null && (location.pathname === '/SignUp' || location.pathname === '/SignUpMain')) {
+            navigate('/');
+        }
+    }, [location, navigate, loginInfo]);
 
     if(loginInfo == null) {
         if(location.pathname === '/') {
             return (
                 <div id="wrap">
-                       <Outlet />
+                    <Outlet />
                 </div>
             );
-        } else {
+        } else if (location.pathname === '/SignUp' || location.pathname === '/SignUpMain') {
             return (
                 <div id="wrap">
-                        <Header />
-                        <Outlet />
+                    <Header />
+                    <Outlet />
                 </div>
             );
         }

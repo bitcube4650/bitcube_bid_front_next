@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import EnrollmentProcessPop from '../components/EnrollmentProcess';
 import BiddingGuidePop from '../components/BiddingGuide';
 
@@ -13,6 +13,12 @@ const SignUp = () => {
 
     // 입찰업무안내 실패 팝업
     const [biddingGuidePop, setBiddingGuidePop] = useState(false);
+
+    const navigate = useNavigate();
+
+    const agreeTerms = () => {
+        navigate('/SignUpMain', {state : true});
+    }
 
     return (
         <div>
@@ -178,7 +184,7 @@ const SignUp = () => {
                     <div className="provisionAgree">
                         <input type="checkbox" id="isAgree" checked={ isAgree }  onChange={(e) => setIsAgree(e.target.checked)} className="loginCheckStyle" /><label htmlFor="isAgree">약관에 동의</label>
                         {isAgree ? (
-                            <Link to="/SignUpMain" replace className="btnStyle btnOutlineBlue btnMd" title="동의하고 계속하기">동의하고 계속하기</Link>
+                            <button onClick={agreeTerms} className="btnStyle btnOutlineBlue btnMd" title="동의하고 계속하기">동의하고 계속하기</button>
                         ) : (
                             <button className="btnStyle btnOutlineBlue btnMd dimmed" title="동의하고 계속하기">동의하고 계속하기</button>
                         )}

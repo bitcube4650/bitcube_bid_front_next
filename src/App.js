@@ -75,7 +75,6 @@ const App = () => {
 					<BidProvider>
 						<Routes>
 							<Route element={<Layout />}>
-								<Route path="/login" element={<Login />}></Route>
 								<Route path="/" element={<Login />}></Route>
 								<Route path="/signUp" element={<SignUp />}></Route>
 								<Route path="/signUpMain" element={<SignUpMain />}></Route>

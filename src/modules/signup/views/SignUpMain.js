@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import ItemPop from '../components/ItemPop';
@@ -56,6 +56,15 @@ const SignUpMain = () => {
     const bFileInputRef = useRef(null);
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const state = location.state;
+
+    useEffect(() => {
+        if(!state) {
+            Swal.fire('', '올바르지 못한 접근입니다.', 'warning');
+            navigate('/');
+        }
+    }, []);
 
     const init = async () => {
         setDetail(initDetail);
