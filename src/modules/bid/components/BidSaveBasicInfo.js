@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from "date-fns/locale";
 import { format } from 'date-fns';
+import ItemPop from 'modules/signup/components/ItemPop';
 
 const BidSaveBasicInfo = (props) => {
 
@@ -21,7 +22,8 @@ const BidSaveBasicInfo = (props) => {
   const [isBidPastModal, setIsBidPastModal] = useState(false);
   const [isBidCustListModal, setIsBidCustListModal] = useState(false);
   const [isBidCustUserListModal, setIsBidCustUserListModal] = useState(false);
-  const [custCode, setcustCode] = useState(false);
+  const [itemPop, setItemPop] = useState(false);		
+  const [custCode, setcustCode] = useState('');
 
   //로그인 정보에서 custCode가 롯데일 때 롯데 분류군 데이터 가져오기
   const getLotteCodeList = useCallback(async() => {
@@ -113,13 +115,13 @@ const BidSaveBasicInfo = (props) => {
 
   const onRemoveCust = ( custCode)=>{
     
-    setCustUserInfo(custUserInfo.filter(item => item.custCode !== custCode));
-    setCustUserName(custUserName.filter(item => item.custCode !== custCode));
-    setCustContent(custContent.filter(item => item.custCode !== custCode));
+    setCustUserInfo(custUserInfo.filter(item => item.custCode != custCode));
+    setCustUserName(custUserName.filter(item => item.custCode != custCode));
+    setCustContent(custContent.filter(item => item.custCode != custCode));
   }
 
   const onCustUserDetail = (custCode)=>{
-    setcustCode(custCode)
+    setcustCode(custCode.toString())
     setIsBidCustUserListModal(true)
   }
 
@@ -131,6 +133,18 @@ const BidSaveBasicInfo = (props) => {
         spotDay : formattedDate
     });
   })
+
+  const itemSelectCallback = (data)=>{
+    setBidContent({
+      ...bidContent,
+      itemCode : data.itemCode,
+      itemName : data.itemName
+    });
+  }
+
+  const onItemPopModal = ()=>{
+    setItemPop(true)
+  }
 
 
   return (
@@ -152,7 +166,9 @@ const BidSaveBasicInfo = (props) => {
                 >과거입찰 가져오기
                 </button>
               :
-              ''
+              <div>
+                {bidContent.biNo}
+              </div>
             }
             </div>
           </div>
@@ -189,6 +205,7 @@ const BidSaveBasicInfo = (props) => {
               <button
                 className="btnStyle btnSecondary ml10"
                 title="조회"
+                onClick={()=>{onItemPopModal()}}
                 >조회</button
               >
             </div>
@@ -342,57 +359,40 @@ const BidSaveBasicInfo = (props) => {
 
               : 
               <div>
-              {custContent.map((val, idx) => (
-                <div key={idx}>
-                  <button
-                    onClick={() => {
-                      onCustUserDetail(val.custCode);
-                    }}
-                    className="textUnderline"
-                  >
-                    {val.custName}
-                  </button>
-                  {custUserName.map((data, dataIdx) => (
-                    <span key={dataIdx}>{val.custCode === data.custCode ? ` ${data.userName}` : ''}</span>
-                  ))}
-                  <i
-                    className="fa-regular fa-xmark textHighlight ml5"
-                   onClick={() => onRemoveCust( val.custCode)}
-                  ></i>
-                  {/* Uncomment if you want to add a separator except for the last element */}
-                  {/* {idx !== custContent.length - 1 && <span>, </span>} */}
-                </div>
-              ))}
+              {
+                custContent.map((val, idx) => (
+                  <div key={idx}>
+                    <button
+                      onClick={() => {
+                        onCustUserDetail(val.custCode);
+                      }}
+                      className="textUnderline"
+                    >
+                      {val.custName}
+                    </button>
+                    {custUserName
+                      .filter((data) => data.custCode == val.custCode)
+                      .map((filteredData, dataIdx) => (
+                        <span key={dataIdx}>{` ${filteredData.userName}`}</span>
+                      ))}
+                    <i
+                      className="fa-regular fa-xmark textHighlight ml5"
+                      onClick={() => onRemoveCust(val.custCode)}
+                    ></i>
+                  </div>
+                ))
+            }
             </div>
-
-  
-                  
-
-
-
-
-
-
-
               : <button>가입회원사 전체</button>}
-   
-
-                    
-
                 <div 
-                // v-for="(val, idx) in custContent" :key="idx"
                 >   
                   
                 <button
                     className="textUnderline"
                     >
-                      {/* { val.custName } */}
                     </button>
                   <span>
-                  
-                  {/* v-for="(data,idx) in custUserName" :key="idx"{{ val.custCode == data.custCode ? ` ${data.userName}` : '' }} */}
                   </span>
-                  {/* <i className="fa-regular fa-xmark textHighlight ml5"></i> */}
                 </div>
                 </div>
               {bidContent.biModeCode === 'A'
@@ -406,18 +406,6 @@ const BidSaveBasicInfo = (props) => {
                 }
             </div>
           </div>
-          {/* <div className="flex align-items-center mt20">
-            <div className="formTit flex-shrink0 width170px">입찰참가업체</div>
-            <div className="flex align-items-center width100">
-              <div
-                className="overflow-y-scroll boxStSm width100"
-                style={{height: '50px'}}
-              >
-                <a>가입회원사 전체</a>
-              </div>
-            </div>
-          </div> */}
-
           <div className="flex align-items-center mt20">
             <div className="formTit flex-shrink0 width170px">
               금액기준 <span className="star">*</span>
@@ -542,6 +530,9 @@ const BidSaveBasicInfo = (props) => {
         }
           {/* 과거입찰 가져오기  */}
           <BidPast isBidPastModal={isBidPastModal} setIsBidPastModal={setIsBidPastModal}/>
+
+          {/* 품목 조회 */}
+          <ItemPop itemPop={itemPop} setItemPop={setItemPop} popClick={itemSelectCallback} />
 
           {/* 업체 조회 */}
           <BidCustList isBidCustListModal={isBidCustListModal} setIsBidCustListModal={setIsBidCustListModal}/>

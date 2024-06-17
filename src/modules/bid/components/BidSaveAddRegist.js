@@ -96,6 +96,10 @@ const BidSaveAddRegist = (props) => {
       }
 
       setInsFile(fileData)
+      setBidContent({
+        ...bidContent,
+        insFileCheck : 'C'
+      })
 
   }
 
@@ -456,7 +460,7 @@ const BidSaveAddRegist = (props) => {
                 </div>
               </div>
               :
-               <div className="uploadPreview" ><p style={{lineHeight:'80px'}}>{ insFile.name }<button onClick={onRemovieInsFile} className="file-remove">삭제</button></p></div> 
+               <div className="uploadPreview" ><p style={{lineHeight:'80px'}}>{ insFile.name ? insFile.name :insFile.fileNm }<button onClick={onRemovieInsFile} className="file-remove">삭제</button></p></div> 
                }
             </div>
           </div>

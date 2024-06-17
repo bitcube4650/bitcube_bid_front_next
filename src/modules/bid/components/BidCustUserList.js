@@ -4,6 +4,7 @@ import Pagination from '../../../components/Pagination'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
+import { onAddDashTel } from 'components/CommonUtils';
 
 const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcCustCode, srcCustName, type}) => {
     
@@ -80,11 +81,12 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
 
         // 팝업이 업체 조회에서가 아니라 입찰참가 업체에서 클릭 시 
         if(type === 'edit'){
-          const custUserInfoData = custUserInfo.filter(item => item.custCode === srcCustCode)
+
+          const custUserInfoData = custUserInfo.filter(item => item.custCode == srcCustCode)
           setSelectedUserIds(custUserInfoData)
         }
 
-      }, [isBidCustUserListModal, srcCustCode]);
+      }, [isBidCustUserListModal]);
 
 
       const onAllCheck = (event) => {
@@ -111,7 +113,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
     const onSaveCustUser = ()=> {
       
       if(selectedUserIds.length > 0){
-
+        console.log(selectedUserIds)
         const custUserInfoData = selectedUserIds.map(item => ({ 
           userId: item.userId,
           userName: item.userName,
@@ -234,8 +236,8 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
                         <td>{ item.userBuseo }</td>
                         <td>{ item.userPosition }</td>
                         <td>{ item.userEmail }</td>
-                        <td>{ item.userTel }</td>
-                        <td>{ item.userHp }</td>
+                        <td>{ onAddDashTel(item.userTel) }</td>
+                        <td>{ onAddDashTel(item.userHp) }</td>
                         <td className="end">{ item.userType === '1' ? '업체관리자' : '사용자'}</td>
                     </tr>
                 ))

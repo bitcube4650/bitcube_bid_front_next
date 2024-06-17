@@ -67,11 +67,8 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
             }
             };
             fetchInitialData();
-        }else{
-            onSearch()
-        }
-    
-          }, [isBidUserListModal,srcData.size, srcData.page]);
+        }    
+    }, [isBidUserListModal,srcData.size, srcData.page]);
 
     const onUserSelect = (userData)=>{
         console.log(userData)

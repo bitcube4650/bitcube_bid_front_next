@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BidSaveBasicInfo from '../components/BidSaveBasicInfo';
 import BidSaveAddRegist from '../components/BidSaveAddRegist';
@@ -12,13 +12,22 @@ const BidProgressSave = () => {
   const navigate = useNavigate();
 
   const {viewType, setViewType, bidContent, setBidContent,custContent,custUserInfo,tableContent, insFile,innerFiles, outerFiles} = useContext(BidContext);
+  
+  const [originalInnerFiles, setOriginalInnerFiles] = useState([])
+  const [originalouterFiles, setOriginalouterFiles] = useState([])
+
   const onMoveBidProgress =()=>{
     navigate('/bid/progress');
   }
 
+  const sessionViewType = localStorage.getItem('viewType')
+  
   useEffect(() => {
     if(!viewType){
-      const sessionViewType = localStorage.getItem('viewType')
+
+      if(sessionViewType === '수정'){
+        navigate(`/bid/progress/detail`)
+      }
       setViewType(sessionViewType)
 
       setBidContent({
@@ -45,6 +54,9 @@ const BidProgressSave = () => {
         estStartTime: hours,
         estCloseTime: hours,
       });
+    }else{
+      setOriginalInnerFiles(innerFiles)
+      setOriginalouterFiles(outerFiles)
     }
   }, []);
 
@@ -262,7 +274,6 @@ const BidProgressSave = () => {
           custCode: custCode,
           usemailId: custUserInfoFilter[custCode]
       }));
-      console.log(custUserInfoData)
     }
 
 
@@ -276,37 +287,92 @@ const BidProgressSave = () => {
           return { ...item, seq: idx + 1, orderQty : Number(item.orderQty.replace(/,/g, '')),orderUc: Number(item.orderUc.replace(/,/g, ''))}
        });
       }
-      if(innerFiles.length > 0){
-        innerFiles.forEach(file => {
-          fd.append("innerFiles", file)
-        })
-      }
-      if(outerFiles.length > 0){
-        outerFiles.forEach(file => {
-          fd.append("outerFiles", file)
-        })
-      }
 
 
-      const type = '등록' ? 'insert' : 'update'
+      const type = sessionViewType === '등록' ? 'insert' : 'update'
+      let insFileCheck = ''
+      let delInnerFiles = []
+      let delInnerFilesAll = ''
+      let delOuterFiles = []
+      let delOuterFilesAll = ''
+
       const updatedBidContent = {
         ...bidContent,
         custUserInfo: custUserInfoData,
         userId: loginInfo.userId,
         bdAmt : bidContent.bdAmt.replace(/[^\d-]/g, ''),
-        type : type
+        type : type,
       };
 
-      setBidContent(updatedBidContent);
+      if(sessionViewType === '등록'){
+        if(innerFiles.length > 0){
+          innerFiles.forEach(file => {
+            fd.append("innerFiles", file)
+          })
+        }
+        if(outerFiles.length > 0){
+          outerFiles.forEach(file => {
+            fd.append("outerFiles", file)
+          })
+        }
+      }else if(sessionViewType === '수정'){
+        insFileCheck = bidContent.insModeCode ==='1' ? bidContent.insFileCheck : 'N'
+        updatedBidContent.insFileCheck = insFileCheck
 
+        // 대내용 파일 처리
+        const innerFilesData = innerFiles.filter(item => !item.hasOwnProperty('fileId'))
+        if(innerFilesData.length > 0){
+          innerFilesData.forEach(file => {
+            fd.append("innerFiles", file)
+          })
+  
+        }else if(innerFiles.length === 0){
+          delInnerFilesAll = 'Y'
+          updatedBidContent.delInnerFilesAll = delInnerFilesAll
+        }
+
+        const originInnerFileIds = originalInnerFiles.map(file => file.fileId)
+        const innerFileIds = innerFiles.filter(file => typeof file === 'object').map(file => file.fileId);
+
+        const missingInnerFileIds = originInnerFileIds.filter(fileId => !innerFileIds.includes(fileId))
+
+        
+        if(missingInnerFileIds.length > 0){
+          delInnerFiles = missingInnerFileIds
+          updatedBidContent.delInnerFiles = delInnerFiles
+        }
+
+  
+        //대외용 파일 처리
+        const outerFilesData = outerFiles.filter(item => !item.hasOwnProperty('fileId'))
+        if(outerFilesData.length > 0){
+          outerFilesData.forEach(file => {
+            fd.append("outerFiles", file)
+          })
+  
+        }else if(outerFiles.length === 0){
+          delOuterFilesAll = 'Y'
+          updatedBidContent.delOuterFilesAll = delOuterFilesAll
+        }
+
+        const originOuterFileIds = originalouterFiles.map(file => file.fileId)
+
+        const outerFileIds = outerFiles.filter(file => typeof file === 'object').map(file => file.fileId);
+
+        const missingOuterFileIds = originOuterFileIds.filter(fileId => !outerFileIds.includes(fileId))
+
+        if(missingOuterFileIds.length > 0){
+          delOuterFiles = missingOuterFileIds
+          updatedBidContent.delOuterFiles = delOuterFiles
+        }
+        
+      }
+      
       const params = {
         bidContent : updatedBidContent,
         custContent : custContent,
         tableContent : tableContentData
       }
-
-      console.log(params)
-
       fd.append("bidContent", JSON.stringify(params))
       
       

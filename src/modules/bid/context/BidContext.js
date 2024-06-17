@@ -61,7 +61,8 @@ export const BidProvider = ({ children }) => {
       openAtt2Code : '', // 입회자2 ID
       insModeCode : '1', // 내역방식
       supplyCond : '',  // 납품조건
-      interrelatedCustCode : '' // 로그인 사용자의 custCode
+      interrelatedCustCode : '', // 로그인 사용자의 custCode
+      insFileCheck : 'Y', // 입찰 계획 수정시 내역 방식 파일등록 수정 또는 삭제 여부 체크 Y : 변경 및 삭제 X 그대로 파일 저장. N : 파일 삭제, C : 새로운 파일로 수정(기존 거 지우고 새로 등록)
     }
   )
 

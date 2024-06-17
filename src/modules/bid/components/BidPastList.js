@@ -11,9 +11,7 @@ function BidPastList({bidPastList,onBidPastModalHide}) {
       try {
           const response = await axios.post("/api/v1/bid/progresslistDetail", {biNo});
           const data = response.data.data
-          console.log(data)
           const bid = data[0][0]
-          console.log(bid)
           const currentDate = new Date()
           let currentHours = currentDate.getHours()
           currentHours = currentHours < 10 ? '0' + currentHours : currentHours
@@ -101,7 +99,9 @@ function BidPastList({bidPastList,onBidPastModalHide}) {
 
           if(bid.insModeCode === '2'){
              setTableContent(data[1].map(item => {
-                return { ...item, orderQty : item.orderQty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),orderUc: item.orderUc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')};
+                return { ...item, 
+                  orderQty : item.orderQty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+                  orderUc: item.orderUc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             }))            
           }
 

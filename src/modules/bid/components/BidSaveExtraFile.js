@@ -186,7 +186,7 @@ const BidSaveExtraFile = () => {
                   </p>
                 )}
                 <p style={{ lineHeight: '40px' }}>
-                  {data.name}
+                  {data.name ? data.name : data.fileNm}
                   <button onClick={() => removeInnerFiles(idx)} className="file-remove">
                     삭제
                   </button>
@@ -274,8 +274,8 @@ const BidSaveExtraFile = () => {
                   </p>
                 )}
                 <p style={{ lineHeight: '40px' }}>
-                  {data.name}
-                  <button onClick={() => removeInnerFiles(idx)} className="file-remove">
+                  {data.name ? data.name : data.fileNm}
+                  <button onClick={() => removeOuterFiles(idx)} className="file-remove">
                     삭제
                   </button>
                 </p>

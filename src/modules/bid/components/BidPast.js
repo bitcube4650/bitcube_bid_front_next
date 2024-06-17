@@ -55,8 +55,6 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
         }
       };
       fetchInitialData();
-    }else{
-      onSearch()
     }
   }, [isBidPastModal]);
 

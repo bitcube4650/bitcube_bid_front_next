@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import BidCommonInfo from '../components/BidCommonInfo';
 import BidProgressDel from '../components/BidProgressDel'
+import { BidContext } from '../context/BidContext';
 
 
 const BidProgressDetail = () => {
@@ -18,6 +19,7 @@ const BidProgressDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const {setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
 
   const biNo = localStorage.getItem('biNo')
   const onBidDetail = async()=>{
@@ -108,10 +110,6 @@ const BidProgressDetail = () => {
       params.custUserIds = userIds
     }
     
-
-    console.log(params)
-
-    /*
     try {
       await axios.post(`/api/v1/bid/bidNotice`, params);
       Swal.fire('입찰 공고가 완료되었습니다.', '', 'success');
@@ -121,11 +119,127 @@ const BidProgressDetail = () => {
         Swal.fire('입찰 공고를 실패하였습니다.', '', 'error');
         console.log(error);
     }
-    */
-
 
   }
-  
+
+  const onMoveSave = () =>{
+
+    setViewType('수정')
+    localStorage.setItem("viewType", '수정');
+
+    const [spotDay, spotTime] = data.spotDate.split(' ');
+    const [estStartDay, estStartTime] = data.estStartDate.split(' ');
+    const [estCloseDay, estCloseTime] = data.estCloseDate.split(' ');
+    //등록으로 이동 시 state 초기화
+    setBidContent({
+      ...bidContent,
+
+      //밑에 4개의 변수는 등록 시 로그인 정보로 세팅
+      createUserName : data.damdangName, // 입찰담당자
+      createUser : data.createUser, // 입찰담당자 및 입찰계획 생성자 ID
+      gongoId : data.gongoName, // 입찰공고자 이름
+      gongoIdCode : data.gongoId, // 입찰공고자 ID
+
+      biNo : data.biNo, // 입찰번호
+      biName : data.biName,  // 입찰명
+      itemCode : data.itemCode, // 품목 Code
+      itemName : data.itemName, // 품목 이름
+      biModeCode : data.biMode, // 입찰방식
+      bidJoinSpec : data.bidJoinSpec, // 입찰참가자격 
+      specialCond : data.specialCond, // 특수조건
+      spotDay : spotDay, // 현장설명 일시
+      spotTime : spotTime, // 현장설명 시간
+      spotData : data.spotDate, // 현장설명 일시 및 시간
+      spotArea : data.spotArea, // 현장설명장소
+      succDeciMethCode : data.succDeciMethCode, // 낙찰자결정방법
+      amtBasis : data.amtBasis, // 금액기준
+      payCond : data.payCond, //결제조건
+      bdAmt : data.bdAmt ? data.bdAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '', // 예산금액
+      // 롯데일 때만 사용하는 변수들 loginInfo.custCode == '02', custName == '롯데에너지머티리얼즈'
+      lotteDeptList: [], // 롯데 분류군 사업부 리스트
+      lotteProcList: [], // 롯데 분류군 공정 리스트
+      lotteClsList: [], // 롯데 분류군 분류 리스트
+      matDept : data.matDept, // 사업부
+      matProc : data.matProc, // 공정
+      matCls : data.matCls, // 분류
+      matFactory : data.matFactory, // 공장동
+      matFactoryLine : data.matFactoryLine, // 라인
+      matFactoryCnt : data.matFactoryCnt, // 호기
+
+      //BidSaveAddRegist에서 사용
+
+      estStartDay : estStartDay, // 제출시작 일시
+      estStartTime : estStartTime, // 제출시작 시간
+      estStartDate : data.estStartDate, // 제출시작 일시 + 시간
+      estCloseDay : estCloseDay, // 제출시작 일시
+      estCloseTime : estCloseTime, // 제출시작 시간
+      estCloseDate : data.estCloseDate, // 제출시작 일시 + 시간
+      estOpener : data.estOpener, // 개찰자 이름
+      estOpenerCode : data.estOpenerId, // 개찰자ID
+      estBidder : data.estBidder, // 낙찰자 이름
+      estBidderCode : data.estBidderId, // 낙찰자 ID
+      openAtt1 : data.openAtt1 ? data.openAtt1 : '', // 입회자1 이름
+      openAtt1Code : data.openAtt1Id, // 입회자1 ID
+      openAtt2 : data.openAtt2 ? data.openAtt2 : '', // 입회자2 이름
+      openAtt2Code : data.openAtt2Id, // 입회자2 ID
+      insModeCode : data.insMode, // 내역방식
+      supplyCond : data.supplyCond,  // 납품조건
+      interrelatedCustCode : loginInfo.custCode, // 로그인한 계정의 custCode
+      insFileCheck : 'Y',
+    })
+    
+    const custUserInfo = data.custUserInfo
+
+    if(custUserInfo && custUserInfo.length > 0){
+    
+      const custCodeUserName = custUserInfo.reduce((acc, userInfo) => {
+      const custCode = acc.find(item => item.custCode === userInfo.custCode);
+
+        if (custCode) {
+          custCode.userName += ', ' + userInfo.userName;
+        } else {
+            acc.push({ custCode: userInfo.custCode, userName: userInfo.userName });
+        }
+
+          return acc;
+        }, []);
+        setCustContent(data.custList) // 입찰참가업체
+        setCustUserName(custCodeUserName) // 입찰참가업체 뒤에 표시할 사용자 이름
+        setCustUserInfo(custUserInfo) // 입찰참가업체 클릭 시 표시할 데이터 정보
+
+    }else{
+      setCustContent([])
+      setCustUserName([])
+      setCustUserInfo([])
+    }
+
+    //세부내역 1 : 파일등록. 2 : 직접 입력
+    if(data.insMode ==='1'){
+      const insFileData = data.specFile[0]
+      setInsFile(insFileData) // 세부내역 파일등록
+    }else{
+      setTableContent(data.specInput.map(item => {
+        return { ...item, 
+          orderQty : item.orderQty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+          orderUc: item.orderUc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+    })) // 세부내역 직접입력
+      setInsFile(null)  
+    }
+
+    const fileList = data.fileList
+    if(fileList.length > 0){
+      const innerFilesData = fileList.filter(item => item.fileFlag === '0')
+      const outerFilesData = fileList.filter(item => item.fileFlag === '1')
+
+      setInnerFiles(innerFilesData) // 첨부파일 (대내용)
+      setOuterFiles(outerFilesData) // 첨부파일 (대외용)
+    }else{
+      setInnerFiles([]) 
+      setOuterFiles([]) 
+    }
+    
+    navigate('/bid/progress/save');    
+  }
   return (
     <div className="conRight">
 
@@ -167,6 +281,7 @@ const BidProgressDetail = () => {
           <button
             className="btnStyle btnSecondary"
             title="수정"
+            onClick={()=>{onMoveSave()}}
             >수정</button
           >
           </>
