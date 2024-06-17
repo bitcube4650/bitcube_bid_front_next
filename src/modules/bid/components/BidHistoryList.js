@@ -20,7 +20,7 @@ const BidHistoryList = ({data, lotteMat, onSetPopData}) => {
             <td className="text-right">{ Ft.numberWithCommas(data.succAmt) }</td>
             <td className="text-left">{ data.custName }</td>
             <td>
-                <a onClick={()=>onSetPopData(data.biNo)} className="textUnderline" title="투찰 정보 페이지가 열림" >{ data.joinCustCnt }</a>
+                <a href={()=>false} onClick={()=>onSetPopData(data.biNo)} className="textUnderline" title="투찰 정보 페이지가 열림" >{ data.joinCustCnt }</a>
             </td>
             <td>{ data.estStartDate }</td>
             <td>{ data.estCloseDate }</td>
