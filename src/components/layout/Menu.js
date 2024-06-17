@@ -118,14 +118,14 @@ const Menu = () => {
             {
                 (userCustType === 'inter') &&                
                 <div className="myState">
-                    <div>진행중<a onClick={()=>onMoveBiddingPage('completed')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.ing}</span>건</a></div>
-                    <div>낙찰 (12개월)<a onClick={()=>onMoveBiddingPage('awarded')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.completed}</span>건</a></div>
+                    <div>진행중<a onClick={()=>onMoveBiddingPage('')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.ing}</span>건</a></div>
+                    <div>낙찰 (12개월)<a onClick={()=>onMoveBiddingPage('completed')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.completed}</span>건</a></div>
                 </div>
             }
             {
                 (userCustType === 'cust') &&                
                 <div className="myState">
-                    <div>진행중<a onClick={()=>onMoveBiddingPage('completed')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.ing}</span>건</a></div>
+                    <div>진행중<a onClick={()=>onMoveBiddingPage('')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.ing}</span>건</a></div>
                     <div>낙찰 (12개월)<a onClick={()=>onMoveBiddingPage('awarded')} className="myStateNum" title="전자입찰 페이지로 이동"><span>{BidInfo.awarded}</span>건</a></div>
                 </div>
             }
