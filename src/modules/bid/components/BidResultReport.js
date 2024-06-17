@@ -13,7 +13,7 @@ const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
         // 입찰결과 보고서
         <Modal className="modalStyle printDiv" id="resultsReport" show={reportPop} onHide={onClosePop} keyboard={true} size="lg">
             <Modal.Body>
-                <a href="#!" className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a href={()=>false} className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">{ title }</h2>
                 <h4 className="h4Tit mt20">입찰정보</h4>
                 <div className="modalBoxSt mt10">
@@ -107,8 +107,8 @@ const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
                 </table>
 
                 <div className="modalFooter">
-                    <a href="#!" className="modalBtnClose" onClick={onClosePop} data-dismiss="modal" title="닫기">닫기</a>
-                    <a href="#!" onClick={()=>Api.fnPrint()} className="modalBtnCheck" title="인쇄하기">인쇄하기</a>
+                    <a href={()=>false} className="modalBtnClose" onClick={onClosePop} data-dismiss="modal" title="닫기">닫기</a>
+                    <a href={()=>false} onClick={()=>Api.fnPrint()} className="modalBtnCheck" title="인쇄하기">인쇄하기</a>
                 </div>
             </Modal.Body>
         </Modal>

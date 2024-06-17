@@ -34,10 +34,10 @@ const PartnerBidStatusList = ({data}) => {
     return (
         <tr>
             <td className="textUnderline">
-                <a href="#!" style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)}>{ data.biNo }</a>
+                <a href={()=>false} style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)}>{ data.biNo }</a>
             </td>
             <td className="textUnderline text-left">
-                <a href="#!" style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)} >{ data.biName }</a>
+                <a href={()=>false} style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)} >{ data.biName }</a>
             </td>
             <td className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''}>
                 <i className="fa-regular fa-timer"></i>{ data.estStartDate }

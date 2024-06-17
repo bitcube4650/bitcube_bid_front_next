@@ -20,10 +20,10 @@ const BidStatusList = (props) => {
     return (
          <tr>
             <td className="textUnderline">
-                <a href="#!" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)}>{ props.val.biNo }</a>
+                <a href={()=>false} style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)}>{ props.val.biNo }</a>
             </td>
             <td className="textUnderline text-left">
-                <a href="#!" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)} >{ props.val.biName }</a>
+                <a href={()=>false} style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)} >{ props.val.biName }</a>
             </td>
             <td className={fnIsPastDate(props.val.estCloseDate) ? 'textHighlight' : ''}>
                 <i className="fa-regular fa-timer"></i>{ props.val.estCloseDate }

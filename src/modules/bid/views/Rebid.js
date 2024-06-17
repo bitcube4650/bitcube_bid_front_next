@@ -222,7 +222,7 @@ const Rebid = () => {
                                         <div>
                                             {data === val.custCode &&
                                             <>
-                                            <a href="#!">{ val.custName }</a>
+                                            <a href={()=>false}>{ val.custName }</a>
                                             {(data === val.custCode && idx2 !== reCustList.length - 1) &&
                                                 <span>,</span>
                                             }
@@ -523,8 +523,8 @@ const Rebid = () => {
                             </div>
                         </div>
                         <div className="text-center mt50">
-                            <a href="#!" className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                            <a href="#!" onClick={onValidation} className="btnStyle btnPrimary" title="재입찰" >재입찰</a>
+                            <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                            <a href={()=>false} onClick={onValidation} className="btnStyle btnPrimary" title="재입찰" >재입찰</a>
                         </div>
                     </div>
                 </div>
@@ -533,7 +533,7 @@ const Rebid = () => {
                 {/* 재입찰  */}
                 <Modal className="modalStyle" id="reBidding" show={reBidPop} onHide={()=>setReBidPop(false)} keyboard={true}>
                     <Modal.Body>
-                        <a href="#!" className="ModalClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                        <a href={()=>false} className="ModalClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                         <h2 className="modalTitle">재입찰</h2>
                         <div className="modalTopBox">
                             <ul>
@@ -546,8 +546,8 @@ const Rebid = () => {
                         </div>
                         <textarea className="textareaStyle height150px mt20" placeholder="재입찰 사유 필수 입력 (200자 이내)" defaultValue={whyA3} onChange={(e)=>setWhyA3(e.target.value)}></textarea>
                         <div className="modalFooter">
-                            <a href="#!" className="modalBtnClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="취소">취소</a>
-                            <a href="#!" className="modalBtnCheck" title="재입찰" onClick={onSave}>재입찰</a>
+                            <a href={()=>false} className="modalBtnClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="취소">취소</a>
+                            <a href={()=>false} className="modalBtnCheck" title="재입찰" onClick={onSave}>재입찰</a>
                         </div>
                     </Modal.Body>
                 </Modal>

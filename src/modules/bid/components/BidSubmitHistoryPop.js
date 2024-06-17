@@ -54,7 +54,7 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
     return (
         <Modal className="modalStyle" id="submitHistPop" show={submitHistPop} onHide={onClosePop} keyboard={true} size="lg">
             <Modal.Body>
-                <a href="#!" className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a href={()=>false} className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">제출 이력</h2>
                 <table className="tblSkin1 mt20">
                     <colgroup>
@@ -89,7 +89,7 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
                 </div>
                 {/* //pagination */}
                 <div className="modalFooter">
-                    <a href="#!" className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
+                    <a href={()=>false} className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
                 </div>
             </Modal.Body>
         </Modal>

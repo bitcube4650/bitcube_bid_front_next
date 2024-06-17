@@ -204,7 +204,7 @@ const BidHistory = () => {
                         <div style={{ width:'320px'}}>
                             <input type="text" onChange={onChangeSrcData} name="biName" className="inputStyle" placeholder="" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
-                        <a href="#!" onClick={onSearch} className="btnStyle btnSearch">검색</a>
+                        <a href={()=>false} onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}
@@ -220,7 +220,7 @@ const BidHistory = () => {
                         </select>
                     </div>
                     <div className="flex-shrink0">
-                        <a href="#!" onClick={onExcelDown} className="btnStyle btnPrimary" title="엑셀 다운로드" >엑셀 다운로드 <i className="fa-light fa-arrow-down-to-line ml10"></i></a>
+                        <a href={()=>false} onClick={onExcelDown} className="btnStyle btnPrimary" title="엑셀 다운로드" >엑셀 다운로드 <i className="fa-light fa-arrow-down-to-line ml10"></i></a>
                     </div>
                 </div>
 

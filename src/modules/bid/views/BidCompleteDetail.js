@@ -155,11 +155,11 @@ const BidCompleteDetail = () => {
                                 <>
                                 <tr key={idx}>
                                     <td className="text-left">
-                                        <a href="#!" onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
+                                        <a href={()=>false} onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
                                     </td>
                                     <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
                                     <td>
-                                        <a href="#!" onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
+                                        <a href={()=>false} onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
                                     </td>
                                     <td>{ cust.submitDate }</td>
                                     <td>{ cust.presName }</td>
@@ -213,10 +213,10 @@ const BidCompleteDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a href="#!" onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
-                        <a href="#!" onClick={()=>setReportPop(true)} className="btnStyle btnSecondary" title="입찰결과 보고서">입찰결과 보고서</a>
+                        <a href={()=>false} onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
+                        <a href={()=>false} onClick={()=>setReportPop(true)} className="btnStyle btnSecondary" title="입찰결과 보고서">입찰결과 보고서</a>
                         { ( data.ingTag === 'A5' && data.createUser === userId ) &&
-                        <a href="#!" onClick={()=>setRealAmtPop(true)} className="btnStyle btnPrimary" title="실제 계약금액">실제 계약금액
+                        <a href={()=>false} onClick={()=>setRealAmtPop(true)} className="btnStyle btnPrimary" title="실제 계약금액">실제 계약금액
                             <i className="fas fa-question-circle toolTipSt ml5">
                                 <div className="toolTipText" style={{width: "480px"}}>
                                     <ul className="dList">
@@ -237,7 +237,7 @@ const BidCompleteDetail = () => {
             {realAmtPop && 
             <Modal className="modalStyle" id="realAmtSave" show={realAmtPop} onHide={()=>setRealAmtPop(false)} keyboard={true}>
                 <Modal.Body>
-                    <a href="#!" onClick={()=>setRealAmtPop(false)} className="ModalClose" data-dismiss="modal" title="닫기">
+                    <a href={()=>false} onClick={()=>setRealAmtPop(false)} className="ModalClose" data-dismiss="modal" title="닫기">
                         <i className="fa-solid fa-xmark"></i>
                     </a>
                     <h2 className="modalTitle">실제 계약금액</h2>
@@ -255,8 +255,8 @@ const BidCompleteDetail = () => {
                         <div className="width100"><input type="text" className="inputStyle inputSm" defaultValue={realAmt} onChange={(e)=> setRealAmt(e.target.value)} placeholder="숫자만 입력"/></div>
                     </div>
                     <div className="modalFooter">
-                        <a href="#!" className="modalBtnClose" onClick={()=>setRealAmtPop(false)} data-dismiss="modal" title="취소">취소</a>
-                        <a href="#!" className="modalBtnCheck" data-toggle="modal" title="저장" onClick={onSave}>저장</a>
+                        <a href={()=>false} className="modalBtnClose" onClick={()=>setRealAmtPop(false)} data-dismiss="modal" title="취소">취소</a>
+                        <a href={()=>false} className="modalBtnCheck" data-toggle="modal" title="저장" onClick={onSave}>저장</a>
                     </div>
                 </Modal.Body>
             </Modal>

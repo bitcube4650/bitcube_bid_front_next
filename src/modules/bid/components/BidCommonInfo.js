@@ -106,7 +106,7 @@ const BidCommonInfo = (props) => {
                     <div className="width100">
                         <div className="overflow-y-scroll boxStSm width100" style={{height:"50px"}}>
                             { props.data.custList?.map((cust, idx) => 
-                                <a href="#!" key={idx} onClick={()=>onOpenCustUserPop(cust)} className="textUnderline">{ cust.custName }
+                                <a href={()=>false} key={idx} onClick={()=>onOpenCustUserPop(cust)} className="textUnderline">{ cust.custName }
                                 {props.data.custList.length !== (idx+1) &&
                                 <span>, </span>
                                 }
@@ -119,7 +119,7 @@ const BidCommonInfo = (props) => {
                     { props.data.biMode === 'B' &&
                         <div className="flex align-items-center width100">
                             <div className="boxStSm width100 boxOverflowY">
-                                <a href="#!">가입회원사 전체</a>
+                                <a href={()=>false}>가입회원사 전체</a>
                             </div>
                         </div>
                     }
@@ -264,7 +264,7 @@ const BidCommonInfo = (props) => {
                     
                     { props.data.insMode === '1' && 
                     <div className="width100">
-                        { props.data.specFile?.map((specFile, idx) => <a href="#!" key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
+                        { props.data.specFile?.map((specFile, idx) => <a href={()=>false} key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
                     </div>
                     }
 
@@ -306,7 +306,7 @@ const BidCommonInfo = (props) => {
                     <div className="width100">
                         { props.data.fileList?.map((file, idx) => 
                             <div key={idx} className={file.fileFlag === '1' ? 'textHighlight' : ''}>
-                                <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a href="#!" onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
+                                <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a href={()=>false} onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
                             </div>) }
                     </div>
                 </div>

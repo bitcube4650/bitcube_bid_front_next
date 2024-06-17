@@ -92,7 +92,7 @@ const PartnerBidStatus = () => {
                             <input type="checkbox" id="s1-1" className="checkStyle" onClick={onChangeSrcData} name="esmtYnN" defaultChecked={srcData.esmtYnN} /><label htmlFor="s1-1">미투찰(재입찰 포함)</label>
                             <input type="checkbox" id="s1-2" className="checkStyle" onClick={onChangeSrcData} name="esmtYnY" defaultChecked={srcData.esmtYnY} /><label htmlFor="s1-2" className="ml50">투찰</label>
                         </div>
-                        <a href="#!" className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                        <a href={()=>false} className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}

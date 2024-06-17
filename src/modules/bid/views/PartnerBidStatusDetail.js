@@ -545,12 +545,12 @@ const PartnerBidStatusDetail = () => {
                     {/* // 견적을 아직 제출 안한 경우 */}
 
                     <div className="text-center mt50">
-                        <a href="#!" className="btnStyle btnOutline" title="목록" onClick={()=>onMovePage()}> 목록 </a>
+                        <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={()=>onMovePage()}> 목록 </a>
                         { (esmtPossible && data.custEsmtYn === '1' && (data.ingTag === 'A1' || (data.ingTag === 'A3' && data.custRebidYn === 'Y'))) &&
-                        <a href="#!" onClick={()=>onCheck()} className="btnStyle btnPrimary" title="견적서 제출">견적서 제출</a>
+                        <a href={()=>false} onClick={()=>onCheck()} className="btnStyle btnPrimary" title="견적서 제출">견적서 제출</a>
                         }
                         { ( esmtPossible && data.custEsmtYn === '1' && data.ingTag === 'A3' && data.custRebidYn === 'N' ) &&
-                        <a href="#!" onClick={()=>{Swal.fire('', '재입찰 대상이 아닙니다.', 'warning')}} className="btnStyle btnPrimary" style={{opacity: "0.5", cursor: "not-allowed"}} title="견적서 제출">견적서 제출</a>
+                        <a href={()=>false} onClick={()=>{Swal.fire('', '재입찰 대상이 아닙니다.', 'warning')}} className="btnStyle btnPrimary" style={{opacity: "0.5", cursor: "not-allowed"}} title="견적서 제출">견적서 제출</a>
                         }
                     </div>
                 </div>

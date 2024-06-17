@@ -44,7 +44,7 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpd
     return (
         <Modal className="modalStyle" id="attSignPop" show={attPop} onHide={onCloseAttSignPop} keyboard={true}>
             <Modal.Body>
-                <a href="#!" onClick={onCloseAttSignPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a href={()=>false} onClick={onCloseAttSignPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">입회자 확인</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -58,8 +58,8 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpd
                     </div>
                 </div>
                 <div className="modalFooter">
-                    <a href="#!" onClick={onCloseAttSignPop} className="modalBtnClose" data-bs-dismiss="modal" title="취소">취소</a>
-                    <a href="#!" onClick={onAttSign} className="modalBtnCheck" title="확인">확인</a>
+                    <a href={()=>false} onClick={onCloseAttSignPop} className="modalBtnClose" data-bs-dismiss="modal" title="취소">취소</a>
+                    <a href={()=>false} onClick={onAttSign} className="modalBtnCheck" title="확인">확인</a>
                 </div>
             </Modal.Body>
         </Modal>

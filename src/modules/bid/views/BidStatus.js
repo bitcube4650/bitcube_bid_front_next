@@ -102,7 +102,7 @@ const BidStatus = () => {
                                 <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="dateOverYn" defaultChecked={srcData.dateOverYn} /><label htmlFor="progress1-2" className="ml50">입찰공고(개찰대상)</label>
                                 <input type="checkbox" id="progress1-3" className="checkStyle" onClick={onChangeSrcData} name="openBidYn" defaultChecked={srcData.openBidYn} /><label htmlFor="progress1-3" className="ml50">개찰(업체선정대상)</label>
                             </div>
-                            <a href="#!" className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                            <a href={()=>false} className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                         </div>
                     </div>
                     {/* searchBox  */}

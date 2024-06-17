@@ -115,7 +115,7 @@ const PartnerBidComplete = () => {
                         <div style={{ width:'320px'}}>
                             <input type="text" onChange={onChangeSrcData} name="biName" className="inputStyle" placeholder="" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
                         </div>
-                        <a href="#!" onClick={onSearch} className="btnStyle btnSearch">검색</a>
+                        <a href={()=>false} onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                  {/* //searchBox  */}

@@ -261,7 +261,7 @@ const BidStatusDetail = () => {
                                     <tr>
                                         <td className="text-left">{ cust.custName }</td>
                                         <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
-                                        <td><a href="#!" onClick={()=>onRejectDetail(cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a></td>
+                                        <td><a href={()=>false} onClick={()=>onRejectDetail(cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a></td>
                                         <td>{ cust.submitDate }</td>
                                         <td>{ cust.damdangName }</td>
                                         <td className="end">
@@ -274,12 +274,12 @@ const BidStatusDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a href="#!" className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                        <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
                         { (data.ingTag === 'A1' || data.ingTag === 'A3') && (data.bidAuth || data.openAuth || (data.createUser === userId)) &&
-                        <a href="#!" onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
+                        <a href={()=>false} onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
                         { ((data.ingTag === 'A1' || data.ingTag === 'A3') && data.openAuth && (data.estCloseCheck === 1)) && 
-                        <a href="#!" onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
+                        <a href={()=>false} onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
                         }
                     </div>
                     </>
@@ -319,11 +319,11 @@ const BidStatusDetail = () => {
                                         <label htmlFor={idx}></label>
                                     </td>
                                     <td className="text-left">
-                                        <a href="#!" onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
+                                        <a href={()=>false} onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
                                     </td>
                                     <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
                                     <td>
-                                        <a href="#!" onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
+                                        <a href={()=>false} onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
                                     </td>
                                     <td>{ cust.submitDate }</td>
                                     <td>{ cust.damdangName }</td>
@@ -334,7 +334,7 @@ const BidStatusDetail = () => {
                                     </td>
                                     <td>
                                         {(cust.esmtYn === '2' && (data.openAuth || data.bidAuth)) &&
-                                        <a href="#!" onClick={()=>onSuccSelect(cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
+                                        <a href={()=>false} onClick={()=>onSuccSelect(cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
                                         }
                                     </td>
                                 </tr>
@@ -376,13 +376,13 @@ const BidStatusDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a href="#!" className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                        <a href="#!" className="btnStyle btnOutline" title="개찰결과 보고서" onClick={onOpenReportPop} >개찰결과 보고서</a>
+                        <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                        <a href={()=>false} className="btnStyle btnOutline" title="개찰결과 보고서" onClick={onOpenReportPop} >개찰결과 보고서</a>
                         { (data.openAuth || data.bidAuth || (data.createUser === userId)) &&
-                        <a href="#!" onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
+                        <a href={()=>false} onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
                         { ((data.createUser === userId) || data.openAuth) &&
-                        <a href="#!" onClick={onRebid} className="btnStyle btnOutlineRed" title="선택업체 재입찰">선택업체 재입찰하러 가기</a>
+                        <a href={()=>false} onClick={onRebid} className="btnStyle btnOutlineRed" title="선택업체 재입찰">선택업체 재입찰하러 가기</a>
                         }
                     </div>
                     </>

@@ -13,8 +13,8 @@ const BidCompleteList = ({data}) => {
 
     return (
         <tr>
-            <td><a href="#!" onClick={()=>clickBidDetail(data.biNo)} className="textUnderline" title="입찰번호">{ data.biNo }</a></td>
-            <td className="text-left"><a href="#!" onClick={()=>clickBidDetail(data.biNo)} className="textUnderline" title="입찰명">{ data.biName }</a></td>
+            <td><a href={()=>false} onClick={()=>clickBidDetail(data.biNo)} className="textUnderline" title="입찰번호">{ data.biNo }</a></td>
+            <td className="text-left"><a href={()=>false} onClick={()=>clickBidDetail(data.biNo)} className="textUnderline" title="입찰명">{ data.biName }</a></td>
             <td>{ data.updateDate }</td>
             <td>{ Ft.ftBiMode(data.biMode) }</td>
             <td style={data.ingTag == 'A7' ? {color:'red'} : {}}>{ Ft.ftIngTag(data.ingTag) }</td>
