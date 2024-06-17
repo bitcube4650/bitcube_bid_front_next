@@ -4,10 +4,28 @@ export const onComma = (val) => {
 	return val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+/**************************문자열 관련 Utils**************************/
 export const isEmpty = (str) => {
 	if( str == "" || str == null || str == undefined || ( str != null && typeof str == "object" && !Object.keys(str).length)) return true;
 	else return false ;
 }
+
+//str이 빈값이 아니면 str 리턴 빈값이면 defaultStr 리턴
+export const defaultIfEmpty = (str, defaultStr) => {
+	defaultStr = (isEmpty(defaultStr) ? '' : defaultStr);
+	return (isEmpty(str) ? defaultStr : str);
+}
+
+//lpad
+export const lpad = (str, padLen, padStr) => {
+	if (padStr.length > padLen) return str;
+	str += ""; // 문자로
+	padStr += ""; // 문자로
+	while (str.length < padLen) str = padStr + str;
+	str = str.length >= padLen ? str.substring(0, padLen) : str;
+	return str;
+}
+/**************************문자열 관련 Utils**************************/
 
 // 전화번호 대시 추가
 export const onAddDashTel = (val) => {
@@ -75,4 +93,29 @@ export const onAddDashRegNum = (val) => {
 	tmp += '-';
 	tmp += val.substr(5,5);
 	return tmp;
+}
+
+/**************************날짜관련 관련 Utils**************************/
+export const getCurretDate = (val) => {
+	val = defaultIfEmpty(val, 'yyyy-mm-dd');
+	return formatDate(new Date(), val);
+}
+
+//포맷에 맞는 날짜 return
+export const formatDate = (date, format) => {
+	const map = {
+		mm: lpad(date.getMonth() + 1, 2, '0'),
+		dd: lpad(date.getDate(), 2, '0'),
+		yy: date.getFullYear().toString().slice(-2),
+		yyyy: date.getFullYear().toString()
+	}
+	return format.replace(/mm|dd|yyyy|yy/gi, matched => map[matched]);
+}
+
+//날짜(일) 더하기
+export const strDateAddDay = (dateStr, interval) => {
+	const dateParts = dateStr.split('-');
+	const sDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+	sDate.setDate(sDate.getDate()+interval);
+	return formatDate(sDate, 'yyyy-mm-dd');
 }
