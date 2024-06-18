@@ -28,8 +28,6 @@ const Notice = () => {
     });
     
     const onSearch = async() => {
-        console.log(srcData);
-
         try {
             const response = await axios.post("/api/v1/notice/noticeList", srcData);
             setNoticeList(response.data.data);
