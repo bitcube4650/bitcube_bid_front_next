@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Loading from 'components/Loading';
 import Login from './modules/login/views/Login'
 import Main from './modules/main/views/Main';
+import PartnerMain from './modules/main/views/PartnerMain';
 import SignUp from './modules/signup/views/SignUp';
 import SignUpMain from './modules/signup/views/SignUpMain';
 import BidProgress from './modules/bid/views/BidProgress';
@@ -79,6 +80,7 @@ const App = () => {
 								<Route path="/signUp" element={<SignUp />}></Route>
 								<Route path="/signUpMain" element={<SignUpMain />}></Route>
 								<Route path="/main" element={<Main />}></Route>
+								<Route path="/partnerMain" element={<PartnerMain />}></Route>
 								<Route path="/bid/progress" element={<BidProgress />}></Route>
 								<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>
 								<Route path="/bid/progress/detail" element={<BidProgressDetail />}></Route>
