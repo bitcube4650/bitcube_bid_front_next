@@ -1,22 +1,26 @@
-import { ko } from 'date-fns/locale';
 import React, { useCallback, useEffect, useState } from 'react'
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as CommonUtils from 'components/CommonUtils';
-import { format } from 'date-fns';
 import CoInterSelect from '../components/CoInterSelect'
+import DatePicker from '../components/DatePicker'
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Company = () => {
 	// 세션정보
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-
+	console.log(loginInfo);
 	const [srcData, setSrcData] = useState({
 		size : 10,
 		page : 0,
-		startDate : CommonUtils.strDateAddDay(CommonUtils.getCurretDate(), -365),
-		endDate : CommonUtils.getCurretDate()
+		startDay : CommonUtils.strDateAddDay(CommonUtils.getCurretDate(), -30),
+		endDay : CommonUtils.getCurretDate(),
+		coInters : []
 	})
+
+	const [list, setList] = useState([])
+	const [listSize, setListSize] = useState(0)
+	const [listSum, setListSum] = useState({})
 
 	const onChangeSrcData = (e) => {
 		setSrcData({
@@ -25,31 +29,50 @@ const Company = () => {
 		});
 	}
 
-	const onChgStartDate = (day) => {
-		const selectedDate = new Date(day)
-		const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-		setSrcData({
-			...srcData,
-			startDate: formattedDate
-		});
-	}
-	const onChgEndDate = (day) => {
-		const selectedDate = new Date(day)
-		const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-		setSrcData({
-			...srcData,
-			endDate: formattedDate
-		});
+
+	const onExceldown = () => {
+		let time = CommonUtils.formatDate(new Date(), "yyyy_mm_dd");
+
+        let params = {
+            startDay:  srcData.startDay,
+        	endDay: srcData.endDay,
+			fileName: "회사별 입찰실적_" + time,
+        	coInters: srcData.coInters
+        }
+		
+		axios.post("/api/v1/excel/statistics/biInfoList/downLoad",
+				params,
+				{responseType: "blob"}).then((response) => {
+					if (response.status === 200) {
+						// 응답이 성공적으로 도착한 경우
+						const url = window.URL.createObjectURL(new Blob([response.data])); // 응답 데이터를 Blob 형식으로 변환하여 URL을 생성합니다.
+						const link = document.createElement("a");
+						link.href = url;
+						link.setAttribute("download", params.fileName + ".xlsx"); // 다운로드할 파일명을 설정합니다.
+						document.body.appendChild(link);
+						link.click();
+						window.URL.revokeObjectURL(url); // 임시 URL을 해제합니다.
+					} else {
+						// 오류 처리
+						Swal.fire('', '엑셀 다운로드 중 오류가 발생했습니다.', 'error');
+					}
+				}
+		)
 	}
 
 	const onSearch = useCallback(async() => {
 		let response = await axios.post('/api/v1/statistics/biInfoList', srcData)
-		console.log(response)
+		let result = response.data.data;
+		if(response.data.code === 'OK') {
+			setListSize(result.length - 1 < 0 ? 0 : result.length - 1)
+			setList(result.slice(0, result.length - 1))
+			setListSum(result[result.length - 1])
+		}
 	})
 	
 	useEffect(() => {
 	  onSearch()
-	}, [srcData.page, srcData.size])
+	}, [srcData])
 	
 
 	return (
@@ -75,24 +98,21 @@ const Company = () => {
 					<div className="flex align-items-center">
 						<div className="sbTit width100px">입찰완료일</div>
 						<div className="flex align-items-center" style={{width : '320px'}}>
-							{/* <DatePicker className="datepicker inputStyle hasDatepicker" locale={ko} shouldCloseOnSelect selected={srcData.startDate} onChange={(date) => onChgStartDate(date)} dateFormat="yyyy-MM-dd"/> */}
-							<DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect dateFormat="yyyy-MM-dd" selected={srcData.startDate} onChange={(date) => onChgStartDate(date)} />
-							<span style={{ margin : "0px 10px" }}>~</span>
-							<DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect dateFormat="yyyy-MM-dd" selected={srcData.endDate}  onChange={(date) => onChgEndDate(date)} />
+							<DatePicker srcData={srcData} setSrcData={setSrcData}/>
 						</div>
 						<div className="sbTit width80px ml50">계열사</div>
 						<div className="flex align-items-center width280px">
-							<CoInterSelect onChangeSrcData={onChangeSrcData} />
+							<CoInterSelect srcData={srcData} setSrcData={setSrcData} />
 						</div>
 						<button className="btnStyle btnSearch" onClick={onSearch}>검색</button>
 					</div>
 				</div>
 				<div className="flex align-items-center justify-space-between mt40">
 					<div className="width100">
-						전체 : <span className="textMainColor"><strong>0</strong></span>건
+						전체 : <span className="textMainColor"><strong>{listSize}</strong></span>건
 					</div>
 					<div className="flex-shrink0">
-						<button title="엑셀 다운로드" className="btnStyle btnPrimary">엑셀 다운로드<i className="fa-light fa-arrow-down-to-line ml10"></i></button>
+						<button title="엑셀 다운로드" className="btnStyle btnPrimary" onClick={onExceldown}>엑셀 다운로드<i className="fa-light fa-arrow-down-to-line ml10"></i></button>
 					</div>
 				</div>
 				<table className="tblSkin1 mt10">
@@ -114,10 +134,39 @@ const Company = () => {
 							<th className="end">비고</th>
 						</tr>
 					</thead>
+					{listSize > 0
+					?
+					<>
+						<tbody>
+							{list.map((obj,idx) => (
+								<tr key={idx}>
+									<td className="text-left">{obj.interrelatedNm}</td>
+									<td className="text-right">{obj.cnt.toLocaleString()}</td>
+									<td className="text-right">{obj.bdAmt.toLocaleString()}</td>
+									<td className="text-right">{obj.succAmt.toLocaleString()}</td>
+									<td className={obj.MAmt > 0 ? "text-right" : "text-right textHighlight"}>{obj.MAmt.toLocaleString()}</td>
+									<td className='end'>{obj.temp}</td>
+								</tr>
+							))}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th className="text-left">{listSum.interrelatedNm}</th>
+								<th className="text-right">{listSum.cnt.toLocaleString()}</th>
+								<th className="text-right">{listSum.bdAmt.toLocaleString()}</th>
+								<th className="text-right">{listSum.succAmt.toLocaleString()}</th>
+								<th className="text-right">{listSum.MAmt.toLocaleString()}</th>
+								<th className="end">{listSum.temp}</th>
+							</tr>
+						</tfoot>
+					</>
+					:
 					<tbody>
+						<tr>
+							<td colSpan="6">조회된 데이터가 없습니다.</td>
+						</tr>
 					</tbody>
-					<tfoot>
-					</tfoot>
+					}
 				</table>
 			</div>
 		</div>
