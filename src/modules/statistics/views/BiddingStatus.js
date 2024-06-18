@@ -12,7 +12,7 @@ import InterrelatedCustCodeSelect from '../../../modules/info/components/Interre
 
 const BiddingStatus = () => {
   const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState({})
-  const [BiddingStatusList, setBiddingStatusList] = useState({})
+  const [BiddingStatusList, setBiddingStatusList] = useState([])
   //조회조건
   const [srcData, setSrcData] = useState({
     startDay    : Ft.strDateAddDay(Ft.getCurretDate(), -30),
@@ -31,6 +31,7 @@ const BiddingStatus = () => {
     };
 
     fetchData();
+    onSearch();
   }, []);
 
   const onChangeSrcData = (e) => {
