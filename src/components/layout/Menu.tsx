@@ -133,14 +133,14 @@ const Menu = () => {
             }
             <ul className="conLeft">
                 <li className={(path === '/main'? 'active' : '')}><a href="/main"><span><i className="fa-light fa-desktop"></i></span>메인</a></li>
-                <li className={(path === ('/bid/progress' || '/bid/status' || '/bid/partnerStatus' || '/bid/complete' || '/bid/partnerComplete' || '/bid/history')? 'active' : '')}>
+                <li className={(path === ('/bid/progress') || path === ('/bid/status') || path === ('/bid/partnerStatus') || path === ('/bid/complete') || path === ('/bid/partnerComplete') || path === ('/bid/history')? 'active' : '')}>
                     <a id="ebid" onClick={onClickMenu} ><span><i className="fa-light fa-file-contract"></i></span>전자입찰</a>
                     <div className={(targetId === "ebid" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
                             <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/progress') ? 'active' : '')}>
                                 <a href="/bid/progress">입찰계획</a>
                             </li>
-                            <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/Status') ? 'active' : '')}>
+                            <li style={{ display: userCustType === 'inter' ? 'block' : 'none' }} className={(path === ('/bid/status') ? 'active' : '')}>
                                 <a href='/bid/status'>입찰진행</a>
                             </li>
                             <li style={{ display: userCustType === 'inter' ? 'none' : 'block' }} className={(path === ('/bid/partnerStatus') ? 'active' : '')}>
@@ -159,7 +159,7 @@ const Menu = () => {
                         </ul>
                     </div>
                 </li>
-                <li className={(path === ('/notice' || '/notice/faq/admin' || '/notice/faq/user')? 'active' : '')}>         
+                <li className={(path === ('/notice') || path === ('/notice/faq/admin') || path === ('/notice/faq/user')? 'active' : '')}>         
                     <a id="notice" onClick={onClickMenu}><span><i className="fa-light fa-bullhorn"></i></span>공지</a>
                     <div className={(targetId === "notice" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
@@ -177,7 +177,8 @@ const Menu = () => {
                         </ul>
                     </div>
                 </li>
-                <li style={{ display: ((userCustType === 'inter' && (userAuth === '1' || userAuth === '2' || userAuth === '4')) || (userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} className={((path === '/company/partner/approval') || path.indexOf('/company/partner/management') > -1) ? 'active' : ''}>      
+                <li style={{ display: ((userCustType === 'inter' && (userAuth === '1' || userAuth === '2' || userAuth === '4')) || (userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} 
+                    className={((path === '/company/partner/approval') || path.indexOf('/company/partner/management') > -1) ? 'active' : ''}>      
                     <a id="company" onClick={onClickMenu}><span><i className="fa-light fa-buildings"></i></span>업체정보</a>
                     <div className={(targetId === "company" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul style={{ display: ((userCustType === 'inter' && (userAuth === '1' || userAuth === '2' || userAuth === '4'))) ? 'block' : 'none' }} > 
@@ -190,7 +191,8 @@ const Menu = () => {
                         </ul>
                     </div>
                 </li>
-                <li style={{ display: (userCustType === 'inter' && (userAuth === '1' || userAuth === '4'))  ? 'block' : 'none' }} className={(path === ('/statistics/performance/company' || '/statistics/performance/detail' || 'statistics/status' || 'statistics/detail')? 'active' : '')}>    
+                <li style={{ display: (userCustType === 'inter' && (userAuth === '1' || userAuth === '4'))  ? 'block' : 'none' }} 
+                    className={(path === ('/statistics/performance/company') || path === ('/statistics/performance/detail') || path === ('/statistics/status') || path === ('/statistics/detail')? 'active' : '')}>    
                     <a id="statistics" onClick={onClickMenu}><span><i className="fa-light fa-chart-pie-simple"></i></span>통계</a>
                     <div className={(targetId === "statistics" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
@@ -201,7 +203,7 @@ const Menu = () => {
                         </ul>
                     </div>
                 </li>
-                <li style={{ display: (userCustType === 'inter' && userAuth === '1')  ? 'block' : 'none' }} className={(path === ('/info/group/user' || '/info/group/item')? 'active' : '')}>     
+                <li style={{ display: (userCustType === 'inter' && userAuth === '1')  ? 'block' : 'none' }} className={(path === ('/info/group/user') || path === ('/info/group/item')? 'active' : '')}>     
                     <a id="info" onClick={onClickMenu}><span><i className="fa-light fa-memo-circle-info"></i></span>정보관리</a>
                     <div className={(targetId === "info" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >
                         <ul>
