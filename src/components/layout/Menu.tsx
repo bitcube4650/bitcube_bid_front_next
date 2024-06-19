@@ -4,39 +4,41 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import LogoutPop from './Logout'
 import CheckPwdPop from '../modal/CheckPwd'
+import { MapType } from '../../../src/components/types'
 
 //todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
 const Menu = () => {
     // 현재 경로 /~~~
-    const path = window.location.pathname;
+    const path : string = window.location.pathname;
+    console.log(path)
     const navigate = useNavigate();
     // 선택한 메뉴
-    const [targetId, setTargetId] = useState("")
+    const [targetId, setTargetId] = useState<string>("")
     // 메뉴 선택 여부
-    const [menuClickBoolean, setMenuClickBoolean] = useState(false)
+    const [menuClickBoolean, setMenuClickBoolean] = useState<boolean>(false)
     // 메뉴에 사용자 이름 클릭 시, 메뉴 보여주는거
-    const [profileDrop, setProfileDrop] = useState(false)
+    const [profileDrop, setProfileDrop] = useState<boolean>(false)
     // 사용자 입찰 정보
-    const [BidInfo, setBidInfo] = useState({
+    const [BidInfo, setBidInfo] = useState<MapType>({
         ing : 0,
         completed : 0,
         awarded : 0,
     })
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string) ;
     // 운영사 / 협력사 구분
     const userCustType = loginInfo.custType;
     // 사용자 권한 1, 2, 3, 4
     const userAuth = loginInfo.userAuth;
     // 비밀번호확인 팝업 
-    const [checkPwdPop, setCheckPwdPop] = useState(false);
+    const [checkPwdPop, setCheckPwdPop] = useState<boolean>(false);
     // 수정팝업창
-    const [modPop, setModPop] = useState("");
+    const [modPop, setModPop] = useState<string>("");
     // 로그아웃팝업창
-    const [logoutPop, setLogoutPop] = useState(false);
+    const [logoutPop, setLogoutPop] = useState<boolean>(false);
     // 팝업창 
-    const changeStatus = (flag) => {
+    const changeStatus = (flag : string) => {
        setModPop(flag);
        setCheckPwdPop(true);
     }
@@ -72,7 +74,7 @@ const Menu = () => {
     
 
     // 메뉴 클릭시 펼쳐지는거
-    const onClickMenu = (e) => {
+    const onClickMenu = (e : React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         const clickedId = e.currentTarget.id;
         if (targetId === clickedId) {
@@ -86,7 +88,7 @@ const Menu = () => {
     };
 
     // 진행중 / 낙찰 로 이동
-    const onMoveBiddingPage = (type) => {
+    const onMoveBiddingPage = (type : string) => {
         if( type === 'completed')
             {//계열사 낙찰이력으로 이동
             navigate('/bid/history?flag='+type)
