@@ -12,6 +12,23 @@ export interface SrcInputProps {
     maxLength?: number;
 }
 
+export interface SrcCheckProps {
+    srcData: MapType;
+    setSrcData: Dispatch<SetStateAction<MapType>>;
+    name?: string;
+    maxLength?: number;
+    id?: string;
+    text?: string;
+    defaultChecked?: boolean;
+}
+
+export interface SrcDatePickerProps {
+    name: string;
+    srcData: MapType;
+    setSrcData: Dispatch<SetStateAction<MapType>>;
+    selected?: Date;
+}
+
 export interface EditInputProps {
     defaultValue: any;
     editData: MapType;
