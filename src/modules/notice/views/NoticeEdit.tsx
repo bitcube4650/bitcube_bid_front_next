@@ -3,20 +3,25 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import AffiliateSelectModal from 'components/modal/AffiliateSelectModal';
+import EditInput from 'components/EditInput'
+import EditInputRadio from 'components/EditInputRadio'
+import EditInputFileBox from 'components/EditInputFileBox'
+import EditTextArea from 'components/EditTextArea'
+import { MapType } from 'components/types'
 
 const NoticeEdit = () => {
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
 
     const navigate = useNavigate();
     const { bno } = useParams();
 
     //계열사 팝업 정보
-    const [affiliateSelectData, setAffiliateSelectData] = useState({
+    const [affiliateSelectData, setAffiliateSelectData] = useState<MapType>({
         show: false
     });
 
-    const [detailData, setDetailData] = useState({
+    const [detailData, setDetailData] = useState<MapType>({
         btitle      : "",
         bco         : "CUST",
         buserName   : loginInfo.userName,
@@ -25,7 +30,7 @@ const NoticeEdit = () => {
         bcontent    : ""
     });
 
-    const [uploadFile, setUploadFile] = useState();
+    const [uploadFile, setUploadFile] = useState<File|null>();
 
     async function onSelectDetail() {
         try {
@@ -76,13 +81,6 @@ const NoticeEdit = () => {
         }
     }, [affiliateSelectData.isChange]);
 
-    const onChangeDetailData = (e) => {
-        setDetailData({
-            ...detailData,
-            [e.target.name]: e.target.value
-        });
-    }
-
     function onCheckVali() {
         if(!detailData.btitle) {
             Swal.fire('', '제목을 입력해주세요.', 'warning');
@@ -127,6 +125,16 @@ const NoticeEdit = () => {
          });
     };
 
+    useEffect(() => {
+        if(!detailData.fileName) {
+            setDetailData({
+                ...detailData,
+                ['bfile']: null,
+                ['bfilePath']: null
+            });
+        }
+    }, [detailData.fileName]);
+
     async function onSaveNotice() {
         let url = ''
         let saveText = ''
@@ -141,7 +149,10 @@ const NoticeEdit = () => {
 
         try {
             let formData = new FormData();
-            formData.append('file', uploadFile);
+            if(uploadFile) {
+                formData.append('file', uploadFile);
+            }
+
             formData.append('data', JSON.stringify(detailData));
 
             const response = await axios.post(url, formData);
@@ -155,23 +166,6 @@ const NoticeEdit = () => {
             Swal.fire('', saveText + '에 실패하였습니다.', 'error');
             console.log(error);
         }
-    }
-
-    function onRemoveAttachFile() {
-        setDetailData({
-            ...detailData,
-            ['fileName']: null
-        });
-    }
-
-    function onChangeFile(e) {
-        setUploadFile(
-            e.target.files[0]
-        );
-        setDetailData({
-            ...detailData,
-            ['fileName']: e.target.files[0].name
-        });
     }
 
     return (
@@ -188,17 +182,19 @@ const NoticeEdit = () => {
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width170px">제목</div>
                         <div className="width100">
-                            <input type="text" className="inputStyle" placeholder="" onChange={ onChangeDetailData } value={detailData.btitle} name="btitle" maxLength="300" />
+                            <EditInput name="btitle" maxLength={ 300 } editData={ detailData } setEditData={ setDetailData } defaultValue={ detailData.btitle } />
                         </div>
                     </div>
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">공지대상</div>
                         <div className="flex width100">
-                            <input type="radio" id="bm2_1" className="radioStyle" onChange={ onChangeDetailData } name="bco" value="ALL" checked={ detailData.bco == "ALL" } disabled={loginInfo.userAuth != '1' ? true : false} />
-                            <label for="bm2_1">공통</label>
+                            <EditInputRadio editData={ detailData } setEditData={ setDetailData }
+                                id="bm2_1" name="bco" value="ALL" label="공통"
+                                checked={ detailData.bco == "ALL" } disabled={ loginInfo.userAuth != '1' ? true : false } />
                             <div onClick={(e) => setAffiliateSelectData({...affiliateSelectData, ["show"]: true})} data-toggle="modal" title="계열사 선택">
-                                <input type="radio" name= "bco" value="CUST" id="bm2_2" className="radioStyle" onChange={ onChangeDetailData } checked={ detailData.bco == "CUST" } />
-                                <label for="bm2_2">계열사</label>
+                                <EditInputRadio editData={ detailData } setEditData={ setDetailData }
+                                    id="bm2_2" name="bco" value="CUST" label="계열사"
+                                    checked={ detailData.bco == "CUST" } disabled={ loginInfo.userAuth != '1' ? true : false } />
                                 { detailData.bco == 'CUST' &&
                                     <p className="mt5 ml30">{ detailData.interrelatedNms }</p>
                                 }
@@ -220,29 +216,13 @@ const NoticeEdit = () => {
                     <div className="flex mt20">
                         <div className="formTit flex-shrink0 width170px">첨부파일</div>
                         <div className="width100">
-                            <div className="upload-boxWrap">
-                                { !detailData.fileName &&
-                                <div className="upload-box">
-                                    <input type="file" id="file-input" onChange={ onChangeFile } />
-                                    <div className="uploadTxt">
-                                        <i className="fa-regular fa-upload"></i>
-                                        <div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
-                                    </div>
-                                </div> }
-                                { detailData.fileName &&
-                                <div className="uploadPreview">
-                                    <p>
-                                        { detailData.fileName }
-                                        <button className='file-remove' onClick={ onRemoveAttachFile }>삭제</button>
-                                    </p>
-                                </div> }
-                            </div>
+                            <EditInputFileBox fileName={ detailData.fileName } setUploadFile={ setUploadFile } editData={ detailData } setEditData={ setDetailData } />
                         </div>
                     </div>
                     <div className="flex mt20">
                         <div className="formTit flex-shrink0 width170px">공지내용</div>
                         <div className="width100">
-                            <textarea className="textareaStyle notiBox overflow-y-auto" style={{height:'400px'}} onChange={ onChangeDetailData } name="bcontent" defaultValue={ detailData.bcontent } />
+                            <EditTextArea editData={ detailData } setEditData={ setDetailData } name="bcontent" defaultValue={ detailData.bcontent } />
                         </div>
                     </div>
                     <div className="text-center mt50">

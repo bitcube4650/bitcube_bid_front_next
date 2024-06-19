@@ -1,21 +1,21 @@
 import React from 'react';
-import { SrcInputProps } from 'components/types'
+import { EditInputProps } from 'components/types'
 
-const SrcInput = (props: SrcInputProps) => {
+const EditInput = (props: EditInputProps) => {
     const onFormEventSrcData = (e: React.FormEvent<HTMLInputElement>) => {
-        props.setSrcData({
-            ...props.srcData,
+        props.setEditData({
+            ...props.editData,
             [e.currentTarget.name]: e.currentTarget.value
         });
     }
 
     return (
         <input type="text" className="inputStyle" placeholder=""
+        defaultValue={ props.defaultValue }
         name={ props.name } maxLength={ props.maxLength }
         onKeyUp={ onFormEventSrcData }
-        onKeyDown={ (e) => { if(e.key === 'Enter') props.onSearch()} }
         />
     )
 }
 
-export default SrcInput;
+export default EditInput;

@@ -101,10 +101,10 @@ const NoticeDetail = () => {
                         <div className="formTit flex-shrink0 width170px">공지대상</div>
                         <div className="flex width100">
                             <input type="radio" name="bm2" value="ALL" id="bm2_1" className="radioStyle" checked={ dataFromList.bco == "ALL" } disabled={ dataFromList.bco != 'ALL'?'disabled':'' } />
-                            <label for="bm2_1" className={ dataFromList.bco != 'ALL'?'dimmed':'' }>공통</label>
+                            <label htmlFor="bm2_1" className={ dataFromList.bco != 'ALL'?'dimmed':'' }>공통</label>
                             <div>
                                 <input type="radio" name= "bm2" value="CUST" id="bm2_2" className="radioStyle" checked={ dataFromList.bco == "CUST" } disabled={ dataFromList.bco != 'CUST'?'disabled':'' } />
-                                <label for="bm2_2" className={ dataFromList.bco != 'CUST'?'dimmed':'' }>계열사</label>
+                                <label htmlFor="bm2_2" className={ dataFromList.bco != 'CUST'?'dimmed':'' }>계열사</label>
                                 { dataFromList.bco == 'CUST' &&
                                     <p className="mt5 ml30">{ dataFromList.interrelatedNms }</p>
                                 }
