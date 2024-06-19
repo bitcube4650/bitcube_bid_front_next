@@ -1,17 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MapType } from '../../../components/types';
 import ft from '../api/filters';
 
-const BidStatusList = (props) => {
+const BidStatusList = (props:MapType) => {
 
     const navigate = useNavigate();
 
-    const onClickBidDetail = (biNo) => {
+    const onClickBidDetail = (biNo:string) => {
         localStorage.setItem("biNo", biNo);
         navigate('/bid/status/detail');
     };
 
-    function fnIsPastDate(dateString) {
+    function fnIsPastDate(dateString:Date) {
         const currentDate = new Date();
         const targetDate = new Date(dateString);
         return targetDate < currentDate;
@@ -20,10 +21,10 @@ const BidStatusList = (props) => {
     return (
          <tr>
             <td className="textUnderline">
-                <a href={()=>false} style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)}>{ props.val.biNo }</a>
+                <a href="#" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)}>{ props.val.biNo }</a>
             </td>
             <td className="textUnderline text-left">
-                <a href={()=>false} style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)} >{ props.val.biName }</a>
+                <a href="#" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(props.val.biNo)} >{ props.val.biName }</a>
             </td>
             <td className={fnIsPastDate(props.val.estCloseDate) ? 'textHighlight' : ''}>
                 <i className="fa-regular fa-timer"></i>{ props.val.estCloseDate }
