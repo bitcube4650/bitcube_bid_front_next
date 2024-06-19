@@ -3,10 +3,10 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import AffiliateSelectModal from 'components/modal/AffiliateSelectModal';
-import EditInput from 'components/EditInput'
-import EditInputRadio from 'components/EditInputRadio'
-import EditInputFileBox from 'components/EditInputFileBox'
-import EditTextArea from 'components/EditTextArea'
+import EditInput from 'components/input/EditInput'
+import EditInputRadio from 'components/input/EditInputRadio'
+import EditInputFileBox from 'components/input/EditInputFileBox'
+import EditTextArea from 'components/input/EditTextArea'
 import { MapType } from 'components/types'
 
 const NoticeEdit = () => {

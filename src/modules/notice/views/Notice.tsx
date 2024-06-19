@@ -4,7 +4,7 @@ import axios from 'axios';
 import Pagination from 'components/Pagination';
 import NoticeList from '../components/NoticeList';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import SrcInput from 'components/SrcInput'
+import SrcInput from 'components/input/SrcInput'
 import SelectListSize from 'components/SelectListSize'
 import { MapType } from 'components/types'
 
