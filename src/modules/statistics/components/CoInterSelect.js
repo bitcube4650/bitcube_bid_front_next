@@ -8,11 +8,26 @@ const CoInterSelect = ({srcData, setSrcData}) => {
 
 	const onChangeInterCode = (e) => {
 		let interCodeArr = new Array();
-		interCodeArr.push(e.target.value)
+		let value = e.target.value;
+
+		if(value === ''){
+			// 감사관리자의 경우 관리 계열사 리스트로 조회
+			if(loginInfo.userAuth === '4'){
+				list.map((obj) => {
+					interCodeArr.push(obj.interrelatedCustCode)
+				})
+			} else {
+				// 전체 클릭시 array 초기화
+				interCodeArr = []
+			}
+		} else {
+			interCodeArr.push(value)
+		}
 		
 		setSrcData({
 			...srcData,
-			['coInters']: interCodeArr
+			['coInters']: interCodeArr,
+			['selInterCode'] : value
 		});
 	}
 
@@ -23,8 +38,12 @@ const CoInterSelect = ({srcData, setSrcData}) => {
 			setList(result.data)
 
 			let interCodeArr = new Array();
-			for(let i = 0; i < result.data.length; i++) {
-				interCodeArr.push(result.data[i].interrelatedCustCode)
+			if(srcData.selInterCode !== ''){
+				interCodeArr.push(srcData.selInterCode)
+			} else {
+				result.data.map((obj) => {
+					interCodeArr.push(obj.interrelatedCustCode)
+				}) 
 			}
 			
 			setSrcData({
@@ -39,7 +58,7 @@ const CoInterSelect = ({srcData, setSrcData}) => {
 	},[])
 
 	return (
-		<select className="selectStyle" name='coInters' onChange={onChangeInterCode}>
+		<select className="selectStyle" name='coInters' value={srcData.selInterCode} onChange={onChangeInterCode}>
 			<option value="">전체</option>
 			{list.map((map) => (
 				<option key={map.interrelatedCustCode} value={map.interrelatedCustCode}>{map.interrelatedNm}</option>

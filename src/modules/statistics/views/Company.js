@@ -5,42 +5,40 @@ import CoInterSelect from '../components/CoInterSelect'
 import DatePicker from '../components/DatePicker'
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
 const Company = () => {
 	// 세션정보
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-	console.log(loginInfo);
+
 	const [srcData, setSrcData] = useState({
 		size : 10,
 		page : 0,
-		startDay : CommonUtils.strDateAddDay(CommonUtils.getCurretDate(), -30),
+		startDay : CommonUtils.strDateAddDay(CommonUtils.getCurretDate(), -365),
 		endDay : CommonUtils.getCurretDate(),
-		coInters : []
+		coInters : [],
+		selInterCode : ''
 	})
 
 	const [list, setList] = useState([])
 	const [listSize, setListSize] = useState(0)
 	const [listSum, setListSum] = useState({})
 
-	const onChangeSrcData = (e) => {
-		setSrcData({
-			...srcData,
-			[e.target.name]: e.target.value
-		});
-	}
-
-
+	// 엑셀 다운로드
 	const onExceldown = () => {
 		let time = CommonUtils.formatDate(new Date(), "yyyy_mm_dd");
 
         let params = {
             startDay:  srcData.startDay,
         	endDay: srcData.endDay,
-			fileName: "회사별 입찰실적_" + time,
-        	coInters: srcData.coInters
+			fileName: "회사별_입찰실적_" + time,
+        	coInters: srcData.coInters,
+			columnNames: ['회사명', '입찰건수', '예산금액(1)', '낙찰금액(2)', '차이(1)-(2)', '비고'],
+			mappingColumnNames : ['interrelatedNm','cnt','bdAmt','succAmt','MAmt','temp'],
+			excelUrl: 'selectBiInfoList'
         }
 		
-		axios.post("/api/v1/excel/statistics/biInfoList/downLoad",
+		axios.post("/api/v1/statistics/excel",
 				params,
 				{responseType: "blob"}).then((response) => {
 					if (response.status === 200) {
@@ -60,6 +58,7 @@ const Company = () => {
 		)
 	}
 
+	// 조회
 	const onSearch = useCallback(async() => {
 		let response = await axios.post('/api/v1/statistics/biInfoList', srcData)
 		let result = response.data.data;
@@ -71,8 +70,10 @@ const Company = () => {
 	})
 	
 	useEffect(() => {
-	  onSearch()
-	}, [srcData])
+		if(!(loginInfo.userAuth === '4' && srcData.coInters.length === 0)){
+			onSearch()
+		}
+	}, [srcData.coInters, srcData.page, srcData.size])
 	
 
 	return (
@@ -140,7 +141,11 @@ const Company = () => {
 						<tbody>
 							{list.map((obj,idx) => (
 								<tr key={idx}>
-									<td className="text-left">{obj.interrelatedNm}</td>
+									<td className="text-left textUnderline">
+										<Link to='/statistics/performance/detail' state={{interrelatedCustCode : obj.interrelatedCustCode, srcData : srcData}} >
+											{obj.interrelatedNm}
+										</Link>
+									</td>
 									<td className="text-right">{obj.cnt.toLocaleString()}</td>
 									<td className="text-right">{obj.bdAmt.toLocaleString()}</td>
 									<td className="text-right">{obj.succAmt.toLocaleString()}</td>
