@@ -110,7 +110,7 @@ const Notice = () => {
                 </table>
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } list={ noticeList } />
+                        <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ noticeList } />
                     </div>
                 </div>
             </div>

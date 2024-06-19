@@ -13,7 +13,6 @@ export interface SrcInputProps {
 };
 
 export interface PageProps {
-    onSearch: Function;
     srcData: MapType;
     setSrcData: Dispatch<SetStateAction<MapType>>;
     list: MapType;
