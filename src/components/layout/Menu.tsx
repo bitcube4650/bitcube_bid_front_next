@@ -11,7 +11,6 @@ import { MapType } from '../../../src/components/types'
 const Menu = () => {
     // 현재 경로 /~~~
     const path : string = window.location.pathname;
-    console.log(path)
     const navigate = useNavigate();
     // 선택한 메뉴
     const [targetId, setTargetId] = useState<string>("")
@@ -170,9 +169,11 @@ const Menu = () => {
                             <li style={{ display: userCustType === 'inter' ? 'none' : 'block' }} className={(path === '/notice/faq/user' ? 'active' : '')}>
                                 <a href='/notice/faq/user'>FAQ-협력사</a>
                             </li>
-                            <li>
-                                <a href="../../installFile/전자입찰_매뉴얼_본사.pdf" style={{ display: (userCustType === 'inter')  ? 'block' : 'none' }} download="전자입찰_메뉴얼.pdf">메뉴얼</a>
-                                <a href="../../installFile/전자입찰_매뉴얼_업체.pdf" style={{ display: (userCustType === 'cust')  ? 'block' : 'none' }} download="전자입찰_메뉴얼.pdf">메뉴얼</a>
+                            <li style={{ display: (userCustType === 'inter')  ? 'block' : 'none' }} >
+                                <a href="../../installFile/전자입찰_매뉴얼_본사.pdf" download="전자입찰_메뉴얼.pdf">메뉴얼</a>
+                            </li>
+                            <li style={{ display: (userCustType === 'cust')  ? 'block' : 'none' }} >
+                                <a href="../../installFile/전자입찰_매뉴얼_업체.pdf" download="전자입찰_메뉴얼.pdf">메뉴얼</a>
                             </li>
                         </ul>
                     </div>
