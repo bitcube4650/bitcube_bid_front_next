@@ -67,9 +67,9 @@ const Main = () => {
         if(keyword == 'planning'){//입찰계획 이동
             navigate('/bid/progress');
         }else if(keyword == 'completed' || keyword == 'unsuccessful'){//입찰완료 이동
-            navigate('/bid/complete');
+            navigate('/bid/complete/'+keyword);
         }else{//입찰진행 이동
-            navigate('/bid/status');
+            navigate('/bid/status/'+keyword);
         }
     }
 
@@ -131,9 +131,9 @@ const Main = () => {
                         </div>
                         <div className="mainConBox" style={{height: '381.41px'}}>
                             <h2 className="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
-                            <div className="notiList">
-                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} notice={notice} isMain='true' />) }
-                            </div>
+                            {/* <div className="notiList">
+                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} content={notice} isMain='true' />) }
+                            </div> */}
                         </div>
                     </div>
                 </div>

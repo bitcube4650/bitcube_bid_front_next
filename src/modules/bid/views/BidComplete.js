@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from "react-router-dom";
 import List from '../components/BidCompleteList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
@@ -10,6 +11,7 @@ import { ko } from "date-fns/locale";
 import Ft from '../api/filters';
 
 const BidComplete = () => {
+    const { keyword } = useParams();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef(true);
@@ -46,14 +48,32 @@ const BidComplete = () => {
         })
     }, [srcData]);
 
-    //마운트 완료 후 검색
+    //메인화면에서 진입시 파라미터 분기처리
+    useEffect(() => {
+        if(keyword) {
+            if(keyword == 'completed'){
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    succBi : true,
+                    failBi : false
+                }));
+            }else if(keyword == 'unsuccessful'){
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    succBi : false,
+                    failBi : true
+                }));
+            }
+        }
+    }, [keyword]);
+
     useEffect(() => {
         if (isMounted.current) {
             isMounted.current = false;
         } else {
             onSearch();
         }
-    },[srcData.size, srcData.page]);
+    },[srcData]);
 
     const onChgStartDate = (day) => {
         const selectedDate = new Date(day)
@@ -103,8 +123,8 @@ const BidComplete = () => {
                     
                         <div className="sbTit mr30 ml50">완료상태</div>
                         <div className="flex align-items-center width300px">
-                            <input type="checkbox" id="progress1-1" onClick={onChangeSrcData} name="succBi" defaultChecked={srcData.succBi} className="checkStyle"/><label htmlFor="progress1-1">입찰완료</label>
-                            <input type="checkbox" id="progress1-2" onClick={onChangeSrcData} name="failBi" defaultChecked={srcData.failBi} className="checkStyle"/><label htmlFor="progress1-2" className="ml50">유찰</label>
+                            <input type="checkbox" id="progress1-1" onClick={onChangeSrcData} name="succBi" defaultChecked={srcData.succBi} checked={srcData.succBi} className="checkStyle"/><label htmlFor="progress1-1">입찰완료</label>
+                            <input type="checkbox" id="progress1-2" onClick={onChangeSrcData} name="failBi" defaultChecked={srcData.failBi} checked={srcData.failBi} className="checkStyle"/><label htmlFor="progress1-2" className="ml50">유찰</label>
                         </div>
                     </div>
                     <div className="flex align-items-center height50px mt10">

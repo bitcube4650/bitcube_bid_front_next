@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from "react-router-dom";
 import List from '../components/BidStatusList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 const BidStatus = () => {
+    const { keyword } = useParams();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef(true);
@@ -40,14 +42,41 @@ const BidStatus = () => {
         })
     }, [srcData]);
 
-    //마운트 완료 후 검색
+    //메인화면에서 진입시 파라미터 분기처리
+    useEffect(() => {
+        if(keyword) {
+            if(keyword == 'noticing'){
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    rebidYn : true,
+                    dateOverYn : false,
+                    openBidYn : false
+                }));
+            }else if(keyword == 'beforeOpening'){
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    rebidYn : false,
+                    dateOverYn : true,
+                    openBidYn : false
+                }));
+            } else if(keyword == 'opening') {
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    dateOverYn : false,
+                    rebidYn : false,
+                    openBidYn : true
+                }));
+            }
+        }
+    }, [keyword]);
+
     useEffect(() => {
         if (isMounted.current) {
             isMounted.current = false;
         } else {
             onSearch();
         }
-    },[srcData.size, srcData.page]);
+    },[srcData]);
 
     return (
         <div>
@@ -98,9 +127,9 @@ const BidStatus = () => {
                         <div className="flex align-items-center height50px mt10">
                             <div className="sbTit mr30">진행상태</div>
                             <div className="flex align-items-center width100">
-                                <input type="checkbox" id="progress1-1" className="checkStyle" onClick={onChangeSrcData} name="rebidYn" defaultChecked={srcData.rebidYn} /><label htmlFor="progress1-1">입찰공고(재입찰 포함)</label>
-                                <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="dateOverYn" defaultChecked={srcData.dateOverYn} /><label htmlFor="progress1-2" className="ml50">입찰공고(개찰대상)</label>
-                                <input type="checkbox" id="progress1-3" className="checkStyle" onClick={onChangeSrcData} name="openBidYn" defaultChecked={srcData.openBidYn} /><label htmlFor="progress1-3" className="ml50">개찰(업체선정대상)</label>
+                                <input type="checkbox" id="progress1-1" className="checkStyle" onClick={onChangeSrcData} name="rebidYn" defaultChecked={srcData.rebidYn} checked={srcData.rebidYn} /><label htmlFor="progress1-1">입찰공고(재입찰 포함)</label>
+                                <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="dateOverYn" defaultChecked={srcData.dateOverYn} checked={srcData.dateOverYn} /><label htmlFor="progress1-2" className="ml50">입찰공고(개찰대상)</label>
+                                <input type="checkbox" id="progress1-3" className="checkStyle" onClick={onChangeSrcData} name="openBidYn" defaultChecked={srcData.openBidYn} checked={srcData.openBidYn} /><label htmlFor="progress1-3" className="ml50">개찰(업체선정대상)</label>
                             </div>
                             <a href={()=>false} className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                         </div>

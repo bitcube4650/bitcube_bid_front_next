@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from "react-router-dom";
 import List from '../components/BidPtCompleteList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
@@ -10,6 +11,7 @@ import { ko } from "date-fns/locale";
 import Ft from '../api/filters';
 
 const PartnerBidComplete = () => {
+    const { keyword } = useParams();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef(true);
@@ -46,14 +48,32 @@ const PartnerBidComplete = () => {
         })
     }, [srcData]);
 
-    //마운트 완료 후 검색
+    //메인화면에서 진입시 파라미터 분기처리
+    useEffect(() => {
+        if(keyword) {
+            if(keyword == 'awarded'){
+                setSrcData({
+                    ...srcData,
+                    succYn_Y : true,
+                    succYn_N : false
+                });
+            }else if(keyword == 'unsuccessful'){
+                setSrcData({
+                    ...srcData,
+                    succYn_Y : false,
+                    succYn_N : true
+                });
+            }
+        }
+    }, []);
+
     useEffect(() => {
         if (isMounted.current) {
             isMounted.current = false;
         } else {
             onSearch();
         }
-    },[srcData.size, srcData.page]);
+    },[srcData]);
 
     const onChgStartDate = (day) => {
         const selectedDate = new Date(day)
@@ -102,8 +122,8 @@ const PartnerBidComplete = () => {
                         </div>
                         <div className="sbTit mr30 ml50 width100px">완료상태</div>
                         <div className="flex align-items-center width300px">
-                            <input type="checkbox" id="progress1-1" onClick={onChangeSrcData} name="succYn_Y" defaultChecked={srcData.succYn_Y} className="checkStyle"/><label htmlFor="progress1-1">선정(낙찰)</label>
-                            <input type="checkbox" id="progress1-2" onClick={onChangeSrcData} name="succYn_N" defaultChecked={srcData.succYn_N} className="checkStyle"/><label htmlFor="progress1-2" className="ml50">비선정(유찰포함)</label>
+                            <input type="checkbox" id="progress1-1" onClick={onChangeSrcData} name="succYn_Y" defaultChecked={srcData.succYn_Y} checked={srcData.succYn_Y} className="checkStyle"/><label htmlFor="progress1-1">선정(낙찰)</label>
+                            <input type="checkbox" id="progress1-2" onClick={onChangeSrcData} name="succYn_N" defaultChecked={srcData.succYn_N} checked={srcData.succYn_N} className="checkStyle"/><label htmlFor="progress1-2" className="ml50">비선정(유찰포함)</label>
                         </div>
                     </div>
                     <div className="flex align-items-center height50px mt10">

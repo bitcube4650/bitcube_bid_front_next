@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from "react-router-dom";
 import List from '../components/PartnerBidStatusList'
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 const PartnerBidStatus = () => {
+    const { keyword } = useParams();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef(true);
@@ -41,14 +43,32 @@ const PartnerBidStatus = () => {
         })
     }, [srcData]);
 
-    //마운트 완료 후 검색
+    //메인화면에서 진입시 파라미터 분기처리
+    useEffect(() => {
+        if(keyword) {
+            if(keyword == 'noticing'){
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    esmtYnN : true,
+                    esmtYnY : false
+                }));
+            }else if(keyword == 'submitted'){
+                setSrcData((prevState) => ({
+                    ...prevState,
+                    esmtYnN : false,
+                    esmtYnY : true
+                }));
+            }
+        }
+    }, [keyword]);
+
     useEffect(() => {
         if (isMounted.current) {
             isMounted.current = false;
         } else {
             onSearch();
         }
-    },[srcData.size, srcData.page]);
+    },[srcData]);
 
     return (
         <div className="conRight">
@@ -89,8 +109,8 @@ const PartnerBidStatus = () => {
                         </div>
                         <div className="sbTit mr30 ml50">투찰상태</div>
                         <div className="flex align-items-center width100">
-                            <input type="checkbox" id="s1-1" className="checkStyle" onClick={onChangeSrcData} name="esmtYnN" defaultChecked={srcData.esmtYnN} /><label htmlFor="s1-1">미투찰(재입찰 포함)</label>
-                            <input type="checkbox" id="s1-2" className="checkStyle" onClick={onChangeSrcData} name="esmtYnY" defaultChecked={srcData.esmtYnY} /><label htmlFor="s1-2" className="ml50">투찰</label>
+                            <input type="checkbox" id="s1-1" className="checkStyle" onClick={onChangeSrcData} name="esmtYnN" defaultChecked={srcData.esmtYnN} checked={srcData.esmtYnN} /><label htmlFor="s1-1">미투찰(재입찰 포함)</label>
+                            <input type="checkbox" id="s1-2" className="checkStyle" onClick={onChangeSrcData} name="esmtYnY" defaultChecked={srcData.esmtYnY} checked={srcData.esmtYnY} /><label htmlFor="s1-2" className="ml50">투찰</label>
                         </div>
                         <a href={()=>false} className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                     </div>

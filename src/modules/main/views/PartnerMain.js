@@ -25,16 +25,10 @@ const PartnerMain = () => {
 
     const moveBiddingPage = (keyword) => {
         if(keyword == 'awarded' || keyword == 'awardedAll' || keyword == 'unsuccessful'){//입찰완료로 이동
-            navigate('/bid/partnerComplete');
+            navigate('/bid/partnerComplete/'+keyword);
         }else{//입찰진행 이동
-            navigate('/bid/partnerStatus');
+            navigate('/bid/partnerStatus/'+keyword);
         }
-
-        // if(keyword == 'awarded' || keyword == 'awardedAll' || keyword == 'unsuccessful'){//입찰완료로 이동
-        //     this.$router.push({name:"partnerBidComplete" , params: { 'flag': keyword }});
-        // }else{//입찰진행으로 이동
-        //     this.$router.push({name:"partnerBidStatus" , params: { 'flag': keyword }});
-        // }
     }
 
     const selectNotice = useCallback(async() => {
@@ -138,9 +132,9 @@ const PartnerMain = () => {
                         </div>
                         <div className="mainConBox" style={{height: '381.41px'}}>
                             <h2 className="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
-                            <div className="notiList">
-                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} notice={notice} isMain='true' />) }
-                            </div>
+                            {/* <div className="notiList">
+                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} content={notice} isMain='true' />) }
+                            </div> */}
                         </div>
                     </div>
                 </div>

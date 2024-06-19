@@ -82,9 +82,11 @@ const App = () => {
 								<Route path="/main" element={<Main />}></Route>
 								<Route path="/partnerMain" element={<PartnerMain />}></Route>
 								<Route path="/bid/progress" element={<BidProgress />}></Route>
+								<Route path="/bid/progress/:keyword" element={<BidProgress />}></Route>
 								<Route path="/bid/progress/save" element={<BidProgressSave />}></Route>
 								<Route path="/bid/progress/detail" element={<BidProgressDetail />}></Route>
 								<Route path="/bid/status" element={<BidStatus />}></Route>
+								<Route path="/bid/status/:keyword" element={<BidStatus />}></Route>
 								<Route path="/bid/status/detail" element={<BidStatusDetail />}></Route>
 								<Route path="/bid/rebid" element={<Rebid />}></Route>
 								<Route path="/notice" element={<Notice />}></Route>
@@ -107,10 +109,13 @@ const App = () => {
 								<Route path="/statistics/status" element={<BiddingStatus />}></Route>
 								<Route path="/statistics/detail" element={<BiddingDetail />}></Route>
 								<Route path="/bid/complete" element={<BidComplete />}></Route>
+								<Route path="/bid/complete/:keyword" element={<BidComplete />}></Route>
 								<Route path="/bid/complete/detail" element={<BidCompleteDetail />}></Route>
 								<Route path="/bid/partnerStatus" element={<PartnerBidStatus />}></Route>
+								<Route path="/bid/partnerStatus/:keyword" element={<PartnerBidStatus />}></Route>
 								<Route path="/bid/partnerStatus/detail" element={<PartnerBidStatusDetail />}></Route>
 								<Route path="/bid/partnerComplete" element={<PartnerBidComplete />}></Route>
+								<Route path="/bid/partnerComplete/:keyword" element={<PartnerBidComplete />}></Route>
 								<Route path="/bid/partnerComplete/detail" element={<PartnerBidCompleteDetail />}></Route>
 								<Route path="/bid/history" element={<BidHistory />}></Route>
 							</Route>
