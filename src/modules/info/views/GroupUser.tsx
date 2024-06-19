@@ -3,17 +3,21 @@ import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
 import GroupUserDetailPop from './GroupUserDatail'
-import GroupUserPasswordComfirm from '../../../../src/components/modal/UserPasswordComfirm'
+import GroupUserPasswordComfirm from '../../../components/modal/UserPasswordComfirm'
 import InterrelatedCustCodeSelect from '../components/InterrelatedCustCodeSelect'
 import Swal from 'sweetalert2'; // 공통 팝업창
+import { MapType } from '../../../../src/components/types'
+import SrcInput from '../../../../src/components/input/SrcInput'
+import SelectListSize from '../../../../src/components/SelectListSize'
+import SrcSelectBox from '../../../../src/components/input/SrcSelectBox'
 
 const GroupUser = () => {
     // 사용자 등록 / 수정 여부
-    const [CreateUser, setCreateUser] = useState(false)
+    const [CreateUser, setCreateUser] = useState<boolean>(false)
     // 모달창 오픈 여부
-    const [groupUserDetailPopOpen, setGroupUserDetailPopOpen] = useState(false);  // 사용자 등록/수정모달 오픈
-    const [GroupUserPasswordComfirmOpen, setGroupUserPasswordComfirmOpen] = useState(false);    // 비밀번호 확인
-
+    const [groupUserDetailPopOpen, setGroupUserDetailPopOpen] = useState<boolean>(false);  // 사용자 등록/수정모달 오픈
+    const [GroupUserPasswordComfirmOpen, setGroupUserPasswordComfirmOpen] = useState<boolean>(false);    // 비밀번호 확인
+    const [useYnOptionList, setUseYnOptionList] = useState([{"value" : "Y", "name" : "사용"}, {"value" : "N", "name" : "미사용"}])
     // 사용자등록 팝업호출
     const onGroupUserPop = useCallback(() => {
         setSrcUserIdChange("")
@@ -21,14 +25,14 @@ const GroupUser = () => {
         setCreateUser(true); 
     }, []);
     // 상세, 수정에 필요한 userId
-    const [SrcUserIdChange, setSrcUserIdChange] = useState("");
+    const [SrcUserIdChange, setSrcUserIdChange] = useState<string>("");
     // 비밀번호 확인 팝업 호출
-    function onUserDetailPopUserIdChange(userId){
+    function onUserDetailPopUserIdChange(userId : string){
         setSrcUserIdChange(userId)
         setGroupUserPasswordComfirmOpen(true)   
     }
     // 사용자 상세, 수정 팝업 호출
-    function onUserDetailPop(userId){
+    function onUserDetailPop(userId : string){
         setSrcUserIdChange(userId)
         setCreateUser(false)
         setGroupUserPasswordComfirmOpen(false)
@@ -36,10 +40,13 @@ const GroupUser = () => {
     }
     
     //조회 결과
-    const [GroupUserList, setGroupUserList] = useState({})
-    const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState({})
+    const [GroupUserList, setGroupUserList] = useState({        
+        totalElements   : 0,
+        content         : [{}]
+    })
+    const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState([{} as MapType])
     //조회조건
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         interrelatedCustCode    : "",
         useYn                   : "",
         userName                : "",
@@ -47,13 +54,6 @@ const GroupUser = () => {
         size                    : 10,
         page                    : 0
     });
-
-    const onChangeSrcData = (e) => {
-        setSrcData({
-            ...srcData,
-            [e.target.name]: e.target.value
-        });
-    }
 
     const onSearch = useCallback(async() => {
         try {
@@ -98,29 +98,22 @@ const GroupUser = () => {
                     <div className="flex align-items-center">
 				        <div className="sbTit width100px">그룹사</div>
 				        <div className="flex align-items-center width250px">
-                            <InterrelatedCustCodeSelect 
-                                InterrelatedCustCodeList={InterrelatedCustCodeList} 
-                                onChangeSrcData={onChangeSrcData}
-                            />
+                            <SrcSelectBox   name={"interrelatedCustCode"} optionList={InterrelatedCustCodeList} valueKey="interrelatedCustCode" nameKey="interrelatedNm"
+                                            onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                         </div>
                         <div className="sbTit width100px ml50">사용여부</div>
                         <div className="flex align-items-center width250px">
-                            <select name='useYn' onChange={onChangeSrcData} className="selectStyle">
-                                <option value="">전체</option>
-                                <option value="Y">사용</option>
-                                <option value="N">미사용</option>
-                            </select>
-
+                            <SrcSelectBox   name={"useYn"} optionList={useYnOptionList} valueKey="value" nameKey="name" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                         </div>
                     </div>
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit width100px">사용자명</div>
 				        <div className="flex align-items-center width250px">
-                            <input type="text" onChange={onChangeSrcData} name="userName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
+                            <SrcInput name="userName" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
                         </div>
 				        <div className="sbTit width100px ml50">아이디</div>
 				        <div className="width250px">
-                            <input type="text" onChange={onChangeSrcData} name="userId" className="inputStyle" placeholder="" maxLength="50" onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} autoComplete="new-password"/>
+                            <SrcInput name="userId" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
                         </div>
                         <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
@@ -128,12 +121,7 @@ const GroupUser = () => {
                 <div className="flex align-items-center justify-space-between mt40">
                     <div className="width100">
                         전체 : <span className="textMainColor"><strong>{ GroupUserList.totalElements ? GroupUserList.totalElements.toLocaleString() : 0 }</strong></span>건
-                        <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
-                            <option value="10">10개씩 보기</option>
-                            <option value="20">20개씩 보기</option>
-                            <option value="30">30개씩 보기</option>
-                            <option value="50">50개씩 보기</option>
-                        </select>
+                        <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                     </div>
                     <div>
                         <a onClick={ onGroupUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
@@ -168,13 +156,13 @@ const GroupUser = () => {
                         { GroupUserList.content?.map((groupUser, index) => <GroupUserListJs key={index} groupUser={groupUser} onUserDetailPopUserIdChange={onUserDetailPopUserIdChange}/> ) }
                         { GroupUserList.content == null &&
                             <tr>
-                                <td className="end" colSpan="9">조회된 데이터가 없습니다.</td>
+                                <td className="end" colSpan={9}>조회된 데이터가 없습니다.</td>
                             </tr> }
                     </tbody>
                 </table>
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={GroupUserList} />
+                        {/* <Pagination onChangeSrcData={onChangeSrcData} list={GroupUserList} /> */}
                     </div>
                 </div>
             </div>

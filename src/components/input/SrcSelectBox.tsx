@@ -9,12 +9,15 @@ const SrcSelectBox = (props: SrcSelectBoxProps) => {
         });
     }
 
+
+    
     return (
         <select name={props.name} onChange={onFormEventSrcData} className="selectStyle">
+            <option value={""}>전체</option>
             {
                 props.optionList?.map((data, index) => 
-                <option value={data.value} key={index}>
-                    {data.name}
+                <option value={data[props.valueKey as string]} key={index}>
+                    {data[props.nameKey as string]}
                 </option>)
             }
         </select>

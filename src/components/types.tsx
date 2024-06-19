@@ -34,7 +34,9 @@ export interface SrcSelectBoxProps {
     srcData: MapType;
     setSrcData: Dispatch<SetStateAction<MapType>>;
     name?: string;
-    optionList?: Array<MapType>
+    optionList?: Array<MapType>;
+    valueKey?: string;
+    nameKey?: string;
 }
 
 export interface EditInputProps {
