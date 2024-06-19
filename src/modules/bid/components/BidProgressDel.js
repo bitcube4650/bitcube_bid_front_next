@@ -56,8 +56,8 @@ const BidProgressDel = ({isBidProgressDelModal,setIsBidProgressDelModal,data,int
         <Modal className="modalStyle" show={isBidProgressDelModal} onHide={onBidProgressDelModalHide}>
             <Modal.Body>
             <button className="ModalClose" onClick={()=>{onBidProgressDelModalHide()}} title="닫기"
-              ><i className="fa-solid fa-xmark"></i
-            ></button>
+              ><i className="fa-solid fa-xmark"></i>
+            </button>
             <h2 className="modalTitle">입찰계획 삭제</h2>
             <div className="modalTopBox">
               <ul>

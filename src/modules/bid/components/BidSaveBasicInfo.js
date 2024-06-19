@@ -271,7 +271,7 @@ const BidSaveBasicInfo = (props) => {
               현장설명일시 <span className="star">*</span>
             </div>
             <div className="flex align-items-center width100">
-            <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.spotDay} onChange={(day) => onUpdateSpotDay(day)} dateFormat="yyyy-MM-dd"/>
+            <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.spotDay} onChange={(day) => onUpdateSpotDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/>
               <select
                 className="inputStyle ml10"
                 name="spotTime"

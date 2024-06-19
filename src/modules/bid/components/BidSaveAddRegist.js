@@ -193,7 +193,7 @@ const BidSaveAddRegist = (props) => {
                 제출시작일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-                <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estStartDay} onChange={(day) => onUpdateEstStartDay(day)} dateFormat="yyyy-MM-dd"/>
+                <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estStartDay} onChange={(day) => onUpdateEstStartDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estStartTime" onChange={onChangeAddRegist} value={bidContent.estStartTime}>
                   <option value="">시간 선택</option>
@@ -228,7 +228,7 @@ const BidSaveAddRegist = (props) => {
                 제출마감일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-              <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estCloseDay} onChange={(day) => onUpdateEstEstCloseDay(day)} dateFormat="yyyy-MM-dd"/>
+              <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estCloseDay} onChange={(day) => onUpdateEstEstCloseDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estCloseTime" onChange={onChangeAddRegist} value={bidContent.estCloseTime}>
                   <option value="">시간 선택</option>

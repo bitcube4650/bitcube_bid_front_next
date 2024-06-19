@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import BidCommonInfo from '../components/BidCommonInfo';
 import BidProgressDel from '../components/BidProgressDel'
 import { BidContext } from '../context/BidContext';
+import BidBiddingPreview from '../components/BidBiddingPreview';
 
 
 const BidProgressDetail = () => {
@@ -16,6 +17,7 @@ const BidProgressDetail = () => {
   const [data, setData] = useState({})
   const [isEditUser,setIsEditUser] = useState(false)
   const [isBidProgressDelModal, setIsBidProgressDelModal] = useState(false)
+  const [isBidBiddingPreviewModal,setIsBidBiddingPreviewModal] = useState(false)
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,13 +51,13 @@ const BidProgressDetail = () => {
   }
 
   const onExcel = async() => {
-
+    
     const params = {
       fileName : `${biNo}_전자입찰요청서`,
-      // result : data[0][0],
-      // tableContent : data[1],
-      // fileContent : data[2],
-      // custContent : data[3],
+      result : data,
+      tableContent : data.specInput ? data.specInput : [],
+      fileContent : data.specFile ? [...data.fileList,...data.specFile]: [...data.fileList],
+      custContent : data.custList,
     }
 
     try {
@@ -77,6 +79,10 @@ const BidProgressDetail = () => {
     setIsBidProgressDelModal(true)
   }
 
+  const onBidBiddingPreviewModal = () =>{
+    setIsBidBiddingPreviewModal(true)
+  }
+  
 
   const onBidNoticeConfirm = ()=>{
     Swal.fire({
@@ -254,8 +260,6 @@ const BidProgressDetail = () => {
       <div className="contents">
       <BidCommonInfo key={`info_${biNo}`} data={data} BidProgressDetail="Y"/>
 
-
-
       <div className="text-center mt50">
           <button className="btnStyle btnOutline" title="목록" onClick={()=>{onMoveBidProgress()}}
             >목록
@@ -266,6 +270,7 @@ const BidProgressDetail = () => {
           <button
             className="btnStyle btnOutline"
             title="공고문 미리보기"
+            onClick={()=>{onBidBiddingPreviewModal()}}
             >공고문 미리보기</button
           >
         
@@ -298,6 +303,7 @@ const BidProgressDetail = () => {
 
 
       </div>
+      <BidBiddingPreview isBidBiddingPreviewModal={isBidBiddingPreviewModal} setIsBidBiddingPreviewModal={setIsBidBiddingPreviewModal} data={data}/>
       <BidProgressDel isBidProgressDelModal={isBidProgressDelModal} setIsBidProgressDelModal={setIsBidProgressDelModal} data={data} interNm={interNm}/>
     </div>
   )
