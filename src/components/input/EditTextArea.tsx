@@ -11,7 +11,7 @@ const EditTextArea = (props: EditInputProps) => {
 
     return (
         <textarea className="textareaStyle notiBox overflow-y-auto" style={{height:'400px'}} 
-            onChange={ onFormEventSrcData } name="bcontent" defaultValue={ props.defaultValue } />
+            onChange={ onFormEventSrcData } name={ props.name } defaultValue={ props.defaultValue } />
     )
 }
 
