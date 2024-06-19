@@ -17,7 +17,7 @@ const BiddingStatus = () => {
   const [srcData, setSrcData] = useState({
     startDay    : Ft.strDateAddDay(Ft.getCurretDate(), -30),
     endDay      : Ft.getCurretDate(),
-    interrelatedCustCode    : "",
+    coInters    : [],
   });
 
   useEffect(() => {
@@ -35,9 +35,16 @@ const BiddingStatus = () => {
   }, []);
 
   const onChangeSrcData = (e) => {
+    let coInters = []
+    if( e.target.name === 'interrelatedCustCode' && e.target.value === '' ){
+      coInters = InterrelatedCustCodeList.map(item => item.interrelatedCustCode);
+    } else {
+      coInters.push(e.target.value)
+    }
     setSrcData({
         ...srcData,
-        [e.target.name]: e.target.value
+        [e.target.name]: e.target.value,
+        coInters : coInters
     });
   }
   const onSearch = useCallback(async() => {
@@ -70,12 +77,24 @@ const BiddingStatus = () => {
     });
   }
 
-  // to do
+  // 엑셀다운
   function onExcelDown(){
     let params = Object.assign({}, srcData);
     params.fileName = "입찰현황_" + Ft.formatDate(new Date(), "yyyy_mm_dd");
+    params.mergeColumns = ['회사명', ['입찰계획',['건수','예산금액']],['입찰진행',['건수','예산금액']],['입찰완료(유찰제외)',['건수','낙찰금액','업체수/건수']],'등록 업체수','기타']
+    params.mappingColumnNames = ['interrelatedNm','planCnt','planAmt','ingCnt','ingAmt','succCnt','succAmt','custCnt','custCnt','regCustCnt','temp']
+    params.excelUrl = 'bidPresentList'
+    params.coInters = []
+    if( srcData.interrelatedCustCode === '' ){
+      params.coInters = InterrelatedCustCodeList.map(item => item.interrelatedCustCode);
+    } else {
+      params.coInters.push(srcData.interrelatedCustCode)
+    }
+      
+    params.coInters = InterrelatedCustCodeList.map(item => item.interrelatedCustCode);
 
-    axios.post("/api/v1/excel/statistics/bidPresentList/downLoad", params, {responseType: "blob",}).then((response) => {
+    axios.post("/api/v1/statistics/excel", params, {responseType: "blob"})
+    .then((response) => {
         if (response.status === 200) {
             // 응답이 성공적으로 도착한 경우
             const url = window.URL.createObjectURL(new Blob([response.data])); // 응답 데이터를 Blob 형식으로 변환하여 URL을 생성합니다.
@@ -168,7 +187,7 @@ const BiddingStatus = () => {
           </thead>
           <tbody>
             { BiddingStatusList?.map((biddingStatus, index) => <BiddingStatusListJs key={index} biddingStatus={biddingStatus} /> ) }
-            { BiddingStatusList == null &&
+            { (BiddingStatusList == null || BiddingStatusList.length === 0) &&
                 <tr>
                     <td className="end" colSpan="10">조회된 데이터가 없습니다.</td>
                 </tr> }
