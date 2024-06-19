@@ -6,7 +6,7 @@ import { SrcCheckProps } from '../types'
  * @param props 
  * @returns 
  */
-const EditCheckBox = (props: SrcCheckProps) => {
+const SrcCheckBox = (props: SrcCheckProps) => {
     const onFormEventSrcData = (e: React.ChangeEvent<HTMLInputElement>) => {
         props.setSrcData({
             ...props.srcData,
@@ -22,4 +22,4 @@ const EditCheckBox = (props: SrcCheckProps) => {
     )
 }
 
-export default EditCheckBox;
+export default SrcCheckBox;

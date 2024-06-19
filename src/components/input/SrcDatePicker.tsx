@@ -10,7 +10,7 @@ import { ko } from "date-fns/locale";
  * @param props 
  * @returns 
  */
-const EditDatePicker = (props: SrcDatePickerProps) => {
+const SrcDatePicker = (props: SrcDatePickerProps) => {
     const onFormEventSrcData = (date: Date) => {
         const selectedDate = new Date(date)
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
@@ -28,4 +28,4 @@ const EditDatePicker = (props: SrcDatePickerProps) => {
     )
 }
 
-export default EditDatePicker;
+export default SrcDatePicker;
