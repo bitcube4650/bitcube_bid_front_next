@@ -29,6 +29,14 @@ export interface SrcDatePickerProps {
     selected?: Date;
 }
 
+export interface SrcSelectBoxProps {
+    onSearch: Function;
+    srcData: MapType;
+    setSrcData: Dispatch<SetStateAction<MapType>>;
+    name?: string;
+    optionList?: Array<MapType>
+}
+
 export interface EditInputProps {
     defaultValue: any;
     editData: MapType;
