@@ -45,7 +45,6 @@ const BidStatus = () => {
         if (isMounted.current) {
             isMounted.current = false;
         } else {
-            console.log("fds")
             onSearch();
         }
     },[srcData.size, srcData.page]);
@@ -57,7 +56,7 @@ const BidStatus = () => {
                  {/* conHeader  */}
                 <div className="conHeader">
                     <ul className="conHeaderCate">
-                        <li>전자입찰dsadsad</li>
+                        <li>전자입찰</li>
                         <li>입찰진행</li>
                     </ul>
                 </div>
@@ -90,12 +89,10 @@ const BidStatus = () => {
                             <div className="sbTit mr30">입찰번호</div>
                             <div className="width250px">
                                 <SrcInput onSearch={onSearch} name="bidNo" srcData={ srcData } setSrcData={ setSrcData } maxLength={ 10 } />
-                                {/* <input type="text" className="inputStyle" onChange={onChangeSrcData} name="bidNo" maxLength="10" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} /> */}
                             </div>
                             <div className="sbTit mr30 ml50">입찰명</div>
                             <div className="width250px">
                                 <SrcInput onSearch={onSearch} name="bidName" srcData={ srcData } setSrcData={ setSrcData } maxLength={ 50 }/>
-                                {/* <input type="text" className="inputStyle" onChange={onChangeSrcData} name="bidName" maxLength="50" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} /> */}
                             </div>
                         </div>
                         <div className="flex align-items-center height50px mt10">
@@ -104,11 +101,8 @@ const BidStatus = () => {
                                 <SrcCheck id="progress1-1" name="rebidYn" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.rebidYn} text="입찰공고(재입찰 포함)" />
                                 <SrcCheck id="progress1-2" name="dateOverYn" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.dateOverYn} text="입찰공고(개찰대상)" />
                                 <SrcCheck id="progress1-3" name="openBidYn" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.openBidYn} text="개찰(업체선정대상)" />
-                                {/* <input type="checkbox" id="progress1-1" className="checkStyle" onClick={onChangeSrcData} name="rebidYn" defaultChecked={srcData.rebidYn} /><label htmlFor="progress1-1">입찰공고(재입찰 포함)</label>
-                                <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="dateOverYn" defaultChecked={srcData.dateOverYn} /><label htmlFor="progress1-2" className="ml50">입찰공고(개찰대상)</label>
-                                <input type="checkbox" id="progress1-3" className="checkStyle" onClick={onChangeSrcData} name="openBidYn" defaultChecked={srcData.openBidYn} /><label htmlFor="progress1-3" className="ml50">개찰(업체선정대상)</label> */}
                             </div>
-                            <a role="button" className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                            <a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                         </div>
                     </div>
                     {/* searchBox  */}
@@ -119,15 +113,6 @@ const BidStatus = () => {
                             <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                         </div>
                     </div>
-                    {/* <div className="width100 mt10">
-                        전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
-                        <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
-                            <option value="10">10개씩 보기</option>
-                            <option value="20">20개씩 보기</option>
-                            <option value="30">30개씩 보기</option>
-                            <option value="50">50개씩 보기</option>
-                        </select>
-                    </div> */}
                     
                     <table className="tblSkin1 mt10">
                         <colgroup>
@@ -153,11 +138,11 @@ const BidStatus = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {/* { list.content?.map((data: MapType) => <List key={data.biNo} val={data} />) }
+                            { list.content?.map((data: MapType) => <List key={data.biNo} val={data} />) }
                             { (list.content === undefined || list.content === null || list.content.length === 0)&&
                                 <tr>
                                     <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
-                                </tr> } */}
+                                </tr> }
                         </tbody>
                     </table>
 
@@ -165,7 +150,6 @@ const BidStatus = () => {
                      <div className="row mt40">
                         <div className="col-xs-12">
                             <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ list } />
-                            {/* <Pagination onChangeSrcData={onChangeSrcData} list={list} /> */}
                         </div>
                     </div>
                     {/* pagination  */}
