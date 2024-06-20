@@ -7,7 +7,6 @@ import * as CommonUtils from 'components/CommonUtils';
 import SaveManagementInfo from '../components/SaveManagementInfo';
 import AdminInfo from '../components/AdminInfo';
 import SaveAdminInfo from '../components/SaveAdminInfo';
-import { CustInfoProps } from '../types/types';
 import { MapType } from 'components/types';
 
 const SaveCust = () => {
@@ -22,15 +21,9 @@ const SaveCust = () => {
 	})
 
 	let isEdit = (params?.custCode || '') === '' && selCustCode === '' ? false : true;
+	const [uploadRegnumFile, setUploadRegnumFile] = useState<File|null>();
+	const [uploadBFile, setUploadBFile] = useState<File|null>();
 	
-	// 자식 컴포넌트에서 입력한 input 데이터 data에 셋팅
-	// const onChangeData = (name:string, value:string) => {
-	// 	setCustInfo(current => ({
-	// 		...current,
-	// 		[name] : value
-	// 	}))
-	// }
-
 	// 취소
 	const onMove = () => {
 		let custCode = params?.custCode || ''
@@ -257,9 +250,23 @@ const SaveCust = () => {
 
 	const onSaveCallBack = async() => {
 		let formData = new FormData();
-		formData.append('regnumFile',	typeof custInfo.regnumFile === "string" ? null : custInfo.regnumFile);
-		formData.append('bFile',		typeof custInfo.bFile === "string" ? null : custInfo.bFile);
-		formData.append('data',			new Blob([JSON.stringify(custInfo)], { type: 'application/json' }));
+		if(uploadRegnumFile){
+			formData.append('regnumFile', uploadRegnumFile);
+		} else {
+			setCustInfo({
+				...custInfo,
+				regnumFile : custInfo.regnumFileName
+			})
+		}
+		if(uploadBFile) {
+			formData.append('bFile', uploadBFile);
+		} else {
+			setCustInfo({
+				...custInfo,
+				bFile : custInfo.bfileName
+			})
+		}
+		formData.append('data',	new Blob([JSON.stringify(custInfo)], { type: 'application/json' }));
 
 		// const response = await axios.post('/api/v1/cust/save', formData, {
 		// 	headers : 'multipart/form-data'
@@ -309,21 +316,18 @@ const SaveCust = () => {
 				</div>
 				}
 				{/* 업체 정보 */}
-				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} setCustInfo={setCustInfo} setSelCustCode={setSelCustCode}/>
-				{/* <SaveCustInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} setSelCustCode={setSelCustCode}/> */}
-				
+				<SaveCustInfo isEdit={isEdit} custInfo={custInfo} setCustInfo={setCustInfo} setSelCustCode={setSelCustCode} setUploadRegnumFile={setUploadRegnumFile} setUploadBFile={setUploadBFile} />
+								
 				{loginInfo.custType === 'inter'
 				?
 				// 계열사 사용자 로그인시 조회
 					<>
 					{/*계열사 관리항목 업체 수정시 조회 */}
-					{/* {isEdit &&
-						<SaveManagementInfo isEdit={isEdit} custInfo={custInfo} />
-						// <SaveManagementInfo isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} />
-					} */}
+					{isEdit &&
+						<SaveManagementInfo custInfo={custInfo} setCustInfo={setCustInfo} />
+					}
 					{/* 관리자 정보 */}
-					{/* <SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} /> */}
-					{/* <SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} onChangeData={onChangeData} /> */}
+					<SaveAdminInfo  isEdit={isEdit} custInfo={custInfo} setCustInfo={setCustInfo} />
 
 					{/* 업체 정보 등록 및 수정 버튼 */}
 					<div className="text-center mt50">
@@ -340,7 +344,7 @@ const SaveCust = () => {
 							<button className="btnStyle btnPrimary" title='저장' onClick={onSave}>저장</button>
 						</div>
 						{/* 협력사 사용자 로그인시 관리자 정보 조회 */}
-						<AdminInfo custInfo={custInfo} />
+						<AdminInfo custInfo={custInfo} setCustInfo={setCustInfo} />
 					</>
 				}
 			</div>

@@ -1,25 +1,23 @@
 import React, { useState } from 'react'
 import OtherCustListPop from './OtherCustListPop'
 import { useParams } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import * as CommonUtils from 'components/CommonUtils';
 import ItemPop from '../../signup/components/ItemPop';
 import AddrPop from 'components/AddrPop';
 import { SaveCustInfoProps } from '../types/types';
 import { MapType } from 'components/types'
 import EditInputFileBox from 'components/input/EditInputFileBox';
+import EditInput from '../../../components/input/EditInput';
 
-// const SaveCustInfo = ({isEdit, custInfo, onChangeData, setSelCustCode}) => {
-const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustInfoProps) => {
+const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode, setUploadRegnumFile, setUploadBFile}:SaveCustInfoProps) => {
 	// 세션정보
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
-	const [otherCustModal, setOtherCustModal] = useState(false)
+	const [otherCustModal, setOtherCustModal] = useState<boolean>(false)
 	const params = useParams();
 	
 	const [type, setType] = useState("type1");			// 업체 유형
-	const [itemPop, setItemPop] = useState(false);		// 품목 팝업
-	const [addrPop, setAddrPop] = useState(false);		// 주소 팝업
-	const [uploadFile, setUploadFile] = useState<File|null>();
+	const [itemPop, setItemPop] = useState<boolean>(false);		// 품목 팝업
+	const [addrPop, setAddrPop] = useState<boolean>(false);		// 주소 팝업
 
 
 	// custInfo의 input 데이터 setting
@@ -27,31 +25,11 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 		let value = e.currentTarget.value
 		if(e.currentTarget.name === 'tel' || e.currentTarget.name === 'fax') value =  CommonUtils.onAddDashTel(value)
 		if(e.currentTarget.name === 'capital') value =  CommonUtils.onComma(value)
-
-		// onChangeData(e.target.name, value)
-	}
-
-	// 첨부파일 추가
-	const onAttachFile = (e:React.FormEvent<HTMLInputElement>) => {
-		// if(e.target.files.length > 0){
-		// 	let file = e.target?.files[0];
-		// 	let fileSize = e.target?.files[0]?.size;
-		// 	// 원하는 용량 제한 설정 (10MB)
-		// 	const maxSize = 10 * 1024 * 1024;
-		// 	if (fileSize > maxSize) {
-		// 		Swal.fire('', '파일 크기가 10MB를 초과하였습니다.', 'error');
-		// 	} else {
-		// 		// onChangeData(e.target.id, file)
-		// 		// onChangeData(e.target.id+'Name', file.name)
-		// 	}
-		// }
-	}
-
-	// 첨부파일 삭제
-	const onRemoveFile = (id :string) => {
-		// onChangeData(id, null)
-		// onChangeData(id+'Name', '')
-		// onChangeData(id==='regnumFile' ? 'regnumPath' : id+'Path', '')
+		
+		setCustInfo({
+			...custInfo,
+			[e.currentTarget.name]: value
+		})
 	}
 	
 	// 업체유형 팝업 호출
@@ -63,11 +41,17 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 	// 업체유형 팝업 callback
 	const itemSelectCallback = (data:MapType) => {
 		if("type1" === type) {
-			// onChangeData('custType1', data.itemCode)
-			// onChangeData('custTypeNm1', data.itemName)
+			setCustInfo({
+				...custInfo,
+				['custType1']: data.itemCode,
+				['custTypeNm1']: data.itemName
+			})
 		} else if("type2" === type) {
-			// onChangeData('custType2', data.itemCode)
-			// onChangeData('custTypeNm2', data.itemName)
+			setCustInfo({
+				...custInfo,
+				['custType2']: data.itemCode,
+				['custTypeNm2']: data.itemName
+			})
 		}
 	}
 
@@ -78,8 +62,11 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 	
 	// 주소 조회 callback
     const addrPopCallback = (data:MapType) => {
-		// onChangeData('zipcode', data.zipcode)
-		// onChangeData('addr', data.addr)
+		setCustInfo({
+			...custInfo,
+			['zipcode']: data.zipcode,
+			['addr']: data.addr
+		})
     }
 
 	// 상태 str
@@ -162,7 +149,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 							<div className="flex align-items-center width100">
 								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm1} readOnly />
 								<input type="hidden" value={ custInfo.custType1 || '' }/>
-							<a onClick={() => openItemPop('type1')} className="btnStyle btnSecondary ml10" title="조회">조회</a>
+								<button onClick={() => openItemPop('type1')} className="btnStyle btnSecondary ml10" title="조회">조회</button>
 							</div>
 						</div>
 						<div className="flex align-items-center mt20">
@@ -170,7 +157,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 							<div className="flex align-items-center width100">
 								<input type="text" className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" value={custInfo.custTypeNm2} readOnly />
 								<input type="hidden" value={ custInfo.custType2 || '' }/>
-								<a onClick={() => openItemPop('type2')} className="btnStyle btnSecondary ml10" title="조회">조회</a>
+								<button onClick={() => openItemPop('type2')} className="btnStyle btnSecondary ml10" title="조회">조회</button>
 							</div>
 						</div>
 						</>
@@ -188,38 +175,43 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 				}
 					<div className="flex align-items-center mt20">
 						<div className="formTit flex-shrink0 width170px">회사명 <span className="star">*</span></div>
-						<div className="width100"><input type="text" name="custName" value={custInfo.custName || ''} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
+						<div className="width100">
+							<EditInput name="custName" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.custName || ''} />
+						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">대표자명 <span className="star">*</span></div>
-						<div className="width100"><input type="text" name="presName" value={custInfo.presName || ''} className="inputStyle maxWidth-max-content" onChange={handleChange} /></div>
+						<div className="width100">
+							<EditInput name="presName" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.presName || ''} />
+						</div>
 					</div>
 
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">사업자등록번호 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="regnum1" value={custInfo.regnum1 || ''} maxLength={3} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="regnum1" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.regnum1 || ''} maxLength={3} />
 							<span style={{margin:"0 10px"}}>-</span>
-							<input type="text" name="regnum2" value={custInfo.regnum2 || ''} maxLength={2} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="regnum2" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.regnum2 || ''} maxLength={2} />
 							<span style={{margin:"0 10px"}}>-</span>
-							<input type="text" name="regnum3" value={custInfo.regnum3 || ''} maxLength={5} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="regnum3" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.regnum3 || ''} maxLength={5} />
 						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">법인번호</div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="presJuminNo1" value={custInfo.presJuminNo1 || ''} maxLength={6} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="presJuminNo1" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.presJuminNo1 || ''} maxLength={6} />
 							<span style={{margin:"0 10px"}}>-</span>
-							<input type="text" name="presJuminNo2" value={custInfo.presJuminNo2 || ''} maxLength={7} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="presJuminNo2" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.presJuminNo2 || ''} maxLength={7} />
 						</div>
 					</div>
 
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">자본금 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="capital" value={CommonUtils.onComma(custInfo.capital || '')} maxLength={15} className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} />
+							<EditInput name="capital" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.capital || ''} maxLength={15} />
+							{/* <input type="text" name="capital" value={CommonUtils.onComma(custInfo.capital || '')} maxLength={15} className="inputStyle maxWidth-max-content" placeholder="ex) 10,000,000" onChange={handleChange} /> */}
 							<div className="ml10">원</div>
 						</div>
 					</div>
@@ -227,7 +219,8 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">설립년도 <span className="star">*</span></div>
 						<div className="flex align-items-center width100">
-							<input type="text" name="foundYear" value={custInfo.foundYear || ''} maxLength={4} className="inputStyle maxWidth-max-content" placeholder="ex) 2021" onChange={handleChange} />
+							<EditInput name="foundYear" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.foundYear || ''} maxLength={4} />
+							{/* <input type="text" name="foundYear" value={custInfo.foundYear || ''} maxLength={4} className="inputStyle maxWidth-max-content" placeholder="ex) 2021" onChange={handleChange} /> */}
 							<div className="ml10">년</div>
 						</div>
 					</div>
@@ -235,14 +228,16 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">대표전화 <span className="star">*</span></div>
 						<div className="width100">
-							<input type="text" name="tel" value={custInfo.tel || ''} maxLength={13} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="tel" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.tel || ''} />
+							{/* <input type="text" name="tel" value={custInfo.tel || ''} maxLength={13} className="inputStyle maxWidth-max-content" onChange={handleChange} /> */}
 						</div>
 					</div>
 					
 					<div className="flex align-items-center mt10">
 						<div className="formTit flex-shrink0 width170px">팩스</div>
 						<div className="width100">
-							<input type="text" name="fax" value={custInfo.fax || ''} maxLength={13} className="inputStyle maxWidth-max-content" onChange={handleChange} />
+							<EditInput name="fax" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.fax || ''} />
+							{/* <input type="text" name="fax" value={custInfo.fax || ''} maxLength={13} className="inputStyle maxWidth-max-content" onChange={handleChange} /> */}
 						</div>
 					</div>
 					
@@ -250,11 +245,15 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 						<div className="formTit flex-shrink0 width170px">회사주소 <span className="star">*</span></div>
 						<div className="width100">
 							<div className="flex align-items-center width100">
-								<input type="text"  name="zipcode" value={custInfo.zipcode || ''} className="inputStyle maxWidth-max-content readonly" placeholder="주소 조회 클릭" readOnly onChange={handleChange}/>
+								<EditInput name="zipcode" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.zipcode || ''} />
+								{/* <input type="text"  name="zipcode" value={custInfo.zipcode || ''} className="inputStyle maxWidth-max-content readonly" placeholder="주소 조회 클릭" readOnly onChange={handleChange}/> */}
 								<a onClick={openAddrPop} className="btnStyle btnSecondary flex-shrink0 ml10" title="주소 조회">주소 조회</a>
 							</div>
-							<div className="mt5"><input type="text" name="addr" value={custInfo.addr || ''} className="inputStyle readonly" placeholder="" readOnly onChange={handleChange} /></div>
-							<div className="mt5"><input type="text" name="addrDetail" value={custInfo.addrDetail || ''} className="inputStyle" placeholder="상세 주소 입력" onChange={handleChange}/></div>
+
+							<EditInput name="addr" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.addr || ''} />
+							<EditInput name="addrDetail" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.addrDetail || ''} />
+							{/* <div className="mt5"><input type="text" name="addr" value={custInfo.addr || ''} className="inputStyle readonly" placeholder="" readOnly onChange={handleChange} /></div>
+							<div className="mt5"><input type="text" name="addrDetail" value={custInfo.addrDetail || ''} className="inputStyle" placeholder="상세 주소 입력" onChange={handleChange}/></div> */}
 						</div>
 					</div>
 
@@ -263,25 +262,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 						<div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star" style={{display : (params?.custCode || '') !== '' ? '' : 'none' }} >*</span></div>
 						<div className="width100">
 							{/* 다중파일 업로드 */}
-							<EditInputFileBox name='regnumFileName' fileName={ custInfo.regnumFileName } setUploadFile={ setUploadFile } editData={ custInfo } setEditData={ setCustInfo }/>
-							{/* <div className="upload-boxWrap">
-								{!CommonUtils.isEmpty(custInfo.regnumFileName)
-								?	<div className="uploadPreview" >
-										<p>
-											{ custInfo.regnumFileName }
-											<button className='file-remove' onClick={() => onRemoveFile('regnumFile')}>삭제</button>
-										</p>
-									</div>
-								:
-									<div className="upload-box">
-										<input type="file" id="regnumFile" onChange={onAttachFile} />
-										<div className="uploadTxt">
-											<i className="fa-regular fa-upload"></i>
-											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
-										</div>
-									</div>
-								}
-							</div> */}
+							<EditInputFileBox name='regnumFileName' fileName={ custInfo.regnumFileName } setUploadFile={ setUploadRegnumFile } editData={ custInfo } setEditData={ setCustInfo }/>
 							{/* 다중 파일 업로드 */}
 						</div>
 					</div>
@@ -302,24 +283,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 						</div>
 						<div className="width100">
 							{/* 다중파일 업로드 */}
-							<div className="upload-boxWrap">
-							{!CommonUtils.isEmpty(custInfo.bFileName)
-								?	<div className="uploadPreview" >
-										<p>
-											{ custInfo.bFileName }
-											<button className='file-remove' onClick={() => onRemoveFile('bFile')}>삭제</button>
-										</p>
-									</div>
-								:
-									<div className="upload-box">
-									<input type="file" id="bFile" onChange={onAttachFile} />
-										<div className="uploadTxt">
-											<i className="fa-regular fa-upload"></i>
-											<div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
-										</div>
-									</div>
-								}
-							</div>
+							<EditInputFileBox name='bFileName' fileName={ custInfo.bFileName } setUploadFile={ setUploadBFile } editData={ custInfo } setEditData={ setCustInfo }/>
 							{/* //다중파일 업로드 */}
 						</div>
 					</div>
@@ -334,7 +298,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode}:SaveCustIn
 			</div>
 			{/* // 회사정보 */}
 			{otherCustModal &&
-				<OtherCustListPop setOtherCustModal={setOtherCustModal} setSelCustCode={setSelCustCode} />
+				<OtherCustListPop otherCustModal={otherCustModal} setOtherCustModal={setOtherCustModal} setSelCustCode={setSelCustCode} />
 			}
 			{/* 업체유형 팝업 */}
 			{!isEdit &&
