@@ -9,18 +9,20 @@ import * as CommonUtils from 'components/CommonUtils';
 import BidCustUserList from '../../bid/components/BidCustUserList';
 import { MapType } from 'components/types'
 import SrcInput from 'components/input/SrcInput'
+import SrcSelectBox from 'components/input/SrcSelectBox'
 import SelectListSize from 'components/SelectListSize'
 
 const CustList = () => {
 	const url = useLocation().pathname;
 	// url 파라미터에 certYn이 있으면 해당 값을 가져온다
-	const certYn = new URLSearchParams(useLocation().search).get("certYn")
+	const certYn = new URLSearchParams(useLocation().search).get("certYn") as string
 	
 	// 세션정보
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
 	const [itemPop, setItemPop] = useState<boolean>(false);		// 품목 팝업
 	const [isBidCustUserListModal, setIsBidCustUserListModal] = useState<boolean>(false);
 	const [custCode, setCustCode] = useState<string>('');
+	const [srcCertYn, setSrcCertYn] = useState([{"value" : "Y", "name" : "정상"}, {"value" : "D", "name" : "삭제"}])
 
 	let isApproval = false;								// 업체 승인 화면 여부
 	if(url.indexOf('approval') > -1) {
@@ -42,14 +44,7 @@ const CustList = () => {
 		totalElements	: 0,
 		content			: []
 	});
-
-	const onChangeEventSrcData = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSrcData({
-			...srcData,
-			[e.target.name] : e.target.value
-		});
-	}
-
+	
 	// 업체유형 팝업 callback
 	const itemSelectCallback = (data:MapType) => {
 		setSrcData({
@@ -133,11 +128,7 @@ const CustList = () => {
 							<>
 							<div className="sbTit mr30 ml50">상태</div>
 							<div className="width120px">
-								<select className="selectStyle" name="certYn" value={srcData.certYn} onChange={e => onChangeEventSrcData(e)} >
-									<option value="">전체</option>
-									<option value="Y">정상</option>
-									<option value="D">삭제</option>
-								</select>
+								<SrcSelectBox name='certYn' optionList={srcCertYn} valueKey='value' nameKey='name' onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData }/>
 							</div>
 							</>
 						}

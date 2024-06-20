@@ -10,7 +10,7 @@ const EditInputFileBox = (props: EditInputFileProps) => {
 
             props.setEditData({
                 ...props.editData,
-                ['fileName']: e.target.files[0].name
+                [props.name]: e.target.files[0].name
             });
         }
     }
@@ -18,7 +18,7 @@ const EditInputFileBox = (props: EditInputFileProps) => {
     function onRemoveAttachFile() {
         props.setEditData({
             ...props.editData,
-            ['fileName']: null
+            [props.name]: null
         });
         props.setUploadFile(null);
     }

@@ -62,7 +62,8 @@ export interface EditInputFileProps {
     setUploadFile: Dispatch<SetStateAction<File | undefined | null>>;
     editData: MapType;
     setEditData: Dispatch<SetStateAction<MapType>>;
-    fileName?:string
+    fileName?:string;
+    name:string;
 }
 
 export interface PageProps {
