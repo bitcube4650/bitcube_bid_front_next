@@ -1,12 +1,17 @@
 import React, { useCallback } from 'react'
 import Modal from 'react-bootstrap/Modal';
 
-const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
+interface BiddingGuideProps {
+    biddingGuidePop : boolean;
+    setBiddingGuidePop : React.Dispatch<React.SetStateAction<boolean>>;
+} 
+
+const BiddingGuidePop: React.FC<BiddingGuideProps> = ({biddingGuidePop, setBiddingGuidePop}) => {
     
     // 팝업 닫기
-    const fnCloseBiddingGuidePop = useCallback(() => {
+    const fnCloseBiddingGuidePop = () => {
         setBiddingGuidePop(false);
-    })
+    }
 
     return (
         <Modal className="modalStyle" id="biddingGuide" show={biddingGuidePop} onHide={fnCloseBiddingGuidePop} keyboard={true} dialogClassName="modal-lg">
@@ -30,8 +35,8 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                         </colgroup>
                         <thead>
                             <tr>
-                                <th colspan="2">절차</th>
-                                <th rowspan="2" className="end">주요내용</th>
+                                <th colSpan={2}>절차</th>
+                                <th rowSpan={2} className="end">주요내용</th>
                             </tr>
                             <tr>
                                 <th>그룹사</th>
@@ -40,7 +45,7 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="2" style={{ position:'relative'}}><img src="/images/biddingInfo.png" className="img-responsive" alt="절차" style={{ position:'absolute', top:0, left:0}} /></td>
+                                <td colSpan={2} style={{ position:'relative'}}><img src="/images/biddingInfo.png" className="img-responsive" alt="절차" style={{ position:'absolute', top:0, left:0}} /></td>
                                 <td className="text-left end">
                                     <ul className="dList">
                                         <li><div>입찰 담당자는 입찰 계획을 등록합니다.</div></li>
@@ -50,7 +55,7 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2"></td>
+                                <td colSpan={2}></td>
                                 <td className="text-left end">
                                     <ul className="dList">
                                         <li><div>공고된 입찰을 조회합니다.</div></li>
@@ -59,7 +64,7 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2"></td>
+                                <td colSpan={2}></td>
                                 <td className="text-left end">
                                     <ul className="dList">
                                         <li><div>입찰 세부내역을 확인하고 견적서를 제출합니다.</div></li>
@@ -68,7 +73,7 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2"></td>
+                                <td colSpan={2}></td>
                                 <td className="text-left end">
                                     <ul className="dList">
                                         <li><div>입찰의 제출마감일시가 지나면 개찰자는 업체의 투찰 내역을<br />확인할 수 있습니다.</div></li>
@@ -78,7 +83,7 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2"></td>
+                                <td colSpan={2}></td>
                                 <td className="text-left end">
                                     <ul className="dList">
                                         <li><div>개찰자는 낙찰업체를 선정할 수 있습니다.<br />(선정된 업체에게는 낙찰 메일 발송)</div></li>
@@ -87,7 +92,7 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2"></td>
+                                <td colSpan={2}></td>
                                 <td className="text-left end">
                                     <ul className="dList">
                                         <li><div>낙찰된 내역을 확인할 수 있습니다.</div></li>
@@ -105,4 +110,4 @@ const BiddingGuide = ({biddingGuidePop, setBiddingGuidePop}) => {
     )
 }
 
-export default BiddingGuide
+export default BiddingGuidePop

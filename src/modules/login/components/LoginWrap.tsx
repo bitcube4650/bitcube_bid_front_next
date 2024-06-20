@@ -9,7 +9,7 @@ import PwSearchPop from "../components/PwSearchPop";
 import Swal from 'sweetalert2';
 import axios from "axios"
 
-function LoginWrap(props) {
+function LoginWrap(props: {logoUrl: string}) {
     const [loginInfo, setLoginInfo] = useState({
         loginId: '',
         loginPw: '',
@@ -20,16 +20,16 @@ function LoginWrap(props) {
     const [cookies, setCookie, removeCookie] = useCookies(['rememberUserId', 'loginInfo']);
 
     // 로그인 실패 팝업
-    const [loginFailPop, setLoginFailPop] = useState(false);
+    const [loginFailPop, setLoginFailPop] = useState<boolean>(false);
 
     // 로그인 승인 실패 팝업
-    const [loginNotAppPop, setLoginNotAppPop] = useState(false);
+    const [loginNotAppPop, setLoginNotAppPop] = useState<boolean>(false);
 
     // 아이디 찾기 팝업
-    const [idSearchPop, setIdSearchPop] = useState(false);
+    const [idSearchPop, setIdSearchPop] = useState<boolean>(false);
 
     // 비밀번호 찾기 팝업
-    const [pwSearchPop, setPwSearchPop] = useState(false);
+    const [pwSearchPop, setPwSearchPop] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -71,8 +71,12 @@ function LoginWrap(props) {
 
         } catch (err) {
             // 기존 로그인 로직 interface처리하는부분의 로직이 사라져서 case처리 부분 삭제
-            if (err.response.status === 403) {
-                setLoginNotAppPop(true);
+            if (axios.isAxiosError(err) && err.response) {
+                if(err.response.status === 403) {
+                    setLoginNotAppPop(true);
+                } else {
+                    setLoginFailPop(true);
+                }
             } else {
                 setLoginFailPop(true);
             }
@@ -91,7 +95,7 @@ function LoginWrap(props) {
         setPwSearchPop(true);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if(e.key === "Enter") {
             e.preventDefault();
             onLogin();

@@ -1,12 +1,11 @@
 import React from 'react';
 
-function LoginFooter(props) {
+function LoginFooter() {
     return (
         <div className="loginFooter">
             <div className="inner">
-                {/* <div className="loginFootLeft"><img src={props.logoUrl} className="img-responsive" alt="일진그룹 로고" /></div> */}
                 <div className="loginFootCenter">
-                <a href="/#"  click="clickCertificate" title="공동인증서">공동인증서</a>
+                <a href="/#" title="공동인증서">공동인증서</a>
                 <a href="/#" data-toggle="modal" data-target="#regProcess" title="업체등록절차">업체등록절차</a>
                 <a href="/#" data-toggle="modal" data-target="#biddingInfo" title="입찰업무안내">입찰업무안내</a>
                 </div>

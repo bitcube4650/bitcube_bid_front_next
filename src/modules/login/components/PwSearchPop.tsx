@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
-const PwSearchPop = ({pwSearchPop, setPwSearchPop}) => {
+interface PwSearchPopProps {
+    pwSearchPop : boolean;
+    setPwSearchPop : React.Dispatch<React.SetStateAction<boolean>>;
+}
 
+const PwSearchPop: React.FC<PwSearchPopProps> = ({pwSearchPop, setPwSearchPop}) => {
     const initPwSearch = {regnum1 : '', regnum2 : '', regnum3 : '', userName : '', userId : '', userEmail : ''};
     const [pwSearch, setPwSearch] = useState(initPwSearch);
     const [showAlert, setShowAlert] = useState(false);
@@ -16,7 +20,7 @@ const PwSearchPop = ({pwSearchPop, setPwSearchPop}) => {
         }
     }, [pwSearchPop]);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPwSearch((prevState) => ({
           ...prevState,
@@ -70,11 +74,11 @@ const PwSearchPop = ({pwSearchPop, setPwSearchPop}) => {
                     <div className="flex align-items-center mt30">
                         <div className="formTit flex-shrink0 width150px">사업자등록번호 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="regnum1" value={pwSearch.regnum1} onChange={handleInputChange} maxLength="3" className="inputStyle" />
+                            <Form.Control type="text" name="regnum1" value={pwSearch.regnum1} onChange={handleInputChange} maxLength={3} className="inputStyle" />
                             <span style={{ margin: '0 10px' }}>-</span>
-                            <Form.Control type="text" name="regnum2" value={pwSearch.regnum2} onChange={handleInputChange} maxLength="2" className="inputStyle" />
+                            <Form.Control type="text" name="regnum2" value={pwSearch.regnum2} onChange={handleInputChange} maxLength={2} className="inputStyle" />
                             <span style={{ margin: '0 10px' }}>-</span>
-                            <Form.Control type="text" name="regnum3" value={pwSearch.regnum3} onChange={handleInputChange} maxLength="5" className="inputStyle" />
+                            <Form.Control type="text" name="regnum3" value={pwSearch.regnum3} onChange={handleInputChange} maxLength={5} className="inputStyle" />
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">

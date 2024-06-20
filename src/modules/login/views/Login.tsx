@@ -10,7 +10,7 @@ const Login = () => {
             <div className="loginBg">
                 <div className="inner">
                     <LoginWrap logoUrl={logoUrl}/>
-                    <LoginFooter logoUrl={logoUrl}/>
+                    <LoginFooter />
                 </div>
             </div>
         </div>

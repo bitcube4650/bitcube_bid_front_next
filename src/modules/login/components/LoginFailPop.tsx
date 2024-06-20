@@ -1,12 +1,17 @@
 import React, { useCallback, useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 
-const LoginFailPop = ({setLoginFailPop, loginFailPop}) => {
+interface LoginFailPopProps {
+    loginFailPop : boolean;
+    setLoginFailPop : React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const LoginFailPop: React.FC<LoginFailPopProps> = ({setLoginFailPop, loginFailPop}) => {
     
     // 팝업 닫기
-    const fnCloseLoginFailPop = useCallback(() => {
+    const fnCloseLoginFailPop = () => {
         setLoginFailPop(false);
-    })
+    }
 
     return (
         <Modal className="modalStyle" id="loginAlert" show={loginFailPop} onHide={fnCloseLoginFailPop} keyboard={true}>

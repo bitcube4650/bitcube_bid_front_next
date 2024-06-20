@@ -2,17 +2,17 @@ import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EnrollmentProcessPop from '../components/EnrollmentProcess';
-import BiddingGuidePop from '../components/BiddingGuide';
+import BiddingGuidePop from '../components/BiddingGuidePop';
 
 
 const SignUp = () => {
-    const [isAgree, setIsAgree] = useState(false); 
+    const [isAgree, setIsAgree] = useState<boolean>(false); 
 
     // 업체등록절차 팝업
-    const [enrollmentProcessPop, setEnrollmentProcessPop] = useState(false);
+    const [enrollmentProcessPop, setEnrollmentProcessPop] = useState<boolean>(false);
 
     // 입찰업무안내 실패 팝업
-    const [biddingGuidePop, setBiddingGuidePop] = useState(false);
+    const [biddingGuidePop, setBiddingGuidePop] = useState<boolean>(false);
 
     const navigate = useNavigate();
 

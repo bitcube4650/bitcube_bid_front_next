@@ -1,12 +1,17 @@
 import React, { useCallback } from 'react'
 import Modal from 'react-bootstrap/Modal';
 
-const EnrollmentProcess = ({enrollmentProcessPop, setEnrollmentProcessPop}) => {
+interface EnrollmentProcessProps {
+    enrollmentProcessPop : boolean;
+    setEnrollmentProcessPop : React.Dispatch<React.SetStateAction<boolean>>;
+} 
+
+const EnrollmentProcess: React.FC<EnrollmentProcessProps> = ({enrollmentProcessPop, setEnrollmentProcessPop}) => {
     
     // 팝업 닫기
-    const fnCloseEnrollmentProcessPop = useCallback(() => {
+    const fnCloseEnrollmentProcessPop = () => {
         setEnrollmentProcessPop(false);
-    })
+    }
 
     return (
         <Modal className="modalStyle" id="enrollmentProcess" show={enrollmentProcessPop} onHide={fnCloseEnrollmentProcessPop} keyboard={true}>
