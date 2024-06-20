@@ -216,7 +216,7 @@ const NoticeEdit = () => {
                     <div className="flex mt20">
                         <div className="formTit flex-shrink0 width170px">첨부파일</div>
                         <div className="width100">
-                            <EditInputFileBox fileName={ detailData.fileName } setUploadFile={ setUploadFile } editData={ detailData } setEditData={ setDetailData } />
+                            <EditInputFileBox name="fileName" fileName={ detailData.fileName } setUploadFile={ setUploadFile } editData={ detailData } setEditData={ setDetailData } />
                         </div>
                     </div>
                     <div className="flex mt20">
