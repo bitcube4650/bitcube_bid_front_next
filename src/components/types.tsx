@@ -45,6 +45,7 @@ export interface EditInputProps {
     setEditData: Dispatch<SetStateAction<MapType>>;
     name: string;
     maxLength?: number;
+    placeholder?: string;
 }
 
 export interface EditInputRadioProps {

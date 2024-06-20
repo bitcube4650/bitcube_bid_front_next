@@ -19,7 +19,7 @@ const CustDetail = ({title, isApproval}:CustDetailProps) => {
 	const params = useParams();
 
 	const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);		// 세션 정보
-	const custCode = params.custCode										// 상세 조회할 업체 코드
+	const custCode = params.custCode as string										// 상세 조회할 업체 코드
 
 	const [custInfo, setCustInfo] = useState<MapType>({});							// 업체 정보
 	const [deletePop, setDeletePop] = useState<boolean>(false)						// 업체 삭제 팝업
@@ -124,7 +124,7 @@ const CustDetail = ({title, isApproval}:CustDetailProps) => {
 					<>
 						{/* 계열사 관리 항목 */}
 						{/* 승인 업체 상세에서는 계열사 관리 항목 미조회 */}
-						<ManagementInfo custInfo={custInfo} />
+						<ManagementInfo custInfo={custInfo} setCustInfo={setCustInfo} />
 					</>
 					)
 				: 
@@ -136,7 +136,7 @@ const CustDetail = ({title, isApproval}:CustDetailProps) => {
 				}
 
 				{/* 관리자 정보 */}
-				<AdminInfo custInfo={custInfo} />
+				<AdminInfo custInfo={custInfo} setCustInfo={setCustInfo} />
 			</div>
 			{/* 계열사 사용자 조회 버튼 */}
 			{loginInfo.custType == 'inter' &&

@@ -1,7 +1,8 @@
 import React from 'react'
 import { CustInfoProps } from '../types/types';
+import EditInputRadio from '../../../components/input/EditInputRadio';
 
-const ManagementInfo = ({custInfo}:CustInfoProps) => {
+const ManagementInfo = ({custInfo, setCustInfo}:CustInfoProps) => {
   return (
 		<>
 			<h3 className="h3Tit mt50">계열사 관리 항목</h3>
@@ -9,10 +10,10 @@ const ManagementInfo = ({custInfo}:CustInfoProps) => {
 				<div className="flex align-items-center">
 					<div className="formTit flex-shrink0 width170px">업체등급</div>
 					<div className="width100">
-						<input type="radio" name="custLevel" value="A" id="chkA" className="radioStyle" checked={custInfo.custLevel === 'A'} disabled /><label htmlFor="chkA">A등급</label>
-						<input type="radio" name="custLevel" value="B" id="chkB" className="radioStyle" checked={custInfo.custLevel === 'B'} disabled /><label htmlFor="chkB">B등급</label>
-						<input type="radio" name="custLevel" value="C" id="chkC" className="radioStyle" checked={custInfo.custLevel === 'C'} disabled /><label htmlFor="chkC">C등급</label>
-						<input type="radio" name="custLevel" value="D" id="chkD" className="radioStyle" checked={custInfo.custLevel === 'D'} disabled /><label htmlFor="chkD">D등급</label>
+						<EditInputRadio editData={ custInfo } setEditData={ setCustInfo } id="chkA" name="custLevel" value="A" label="A등급" checked={ custInfo.custLevel === "A" } disabled={true} />
+						<EditInputRadio editData={ custInfo } setEditData={ setCustInfo } id="chkB" name="custLevel" value="B" label="B등급" checked={ custInfo.custLevel === "B" } disabled={true} />
+						<EditInputRadio editData={ custInfo } setEditData={ setCustInfo } id="chkC" name="custLevel" value="C" label="C등급" checked={ custInfo.custLevel === "C" } disabled={true} />
+						<EditInputRadio editData={ custInfo } setEditData={ setCustInfo } id="chkD" name="custLevel" value="D" label="D등급" checked={ custInfo.custLevel === "D" } disabled={true} />
 					</div>
 				</div>
 				<div className="flex align-items-center mt20">

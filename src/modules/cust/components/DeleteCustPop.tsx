@@ -5,20 +5,26 @@ import Swal from 'sweetalert2'
 import * as CommonUtils from 'components/CommonUtils';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import { DeleteCustListProps } from '../types/types';
+import EditTextArea from 'components/input/EditTextArea';
+import { MapType } from 'components/types'
 
 /**
  * 업체 반려 및 삭제, 탈퇴시 사유 작성 팝업
  * @returns 
  */
-const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveList}) => {
-	const [etc, setEtc] = useState("")
+const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveList} : DeleteCustListProps) => {
+	// const [etc, setEtc] = useState("")
+	const [etcInfo, setEtcInfo]	= useState<MapType>({
+		etc : ''
+	})
 	const navigate = useNavigate();
-	const [cookies, setCookie, removeCookie] = useCookies(['username']);
+	const [cookies, setCookie, removeCookie] = useCookies<string>(['username']);
 	const title = deleteType === "refuse" ? '반려' : (deleteType === "delete" ? "삭제" : "회원탈퇴")
 
 	// 반려 사유 팝업 호출
 	const onRefuse = () => {
-		if(CommonUtils.isEmpty(etc)){
+		if(CommonUtils.isEmpty(etcInfo.etc)){
 			Swal.fire('', '반려 사유를 입력해주세요.', 'warning')
 			return;
 		}
@@ -43,7 +49,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 	const onRefuseCallback = async() => {
 		const response = await axios.post('/api/v1/cust/back', {
 			custCode : custCode,
-			etc : etc
+			etc : etcInfo.etc
 		})
 		
 		let result = response.data
@@ -57,7 +63,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 
 	// 삭제 사유 팝업 호출
 	const onDelete = () => {
-		if(CommonUtils.isEmpty(etc)){
+		if(CommonUtils.isEmpty(etcInfo.etc)){
 			Swal.fire('', '삭제 사유를 입력해주세요.', 'warning')
 			return;
 		}
@@ -82,7 +88,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 	const onDeleteCallback = async() => {
 		const response = await axios.post('/api/v1/cust/del', {
 			custCode : custCode,
-			etc : etc,
+			etc : etcInfo.etc,
 		})
 		
 		let result = response.data
@@ -96,7 +102,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 	
 	// 업체 탈퇴 처리
 	const onLeave = async() => {
-		if(CommonUtils.isEmpty(etc)){
+		if(CommonUtils.isEmpty(etcInfo.etc)){
 			Swal.fire('', '탈퇴 사유를 입력해주세요.', 'warning')
 			return;
 		}
@@ -120,7 +126,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 	const onLeaveCallback = async() => {
 		const response = await axios.post('/api/v1/cust/leave', {
 			custCode : custCode,
-			etc : etc,
+			etc : etcInfo.etc,
 		})
 		
 		let result = response.data
@@ -131,7 +137,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 			axios.post("/logout", {}).then((response) => {
 				const status = response.status;
 				if(status == 200) {
-					removeCookie('loginInfo');
+					removeCookie("loginInfo");
 					localStorage.clear();
 					navigate('/');
 				} else {
@@ -174,7 +180,8 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 					</li>
 				</ul>
 			</div>
-			<textarea placeholder={deleteType === "refuse" ? '반려사유 필수 입력' :(deleteType === "delete" ? '삭제사유 필수 입력' : '탈퇴사유 필수 입력')} className="textareaStyle height150px mt20" onChange={(e) => setEtc(e.target.value)}></textarea>
+
+			<EditTextArea editData={ etcInfo } setEditData={ setEtcInfo } name="etc" defaultValue={ etcInfo.etc } placeholder={deleteType === "refuse" ? '반려사유 필수 입력' :(deleteType === "delete" ? '삭제사유 필수 입력' : '탈퇴사유 필수 입력')} />
 			<div className="modalFooter">
 				<button data-dismiss="modal" title="취소" className="modalBtnClose" onClick={() => setDeletePop(false)}>취소</button>
 				<button data-toggle="modal" title={title} className="modalBtnCheck" onClick={deleteType === "refuse" ? onRefuse :(deleteType === "delete" ? onDelete : onLeave)}>{title}</button>

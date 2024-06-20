@@ -2,7 +2,7 @@ import React from 'react'
 import * as CommonUtils from 'components/CommonUtils';
 import { CustInfoProps } from '../types/types';
 
-const AdminInfo = ({custInfo}:CustInfoProps) => {
+const AdminInfo = ({custInfo, setCustInfo}:CustInfoProps) => {
 	return (
 		<>
 		<h3 className="h3Tit mt50">관리자 정보</h3>

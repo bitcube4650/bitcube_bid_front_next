@@ -4,13 +4,16 @@ import axios from 'axios'
 import { Modal } from 'react-bootstrap'
 import * as CommonUtils from 'components/CommonUtils';
 import ItemPop from '../../signup/components/ItemPop';
+import { MapType } from 'components/types'
+import { OtherCustListProps } from '../types/types';
+import SrcInput from '../../../components/input/SrcInput';
 
 /* 타계열사 업체 조회 팝업 */
-const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
+const OtherCustListPop = ({otherCustModal, setOtherCustModal, setSelCustCode}:OtherCustListProps) => {
 	// 세션정보
-	const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+	const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string)
 
-	const [srcData, setSrcData] = useState({						// 조회조건
+	const [srcData, setSrcData] = useState<MapType>({						// 조회조건
 		custCode : loginInfo.custCode,
 		custName : '',
 		custType : '',
@@ -18,25 +21,17 @@ const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
 		size : 10,													// 최대 조회건수
 		page : 0													// 페이지 위치
 	})
-	const [otherCustList, setOtherCustList] = useState([])			// 타계열사 업체 리스트
+	const [otherCustList, setOtherCustList] = useState<MapType>([])			// 타계열사 업체 리스트
 	const [itemPop, setItemPop] = useState(false);					// 품목 팝업
-
-	const onChangeSrcData = (e) => {
-		const { name, value } = e.target;
-		setSrcData({
-			...srcData,
-			[name]: value
-		})
-	}
-
+	
 	// 타계열사 업체 리스트 조회
-	const onSearch = useCallback(async() => {
+	const onSearch = async() => {
 		const response = await axios.post('/api/v1/cust/otherCustList', srcData)
 		setOtherCustList(response.data.data); 
-	})
+	}
 	
 	// 업체유형 팝업 callback
-	const itemSelectCallback = (data) => {
+	const itemSelectCallback = (data:MapType) => {
 		setSrcData({
 			...srcData,
 			custType : data.itemCode,
@@ -49,7 +44,7 @@ const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
 	}, [srcData.size, srcData.page])
 
   return (
-	<Modal className={`modalStyle ${itemPop ? 'modal-cover' : ''}`} id="otherCustPop" show={setOtherCustModal} onHide={() => setOtherCustModal(false)} dialogClassName="modal-xl">
+	<Modal className={`modalStyle ${itemPop ? 'modal-cover' : ''}`} id="otherCustPop" show={otherCustModal} onHide={() => setOtherCustModal(false)} dialogClassName="modal-xl">
 		<Modal.Body>
 			<button className="ModalClose" data-dismiss="modal" title="닫기" onClick={() => setOtherCustModal(false)}><i className="fa-solid fa-xmark"></i></button>
 			<h2 className="modalTitle">타계열사 업체조회</h2>
@@ -64,13 +59,13 @@ const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
 					<div className="sbTit mr30">업체유형</div>
 					<div className="width150px">
 						<input type="text" className="inputStyle readonly" name='custTypeNm' value={srcData.custTypeNm} readOnly />
-					</div>
 					<input type="hidden"  name='custType' value={srcData.custType} />
+					</div>
 					<button className="btnStyle btnSecondary ml10" title="조회" onClick={()=>setItemPop(true)}>조회</button>
 					<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : `${!CommonUtils.isEmpty(srcData.custType) ? "inline-flex" : "none"}`}} onClick={() => {setSrcData({...srcData, custType : '', custTypeNm : ''})}}>삭제</button>
 					<div className="sbTit mr30 ml50">업체명</div>
 					<div className="width150px">
-						<input type="text" className="inputStyle" name="custName" value={srcData.custName} onChange={onChangeSrcData} onKeyDown={(e) => { if(e.key === 'Enter') onSearch()}} />
+						<SrcInput name="custName" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 30 } />
 					</div>
 					<button className="btnStyle btnSearch" onClick={onSearch}>검색</button>
 				</div>
@@ -90,7 +85,7 @@ const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
 					</tr>
 				</thead>
 				<tbody>
-					{ otherCustList.content?.map(otherCust => (
+					{ otherCustList.content?.map((otherCust:MapType) => (
 						<tr key={otherCust.custCode}>
 							<td>{otherCust.custName}</td>
 							<td className="text-left" dangerouslySetInnerHTML={{__html : otherCust.custType1}}></td>
@@ -107,7 +102,7 @@ const OtherCustListPop = ({setOtherCustModal, setSelCustCode}) => {
 			{/* pagination */}
 			<div className="row mt30">
 				<div className="col-xs-12">
-					<Pagination onChangeSrcData={onChangeSrcData} list={otherCustList} />
+					<Pagination srcData={srcData} setSrcData={setSrcData} list={otherCustList} />
 				</div>
 			</div>
 			{/* //pagination */}
