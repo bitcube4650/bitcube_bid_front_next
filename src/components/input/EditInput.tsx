@@ -1,6 +1,20 @@
 import React from 'react';
 import { EditInputProps } from 'components/types'
 
+/**
+ * @param props 
+    editData: MapType;
+    setEditData: Dispatch<SetStateAction<MapType>>;
+    type?: string;
+    className?: string;
+    defaultValue?: string;
+    placeholder?: string;
+    name?: string;
+    maxLength?: number;
+    readOnly?: boolean;
+    disabled?: boolean;
+ * @returns 
+ */
 const EditInput = (props: EditInputProps) => {
     const onFormEventSrcData = (e: React.FormEvent<HTMLInputElement>) => {
         props.setEditData({
@@ -10,10 +24,11 @@ const EditInput = (props: EditInputProps) => {
     }
 
     return (
-        <input type="text" className="inputStyle" placeholder=""
-        defaultValue={ props.defaultValue }
-        name={ props.name } maxLength={ props.maxLength }
-        onKeyUp={ onFormEventSrcData }
+        <input type={ props.type?props.type:"text" } className={ "inputStyle " + (props.className?props.className:"") }
+            defaultValue={ props.defaultValue } placeholder={ props.placeholder }
+            name={ props.name } maxLength={ props.maxLength }
+            readOnly={ props.readOnly } disabled={ props.disabled }
+            onKeyUp={ onFormEventSrcData }
         />
     )
 }

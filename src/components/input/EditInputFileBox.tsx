@@ -1,6 +1,15 @@
 import React from 'react';
 import { EditInputFileProps } from 'components/types'
 
+/**
+ * @param props 
+    setUploadFile: Dispatch<SetStateAction<File | undefined | null>>;
+    editData: MapType;
+    setEditData: Dispatch<SetStateAction<MapType>>;
+    fileName?:string;
+    name:string;
+ * @returns 
+ */
 const EditInputFileBox = (props: EditInputFileProps) => {
     const onFormEventSrcData = (e: React.ChangeEvent<HTMLInputElement>) => {
         if(e.target.files && e.target.files.length > 0) {

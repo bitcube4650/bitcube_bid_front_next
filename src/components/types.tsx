@@ -8,8 +8,14 @@ export interface SrcInputProps {
     onSearch: Function;
     srcData: MapType;
     setSrcData: Dispatch<SetStateAction<MapType>>;
+    type?: string;
+    className?: string;
+    defaultValue?: string;
+    placeholder?: string;
     name?: string;
     maxLength?: number;
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
 export interface SrcCheckProps {
@@ -40,12 +46,16 @@ export interface SrcSelectBoxProps {
 }
 
 export interface EditInputProps {
-    defaultValue: any;
     editData: MapType;
     setEditData: Dispatch<SetStateAction<MapType>>;
-    name: string;
-    maxLength?: number;
+    type?: string;
+    className?: string;
+    defaultValue?: string;
     placeholder?: string;
+    name?: string;
+    maxLength?: number;
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
 export interface EditInputRadioProps {
@@ -55,8 +65,10 @@ export interface EditInputRadioProps {
     name: string;
     value: string;
     label: string;
+    className?: string;
     checked?: boolean;
     disabled?: boolean;
+    readOnly?: boolean;
 }
 
 export interface EditInputFileProps {
