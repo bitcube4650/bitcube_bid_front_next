@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
-import GroupUserDetailPop from './GroupUserDatail_old'
+import GroupUserDetailPop from './GroupUserDatail'
 import GroupUserPasswordComfirm from '../../../components/modal/UserPasswordComfirm'
 import Swal from 'sweetalert2'; // 공통 팝업창
 import { MapType } from '../../../../src/components/types'
@@ -88,9 +88,6 @@ const GroupUser = () => {
                     <li>정보관리</li>
                     <li>사용자관리</li>
                 </ul>
-                <div>
-                    <a onClick={ onGroupUserPop } className="btnStyle btnPrimary" title="사용자등록">사용자등록</a>
-                </div>
             </div>
             <div className="contents">
                 <div className="searchBox">
@@ -119,7 +116,7 @@ const GroupUser = () => {
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
                     <div className="width100">
-                        전체 : <span className="textMainColor"><strong>{ GroupUserList.totalElements ? GroupUserList.totalElements.toLocaleString() : 0 }</strong></span>건
+                        전체 : <span className="textMainColor"><strong>{ GroupUserList?.totalElements ? GroupUserList.totalElements.toLocaleString() : 0 }</strong></span>건
                         <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                     </div>
                     <div>

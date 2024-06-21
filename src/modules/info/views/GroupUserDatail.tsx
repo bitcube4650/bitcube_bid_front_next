@@ -101,11 +101,11 @@ const GroupUserDetailPop : React.FC<GroupUserDetailPopProps> = ({srcUserId, Crea
                 if(srcUserDatailResponse.data.data.userAuth === '4'){
                     const userInterrelated = srcUserDatailResponse.data.data.userInterrelated;
                     // checked 상태 설정
-                    // const checkedList = userInterrelated
-                    //     .filter(item => InterrelatedCustCodeList.some(codeItem => codeItem.interrelatedCustCode === item.interrelatedCustCode))
-                    //     .map(item => item.interrelatedCustCode);
+                    const checkedList = userInterrelated
+                        .filter((item : {interrelatedCustCode:string}) => InterrelatedCustCodeList.some(codeItem => codeItem.interrelatedCustCode === item.interrelatedCustCode as string))
+                        .map((item : {interrelatedCustCode:string}) => item.interrelatedCustCode);
     
-                    // setInterrelatedCustCodeCheckedList(checkedList);
+                    setInterrelatedCustCodeCheckedList(checkedList);
                 }
             } catch (error) {
                 console.log(error);
@@ -189,12 +189,6 @@ const GroupUserDetailPop : React.FC<GroupUserDetailPopProps> = ({srcUserId, Crea
             }
         }
     }
-
-    // 비밀번호 변경 팝업
-    function fnShowChgPwdPop(){
-
-    }
-
     // 저장/수정
     async function onSaveGroupUser(){
         if( onValidate() === false ){

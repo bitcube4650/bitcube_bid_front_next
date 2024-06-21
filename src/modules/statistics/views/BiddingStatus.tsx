@@ -8,16 +8,21 @@ import { ko } from "date-fns/locale";
 import Ft from '../../bid/api/filters';
 import BiddingStatusListJs from '../components/BiddingStatusList'
 import Swal from 'sweetalert2'; // 공통 팝업창
+import { MapType } from '../../../../src/components/types'
+import SrcSelectBox from '../../../../src/components/input/SrcSelectBox'
+import SrcDatePicker from '../../../../src/components/input/SrcDatePicker'
 import InterrelatedCustCodeSelect from '../../../modules/info/components/InterrelatedCustCodeSelect'
 
+
 const BiddingStatus = () => {
-  const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState({})
+  const [InterrelatedCustCodeList, setInterrelatedCustCodeList] = useState([{} as MapType])
   const [BiddingStatusList, setBiddingStatusList] = useState([])
   //조회조건
-  const [srcData, setSrcData] = useState({
+  const [srcData, setSrcData] = useState<MapType>({
     startDay    : Ft.strDateAddDay(Ft.getCurretDate(), -30),
     endDay      : Ft.getCurretDate(),
-    coInters    : [],
+    interrelatedCustCode : "",
+    coInters    : ([{}] || ""),
   });
 
   useEffect(() => {
@@ -34,11 +39,12 @@ const BiddingStatus = () => {
     onSearch();
   }, []);
 
-  const onChangeSrcData = (e) => {
-    let coInters = []
+  const onChangeSrcData = (e : React.ChangeEvent<HTMLInputElement>) => {
+    let coInters = ["" as String]
     if( e.target.name === 'interrelatedCustCode' && e.target.value === '' ){
-      coInters = InterrelatedCustCodeList.map(item => item.interrelatedCustCode);
+      coInters = InterrelatedCustCodeList.map(item => item.interrelatedCustCode as string);
     } else {
+      console.log(e.target.value)
       coInters.push(e.target.value)
     }
     setSrcData({
@@ -51,35 +57,15 @@ const BiddingStatus = () => {
     try {
         const response = await axios.post("/api/v1/statistics/bidPresentList", srcData);
         setBiddingStatusList(response.data.data);
-        console.log(response.data.data)
     } catch (error) {
         Swal.fire('', '조회에 실패하였습니다.', 'error');
         console.log(error);
     }
   }, [srcData]);
 
-  //날짜 이벤트
-  const onChgStartDate = (day) => {
-    const selectedDate = new Date(day)
-    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-    setSrcData({
-        ...srcData,
-        startDay: formattedDate
-    });
-  }
-
-  const onChgEndDate = (day) => {
-    const selectedDate = new Date(day)
-    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-    setSrcData({
-        ...srcData,
-        endDay: formattedDate
-    });
-  }
-
   // 엑셀다운
   function onExcelDown(){
-    let params = Object.assign({}, srcData);
+    let params = Object.assign({} as MapType, srcData);
     params.fileName = "입찰현황_" + Ft.formatDate(new Date(), "yyyy_mm_dd");
     params.mergeColumns = ['회사명', ['입찰계획',['건수','예산금액']],['입찰진행',['건수','예산금액']],['입찰완료(유찰제외)',['건수','낙찰금액','업체수/건수']],'등록 업체수','기타']
     params.mappingColumnNames = ['interrelatedNm','planCnt','planAmt','ingCnt','ingAmt','succCnt','succAmt','custCnt','custCnt','regCustCnt','temp']
@@ -132,16 +118,18 @@ const BiddingStatus = () => {
           <div className="flex align-items-center">
             <div className="sbTit width100px">조회기간</div>
             <div className="flex align-items-center width280px">
-							<DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={srcData.startDay} onChange={(date) => onChgStartDate(date)} dateFormat="yyyy-MM-dd"/>
+              <SrcDatePicker name={"startDay"} selected={srcData.startDay} srcData={srcData} setSrcData={setSrcData} />
               <span style={{margin:"0 10px"}}>~</span>
-              <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={srcData.endDay} onChange={(date) => onChgEndDate(date)} dateFormat="yyyy-MM-dd"/>
+              <SrcDatePicker name={"endDay"} selected={srcData.endDay} srcData={srcData} setSrcData={setSrcData} />
             </div>
             <div className="sbTit width80px ml50">계열사</div>
             <div className="flex align-items-center width280px">
-              <InterrelatedCustCodeSelect 
-                  InterrelatedCustCodeList={InterrelatedCustCodeList} 
-                  onChangeSrcData={onChangeSrcData}
-              />
+                {/* <SrcSelectBox   name={"interrelatedCustCode"} optionList={InterrelatedCustCodeList} valueKey="interrelatedCustCode" nameKey="interrelatedNm"
+                                onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } /> */}
+                <InterrelatedCustCodeSelect 
+                InterrelatedCustCodeList={InterrelatedCustCodeList} 
+                onChangeSrcData={onChangeSrcData}
+                />
             </div>
             <Button onClick={onSearch} className="btnStyle btnSearch">검색</Button>
           </div>
@@ -168,12 +156,12 @@ const BiddingStatus = () => {
           </colgroup>
           <thead>
             <tr>
-              <th rowSpan="2">회사명</th>
-              <th colSpan="2">입찰계획</th>
-              <th colSpan="2">입찰진행</th>
-              <th colSpan="3">입찰완료(유찰제외)</th>
-              <th rowSpan="2">등록 업체수</th>
-              <th rowSpan="2" className="end">기타</th>
+              <th rowSpan={2}>회사명</th>
+              <th colSpan={2}>입찰계획</th>
+              <th colSpan={2}>입찰진행</th>
+              <th colSpan={3}>입찰완료(유찰제외)</th>
+              <th rowSpan={2}>등록 업체수</th>
+              <th rowSpan={2} className="end">기타</th>
             </tr>
             <tr>
               <th>건수</th>
@@ -189,7 +177,7 @@ const BiddingStatus = () => {
             { BiddingStatusList?.map((biddingStatus, index) => <BiddingStatusListJs key={index} biddingStatus={biddingStatus} /> ) }
             { (BiddingStatusList == null || BiddingStatusList.length === 0) &&
                 <tr>
-                    <td className="end" colSpan="10">조회된 데이터가 없습니다.</td>
+                    <td className="end" colSpan={10}>조회된 데이터가 없습니다.</td>
                 </tr> }
           </tbody>
         </table>

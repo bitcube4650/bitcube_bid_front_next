@@ -1,6 +1,8 @@
-import {React} from 'react';
+import React from 'react';
+import { MapType } from '../../../../src/components/types'
 
-function BiddingStatusListJs(props) {
+
+function BiddingStatusListJs(props : MapType) {
     return (
         <tr>
             <td className="text-left" >{props.biddingStatus.interrelatedNm }</td>
