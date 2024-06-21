@@ -5,7 +5,7 @@ export interface MapType {
 }
 
 export interface SrcInputProps {
-    onSearch: Function;
+    onSearch?: Function;
     srcData: MapType;
     setSrcData: Dispatch<SetStateAction<MapType>>;
     type?: string;
@@ -16,6 +16,7 @@ export interface SrcInputProps {
     maxLength?: number;
     readOnly?: boolean;
     disabled?: boolean;
+    style? : React.CSSProperties;
 }
 
 export interface SrcCheckProps {

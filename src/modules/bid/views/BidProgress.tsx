@@ -5,16 +5,20 @@ import Pagination from '../../../components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import BidProgressList from '../components/BidProgressList';
 import { BidContext } from '../context/BidContext';
+import { MapType } from '../../../components/types';
+import SelectListSize from '../../../components/SelectListSize';
+import SrcInput from '../../../components/input/SrcInput';
 
 const BidProgress = () => {
 
   //세션 로그인 정보
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+  const loginInfoString = localStorage.getItem("loginInfo");
+  const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
 
   const navigate = useNavigate();
   const {setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
 
-  const onMoveSave = (type)=>{
+  const onMoveSave = (type : string)=>{
     setViewType(type)
     localStorage.setItem("viewType", type);
 
@@ -87,22 +91,15 @@ const BidProgress = () => {
 
 
      //조회 결과
-     const [progressList, setProgressList] = useState({});
+     const [progressList, setProgressList] = useState<MapType>({});
      //조회조건
-     const [srcData, setSrcData] = useState({
+     const [srcData, setSrcData] = useState<MapType>({
          biNo   : "",
          biName : "",
          size    : 10,
          page    : 0
      });
- 
-     const onChangeSrcData = (e) => {
-         setSrcData({
-             ...srcData,
-             [e.target.name]: e.target.value
-         });
-     }
- 
+  
      const onSearch = useCallback(async() => {
          try {
              const response = await axios.post("/api/v1/bid/progressList", srcData);
@@ -111,7 +108,7 @@ const BidProgress = () => {
              Swal.fire('조회에 실패하였습니다.', '', 'error');
              console.log(error);
          }
-     });
+     },[srcData]);
  
      useEffect(() => {
          onSearch();
@@ -151,32 +148,22 @@ const BidProgress = () => {
           <div className="flex align-items-center">
             <div className="sbTit mr30">입찰번호</div>
             <div className="width250px">
-              <input
-                type="text"
-                name="biNo"
-                onChange={onChangeSrcData}
-                onKeyDown={ (e) => { 
-                    if(e.key === 'Enter') onSearch()
-                  }
-                }
-                className="inputStyle"
-                maxLength="10"
-                autoComplete="off"
+              <SrcInput
+              name="biNo"
+              onSearch={ onSearch }
+              srcData={ srcData } 
+              setSrcData={ setSrcData }
+              maxLength={10}
               />
             </div>
             <div className="sbTit mr30 ml50">입찰명</div>
             <div className="width250px">
-              <input
-                type="text"
+              <SrcInput
                 name="biName"
-                onChange={onChangeSrcData}
-                onKeyDown={ (e) => { 
-                  if(e.key === 'Enter') onSearch()
-                }
-              }
-                className="inputStyle"        
-                maxLength="50"
-                autoComplete="off"
+                onSearch={ onSearch }
+                srcData={ srcData } 
+                setSrcData={ setSrcData }
+                maxLength={50}
               />
             </div>
             <button 
@@ -195,12 +182,7 @@ const BidProgress = () => {
         <div className="width100">
           전체 : <span className="textMainColor"><strong>{progressList?.totalElements ? progressList.totalElements.toLocaleString() : 0 }</strong>
           </span>건
-          <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
-            <option value="10">10개씩 보기</option>
-            <option value="20">20개씩 보기</option>
-            <option value="30">30개씩 보기</option>
-            <option value="50">50개씩 보기</option>
-          </select>
+          <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
         </div>
         <div>
            <button
@@ -232,20 +214,21 @@ const BidProgress = () => {
             </tr>
         </thead>
         <tbody>
-          {progressList?.content?.length > 0 ? (
-            progressList.content.map((item) => (
+
+            {progressList?.content && progressList.content.length > 0 ? (
+            progressList.content.map((item :MapType) => (
               <BidProgressList key={item.biNo} progressList={item} />
             ))
           ) : (
             <tr>
-              <td className="end" colSpan="8">조회된 데이터가 없습니다.</td>
+              <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
             </tr>
           )}
         </tbody>
     </table>
     <div className="row mt40">
           <div className="col-xs-12">
-              <Pagination onChangeSrcData={onChangeSrcData} list={progressList} />
+              <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ progressList } />
           </div>
     </div>        
       </div>

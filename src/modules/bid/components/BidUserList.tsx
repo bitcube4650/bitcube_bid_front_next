@@ -4,18 +4,26 @@ import Pagination from '../../../components/Pagination'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
+import SrcInput from 'components/input/SrcInput';
+import { MapType } from 'components/types';
 
-const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
+interface BidUserListPropsType{
+    isBidUserListModal : boolean;
+    setIsBidUserListModal : React.Dispatch<React.SetStateAction<boolean>>
+    type : string
+}
+
+const BidUserList : React.FC<BidUserListPropsType> = ({isBidUserListModal, setIsBidUserListModal, type}) => {
     
     const {bidContent,setBidContent} = useContext(BidContext);
 
-    const [bidUserList, setBidUserList] = useState({})
+    const [bidUserList, setBidUserList] = useState<any>({})
 
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+    const loginInfo: any = JSON.parse(localStorage.getItem("loginInfo") || '{}');
     
     const userCustCode = loginInfo.custCode
 
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         userName: '',
         deptName: '',
         size: 5,
@@ -28,12 +36,6 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
         setIsBidUserListModal(false)
     }
         
-    const onChangeSrcData = (e) => {
-        setSrcData({
-            ...srcData,
-            [e.target.name]: e.target.value
-        });
-        };
 
         const onSearch = useCallback(async () => {
         try {
@@ -70,7 +72,7 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
         }    
     }, [isBidUserListModal,srcData.size, srcData.page]);
 
-    const onUserSelect = (userData)=>{
+    const onUserSelect = (userData : any)=>{
         console.log(userData)
 
         //개찰자 선택시 낙찰자도 동일하게 세팅
@@ -162,22 +164,20 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
                     <div className="flex align-items-center">
                     <div className="sbTit mr30">사원명</div>
                     <div className="width150px">
-                        <input
-                        type="text"
-                        name="userName"
-                        className="inputStyle"
-                        onChange={onChangeSrcData}
-                        onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
+                        <SrcInput
+                            name="userName"
+                            srcData={ srcData } 
+                            setSrcData={ setSrcData }
+                            onSearch={ onSearch }
                         />
                     </div>
                     <div className="sbTit mr30 ml50">부서명</div>
                     <div className="width150px">
-                        <input
-                        type="text"
-                        name="deptName"
-                        className="inputStyle"
-                        onChange={onChangeSrcData}
-                        onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
+                        <SrcInput
+                            name="deptName"
+                            srcData={ srcData } 
+                            setSrcData={ setSrcData }
+                            onSearch={ onSearch }
                         />
                     </div>
                     <button className="btnStyle btnSearch" 
@@ -201,7 +201,7 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
 
                     {
                 bidUserList?.content?.length > 0 ? (
-                    bidUserList.content.map((item) => (
+                    bidUserList.content.map((item :any) => (
 
                     <tr key={item.userId}>
                         <td>{ item.deptName }</td>
@@ -219,7 +219,7 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
                 ) :
                 (
                 <tr>
-                    <td className="end" colSpan="8">조회된 데이터가 없습니다.</td>
+                    <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
                 </tr> 
                 )
                 }
@@ -227,7 +227,8 @@ const BidUserList = ({isBidUserListModal, setIsBidUserListModal, type}) => {
                 </table>
                 <div className="row mt30">
                     <div className="col-xs-12">
-                    <Pagination onChangeSrcData={onChangeSrcData} list={bidUserList} />
+                    <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ bidUserList } />
+
                     </div>
                 </div>
                 <div className="modalFooter">

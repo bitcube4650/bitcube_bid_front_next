@@ -4,21 +4,35 @@ import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import EditTextArea from '../../../components/input/EditTextArea';
+import { MapType } from 'components/types'
 
-const BidProgressDel = ({isBidProgressDelModal,setIsBidProgressDelModal,data,interNm}) => {
+interface BidProgressDelPropsType {
+    isBidProgressDelModal: boolean;
+    setIsBidProgressDelModal: React.Dispatch<React.SetStateAction<boolean>>;
+    data: {
+        biNo: string;
+        biName: string;
+        createUser: string;
+        gongoId: string;
+        biMode: string;
+        custList?: { custCode: string }[];
+    };
+    interNm: string;
+}
+
+const BidProgressDel: React.FC<BidProgressDelPropsType> = ({ isBidProgressDelModal, setIsBidProgressDelModal, data, interNm }) => {
     const navigate = useNavigate();
-    const [delReason, setDelReason] = useState('')
+    const [delReason, setDelReason] = useState<MapType>(
+      {delReasonContent : '' }
+    )
 
     const onBidProgressDelModalHide =()=>{
         setIsBidProgressDelModal(false)
     }
 
-    const onChangeDelReason= (e) => {
-        setDelReason(e.target.value)
-    };
-
     const onBidProgressDel = async () =>{
-        if(!delReason.trim()){
+        if(!delReason.delReasonContent.trim()){
             Swal.fire('', '삭제 사유를 입력해 주세요.', 'warning')
             return
         }
@@ -31,19 +45,23 @@ const BidProgressDel = ({isBidProgressDelModal,setIsBidProgressDelModal,data,int
             cuserCode : data.createUser,
             gongoIdCode : data.gongoId,
             biModeCode : data.biMode,
-            reason : delReason
+            reason : delReason.delReasonContent
         }
 
+        /*
         if(data.biMode === 'A'){
-          params.custCode = data.custList.map(item => item.custCode).join(',')
+          params.custCode :string = data.custList.map((item :{custCode : string}) => item.custCode).join(',')
         }
+        */
 
         try {
             await axios.post(`/api/v1/bid/delete`, params)
             Swal.fire('입찰계획이 삭제되었습니다.', '', 'success');
             navigate('/bid/progress');
             onBidProgressDelModalHide()
-            setDelReason('')
+            setDelReason({
+              delReasonContent : ''
+            })
         } catch (error) {
             Swal.fire('입찰계획 삭제를 실패하였습니다.', '', 'error');
             console.log(error);
@@ -70,22 +88,17 @@ const BidProgressDel = ({isBidProgressDelModal,setIsBidProgressDelModal,data,int
                 </li>
               </ul>
             </div>
-            <textarea
-              className="textareaStyle height150px mt20"
-              placeholder="삭제 사유 필수 입력"
-              name='delReason'
-              onChange={onChangeDelReason}
-            ></textarea>
+             <EditTextArea editData={ delReason } setEditData={ setDelReason } name="delReasonContent"/>
             <div className="modalFooter">
               <button className="modalBtnClose"title="취소" onClick={()=>{onBidProgressDelModalHide()}}
-                >취소</button
-              >
+                >취소
+              </button>
               <button
                 className="modalBtnCheck"
                 title="삭제"
                 onClick={()=>{onBidProgressDel()}}
-                >삭제</button
-              >
+                >삭제
+              </button>
             </div>
             </Modal.Body>
         </Modal>

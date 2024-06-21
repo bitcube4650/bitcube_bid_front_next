@@ -1,16 +1,38 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import Pagination from '../../../components/Pagination'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
 import { onAddDashTel } from 'components/CommonUtils';
+import { MapType } from 'components/types';
+import SrcInput from 'components/input/SrcInput';
 
-const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcCustCode, srcCustName, type}) => {
+interface BidCustUserListPropsType {
+  isBidCustUserListModal: boolean;
+  setIsBidCustUserListModal: React.Dispatch<React.SetStateAction<boolean>>;
+  srcCustCode : string;
+  srcCustName? : string,
+  type : string;
+}
+
+interface CustUserListType {
+  userId: string;
+  userName: string;
+  userBuseo: string;
+  userPosition: string;
+  userEmail: string;
+  userTel: string;
+  userHp: string;
+  userType: string;
+  useYn: string;
+}
+
+const BidCustUserList : React.FC<BidCustUserListPropsType> = ({isBidCustUserListModal, setIsBidCustUserListModal,srcCustCode, srcCustName, type}) => {
     
   const {custContent, setCustContent,custUserName,setCustUserName, custUserInfo, setCustUserInfo} = useContext(BidContext);
 
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
       userName: '',
       userId: '',
       size: 20,
@@ -19,20 +41,12 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
       useYn : 'Y'
     });
 
-    const [bidCustUserList, setBidCustUserList] = useState({});
-    const [selectedUserIds, setSelectedUserIds] = useState([]);
+    const [bidCustUserList, setBidCustUserList] = useState<any>({});
+    const [selectedUserIds, setSelectedUserIds] = useState<any>([]);
     const [allChecked, setAllChecked] = useState(false);
 
-    
     const onBidCustUserListModalHide = () => {
         setIsBidCustUserListModal(false);
-      };
-    
-      const onChangeSrcData = (e) => {
-        setSrcData({
-          ...srcData,
-          [e.target.name]: e.target.value
-        });
       };
 
       const onSearch = useCallback(async () => {
@@ -89,23 +103,23 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
       }, [isBidCustUserListModal]);
 
 
-      const onAllCheck = (event) => {
+      const onAllCheck = (event: ChangeEvent<HTMLInputElement>) => {
         const isChecked = event.target.checked;
         setAllChecked(isChecked);
         if (isChecked) {
-            const allUserIds = bidCustUserList.content.map((item) => item);
+            const allUserIds = bidCustUserList.content.map((item : CustUserListType) => item);
             setSelectedUserIds(allUserIds);
         } else {
             setSelectedUserIds([]);
         }
     };
 
-    const onCheck = (event, item) => {
+    const onCheck = (event: ChangeEvent<HTMLInputElement>, item:CustUserListType) => {
       const isChecked = event.target.checked;
       if (isChecked) {
           setSelectedUserIds([...selectedUserIds, item]);
       } else {
-        setSelectedUserIds(selectedUserIds.filter((selectedItem) => selectedItem.userId !== item.userId));
+        setSelectedUserIds(selectedUserIds.filter((selectedItem : {userId:string}) => selectedItem.userId !== item.userId));
       }
     };
 
@@ -114,13 +128,13 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
       
       if(selectedUserIds.length > 0){
         console.log(selectedUserIds)
-        const custUserInfoData = selectedUserIds.map(item => ({ 
+        const custUserInfoData = selectedUserIds.map((item:{userId : string,userName:string,custCode:string}) => ({ 
           userId: item.userId,
           userName: item.userName,
           custCode: srcCustCode
         }));
         
-        const custCodeUserName = custUserInfoData.map(item => item.userName).join(', ')
+        const custCodeUserName = custUserInfoData.map((item:{userName : string}) => item.userName).join(', ')
 
         if(type === 'save'){
 
@@ -145,8 +159,8 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
           )
 
         }else if(type === 'edit'){
-          const resetCustUserInfo = custUserInfo.filter(item => item.custCode !== srcCustCode)
-          const resetCustUserName = custUserName.filter(item => item.custCode !== srcCustCode)
+          const resetCustUserInfo = custUserInfo.filter((item:{custCode:string}) => item.custCode !== srcCustCode)
+          const resetCustUserName = custUserName.filter((item:{custCode:string}) => item.custCode !== srcCustCode)
           
           setCustUserInfo([...resetCustUserInfo, ...custUserInfoData]);
 
@@ -179,25 +193,21 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">사용자명</div>
                         <div className="width150px">
-                            <input type="text" 
+                          <SrcInput
                             name="userName"
-                            value={srcData.userName} 
-                            onChange={onChangeSrcData}
-                            className="inputStyle"
-                            onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
-                            autoComplete='off'
-                            />
+                            srcData={ srcData } 
+                            setSrcData={ setSrcData }
+                            onSearch={ onSearch }
+                          />
                         </div>
                         <div className="sbTit mr30 ml50">로그인 ID</div>
                         <div className="width150px">
-                            <input type="text" 
+                            <SrcInput
                             name="userId"
-                            value={srcData.userId} 
-                            onChange={onChangeSrcData}
-                            className="inputStyle"
-                            onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
-                            autoComplete='off'
-                            />
+                            srcData={ srcData } 
+                            setSrcData={ setSrcData }
+                            onSearch={ onSearch }
+                          />
                         </div>
                         <button className="btnStyle btnSearch"
                          onClick={()=>{onSearch()}}
@@ -225,11 +235,10 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
 
                     {
                 bidCustUserList?.content?.length > 0 ? (
-                    bidCustUserList.content.map((item) => (
-
+                    bidCustUserList.content.map((item : CustUserListType) => (
                     <tr key={item.userId}>
                        {type && 
-                       <td><input type="checkbox" checked={selectedUserIds.some((selectedItem) => selectedItem.userId === item.userId)} onChange={(e) => onCheck(e, item)} />
+                       <td><input type="checkbox" checked={selectedUserIds.some((selectedItem:{userId : string}) => selectedItem.userId === item.userId)} onChange={(e) => onCheck(e, item)} />
                         </td>}
                         <td>{ item.userName }</td>
                         <td>{ item.userId }</td>
@@ -244,7 +253,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
                 ) :
                 (
                 <tr>
-                    <td className="end" colSpan="8">조회된 데이터가 없습니다.</td>
+                    <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
                 </tr> 
                 )
                 }
@@ -253,7 +262,7 @@ const BidCustUserList = ({isBidCustUserListModal, setIsBidCustUserListModal,srcC
 
                 <div className="row mt30">
                     <div className="col-xs-12">
-                    <Pagination onChangeSrcData={onChangeSrcData} list={bidCustUserList} />
+                    <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ bidCustUserList } />
                     </div>
                 </div>
                 <div className="modalFooter">

@@ -1,7 +1,8 @@
+import { MapType } from 'components/types';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function BidProgressList(props) {
+const BidProgressList = (props : MapType) => {
     const navigate = useNavigate();
     const data = props.progressList
     const onBidProgressDetail = () =>{
@@ -11,10 +12,10 @@ function BidProgressList(props) {
 
     return (
         <tr>
-            <td onClick={onBidProgressDetail}>
+            <td onClick={()=>{onBidProgressDetail()}}>
                 <button className="textUnderline">{data.biNo}</button>
             </td>
-            <td className="text-left" onClick={onBidProgressDetail}>
+            <td className="text-left" onClick={()=>{onBidProgressDetail()}}>
                 <button className='textUnderline'>{data.biName}</button>
             </td >
             <td >

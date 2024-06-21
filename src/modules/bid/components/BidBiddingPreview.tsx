@@ -1,34 +1,46 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 import Api from '../api/api'
+import { MapType } from 'components/types';
 
-const BidBiddingPreview = ({isBidBiddingPreviewModal,setIsBidBiddingPreviewModal, data}) => {
+interface BidBiddingPreviewPropsType {
+    isBidBiddingPreviewModal : boolean;
+    setIsBidBiddingPreviewModal : React.Dispatch<React.SetStateAction<boolean>>;
+    data : MapType
+}
+
+const BidBiddingPreview : React.FC<BidBiddingPreviewPropsType> = ({isBidBiddingPreviewModal,setIsBidBiddingPreviewModal, data}) => {
 
     const onIsBiddingPreviewHide = () =>{
         setIsBidBiddingPreviewModal(false)
     }
     const onPrint = ()=>{
-    const printContents = document.querySelector(".printDiv").innerHTML;
+    const printContents = document.querySelector(".printDiv")?.innerHTML || "";
     const html = document.querySelector("html");
     const printDiv = document.createElement("div");
     printDiv.className = "print-div modalStyle";
-    html.appendChild(printDiv);
+    html?.appendChild(printDiv);
     printDiv.innerHTML = printContents;
-    const modalFooter = printDiv.querySelector(".modalFooter");
+
+    const modalFooter = printDiv.querySelector(".modalFooter") as HTMLElement;
     if (modalFooter) {
         modalFooter.style.display = "none";
     }
-    const modalClose = printDiv.querySelector(".ModalClose");
+
+    const modalClose = printDiv.querySelector(".ModalClose") as HTMLElement;
     if (modalClose) {
         modalClose.style.display = "none";
     }
-    const modalDialog = printDiv.querySelector(".modal-dialog");
+
+    const modalDialog = printDiv.querySelector(".modal-dialog") as HTMLElement;
     if (modalDialog) {
         modalDialog.style.cssText = "width:100%; max-width:700px";
     }
+
     document.body.style.display = "none";
     window.print();
     document.body.style.display = "block";
+
     const printDivs = document.querySelectorAll('.print-div');
     printDivs.forEach(element => element.remove());
     }
@@ -49,7 +61,7 @@ const BidBiddingPreview = ({isBidBiddingPreviewModal,setIsBidBiddingPreviewModal
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width170px">입찰명</div>
-                        <div style={{width:'550px',wordWrap: 'break-word;'}}>{ data.biName }</div>
+                        <div style={{width:'550px',wordWrap: 'break-word'}}>{ data.biName }</div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width170px">품명</div>
@@ -142,7 +154,7 @@ const BidBiddingPreview = ({isBidBiddingPreviewModal,setIsBidBiddingPreviewModal
                                     {
                                     data.specInput &&
                                     (
-                                        data.specInput.map((val, idx) => (
+                                        data.specInput.map((val : any, idx: number) => (
                                             <tr key={idx}>
                                                 <td className="text-left">{val.name}</td>
                                                 <td className="text-left">{val.ssize}</td>
@@ -163,7 +175,7 @@ const BidBiddingPreview = ({isBidBiddingPreviewModal,setIsBidBiddingPreviewModal
                         <div className="width100">
                             { data.specFile && 
                                 (
-                                    data.specFile.map((val, idx) => (
+                                    data.specFile.map((val : any, idx : number) => (
                                         <div key={idx} onClick={ () => Api.downloadFile(val)} >
                                             {val.fileFlag === 'K' && <button className="textUnderline">{val.fileNm}</button>}
                                         </div>
@@ -178,7 +190,7 @@ const BidBiddingPreview = ({isBidBiddingPreviewModal,setIsBidBiddingPreviewModal
                     <div className="width100">
                         { data.fileList &&
                             (
-                                data.fileList.map((val, idx) => (
+                                data.fileList.map((val : any, idx: number) => (
                                     <div key={`outer${idx}`} onClick={ () => Api.downloadFile(val)} >
                                         {val.fileFlag === '1' && 
                                             <>

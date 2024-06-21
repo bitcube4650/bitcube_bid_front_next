@@ -4,26 +4,26 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import BidPastList from './BidPastList';
 import Pagination from '../../../components/Pagination';
+import SrcInput from '../../../components/input/SrcInput';
+import { MapType } from '../../../components/types';
 
-const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
-  const [srcData, setSrcData] = useState({
+interface BidPastPropsType {
+  isBidPastModal : boolean;
+  setIsBidPastModal : React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const BidPast : React.FC<BidPastPropsType> = ({ isBidPastModal, setIsBidPastModal }) => {
+  const [srcData, setSrcData] = useState<MapType>({
     biNo: '',
     biName: '',
     size: 5,
     page: 0
   });
 
-  const [bidPastList, setBidPastList] = useState({});
+  const [bidPastList, setBidPastList] = useState<MapType>({});
 
   const onBidPastModalHide = () => {
     setIsBidPastModal(false);
-  };
-
-  const onChangeSrcData = (e) => {
-    setSrcData({
-      ...srcData,
-      [e.target.name]: e.target.value
-    });
   };
 
   const onSearch = useCallback(async () => {
@@ -34,7 +34,7 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
       Swal.fire('조회에 실패하였습니다.', '', 'error');
       console.log(error);
     }
-  });
+  },[srcData]);
 
   useEffect(() => {
     if (isBidPastModal) {
@@ -69,30 +69,22 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
           <div className="flex align-items-center">
             <div className="sbTit mr30">입찰번호</div>
             <div className="width150px">
-              <input
-                type="text"
-                name="biNo"
-                className="inputStyle"
-                placeholder=""
-                onChange={onChangeSrcData}
-                value={srcData.biNo}
-                maxLength="10"
-                autoComplete="off"
-                onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
+              <SrcInput
+              name="biNo"
+              onSearch={ onSearch }
+              srcData={ srcData } 
+              setSrcData={ setSrcData }
+              maxLength={10}
               />
             </div>
             <div className="sbTit mr30 ml50">입찰명</div>
             <div className="width150px">
-              <input
-                type="text"
-                name="biName"
-                className="inputStyle"
-                placeholder=""
-                onChange={onChangeSrcData}
-                value={srcData.biName}
-                maxLength="50"
-                autoComplete="off"
-                onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
+            <SrcInput
+              name="biName"
+              onSearch={ onSearch }
+              srcData={ srcData } 
+              setSrcData={ setSrcData }
+              maxLength={50}
               />
             </div>
             <button className="btnStyle btnSearch" onClick={()=>{onSearch()}}>검색</button>
@@ -121,19 +113,19 @@ const BidPast = ({ isBidPastModal, setIsBidPastModal }) => {
           </thead>
           <tbody>
             {bidPastList?.content?.length > 0 ? (
-              bidPastList.content.map((item) => (
+              bidPastList.content.map((item : any) => (
                 <BidPastList key={item.biNo} bidPastList={item} onBidPastModalHide={onBidPastModalHide} />
               ))
             ) : (
               <tr>
-                <td className="end" colSpan="7">조회된 데이터가 없습니다.</td>
+                <td className="end" colSpan={7}>조회된 데이터가 없습니다.</td>
               </tr>
             )}
           </tbody>
         </table>
         <div className="row mt30">
           <div className="col-xs-12">
-            <Pagination onChangeSrcData={onChangeSrcData} list={bidPastList} />
+          <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ bidPastList } />
           </div>
         </div>
         <div className="modalFooter">

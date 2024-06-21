@@ -1,14 +1,76 @@
 import React, { createContext, useState } from 'react';
+import { MapType } from '../../../components/types';
 
-export const BidContext = createContext();
+export interface TableContentType {
+  biNo: string;
+  seq : number;
+  name: string;
+  ssize: string;
+  unitcode: string;
+  orderQty: string;
+  orderUc: string;
+}
 
-export const BidProvider = ({ children }) => {
+export interface CustUserNameType {
+  custCode : string;
+  userName : string
+}
+
+export interface CustUserInfoType {
+  custCode : string,
+  userId : string,
+  userName : string
+}
+
+interface BidContextType {
+  viewType: string;
+  setViewType: React.Dispatch<React.SetStateAction<string>>;
+  bidContent: MapType;
+  setBidContent: React.Dispatch<React.SetStateAction<MapType>>;
+  custContent: any[];
+  setCustContent: React.Dispatch<React.SetStateAction<any[]>>;
+  custUserName: CustUserNameType[];
+  setCustUserName: React.Dispatch<React.SetStateAction<CustUserNameType[]>>;
+  custUserInfo: CustUserInfoType[];
+  setCustUserInfo: React.Dispatch<React.SetStateAction<CustUserInfoType[]>>;
+  tableContent: TableContentType[];
+  setTableContent: React.Dispatch<React.SetStateAction<TableContentType[]>>;
+  insFile: any
+  setInsFile: React.Dispatch<React.SetStateAction<any>>;
+  innerFiles: any[]; 
+  setInnerFiles: React.Dispatch<React.SetStateAction<any[]>>; 
+  outerFiles: any[]; 
+  setOuterFiles: React.Dispatch<React.SetStateAction<any[]>>; 
+}
+
+export const BidContext = createContext<BidContextType>({
+  viewType: '',
+  setViewType: () => {},
+  bidContent: {} as MapType,
+  setBidContent: () => {},
+  custContent: [],
+  setCustContent: () => {},
+  custUserName: [],
+  setCustUserName: () => {},
+  custUserInfo: [],
+  setCustUserInfo: () => {},
+  tableContent: [],
+  setTableContent: () => {},
+  insFile: null,
+  setInsFile: () => {},
+  innerFiles: [],
+  setInnerFiles: () => {},
+  outerFiles: [],
+  setOuterFiles: () => {},
+});
+
+export const BidProvider = ({ children }: { children: React.ReactNode }) => {
 
   //세션 로그인 정보
 
-  const [viewType, setViewType] = useState('');
+  const [viewType, setViewType] = useState<string>('');
 
-  const [bidContent, setBidContent] = useState(
+  const [bidContent, setBidContent] = useState<MapType>(
     {
       //BidBasicInfo.js에서 사용
 
@@ -66,19 +128,19 @@ export const BidProvider = ({ children }) => {
     }
   )
 
-  const [custContent, setCustContent] = useState([]) // 입찰참가업체
+  const [custContent, setCustContent] = useState<any[]>([]); // 입찰참가업체
 
-  const [custUserName,setCustUserName] = useState([]) // 입찰참가업체 뒤에 표시할 사용자 이름
+  const [custUserName,setCustUserName] = useState<CustUserNameType[]>([]) // 입찰참가업체 뒤에 표시할 사용자 이름
 
-  const [custUserInfo,setCustUserInfo] = useState([]) // 입찰참가업체 클릭 시 표시할 데이터 정보
+  const [custUserInfo,setCustUserInfo] = useState<CustUserInfoType[]>([]) // 입찰참가업체 클릭 시 표시할 데이터 정보
 
-  const [tableContent, setTableContent] = useState([]) // 세부내역 직접입력
+  const [tableContent, setTableContent] = useState<TableContentType[]>([]) // 세부내역 직접입력
 
-  const [insFile, setInsFile] = useState(null) // 세부내역 파일등록
+  const [insFile, setInsFile] = useState<File | null>(null) // 세부내역 파일등록
 
-  const [innerFiles, setInnerFiles] = useState([]) // 첨부파일 (대내용)
+  const [innerFiles, setInnerFiles] = useState<any[]>([])  // 첨부파일 (대내용)
 
-  const [outerFiles, setOuterFiles] = useState([]) // 첨부파일 (대외용)
+  const [outerFiles, setOuterFiles] = useState<any[]>([])  // 첨부파일 (대외용)
 
   
 

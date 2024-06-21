@@ -7,20 +7,20 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const BidProgressSave = () => {
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+  const loginInfo: any = JSON.parse(localStorage.getItem("loginInfo") || "{}");
 
   const navigate = useNavigate();
 
   const {viewType, setViewType, bidContent, setBidContent,custContent,custUserInfo,tableContent, insFile,innerFiles, outerFiles} = useContext(BidContext);
   
-  const [originalInnerFiles, setOriginalInnerFiles] = useState([])
-  const [originalouterFiles, setOriginalouterFiles] = useState([])
+  const [originalInnerFiles, setOriginalInnerFiles] = useState<any[]>([])
+  const [originalouterFiles, setOriginalouterFiles] = useState<any[]>([])
 
   const onMoveBidProgress =()=>{
     navigate('/bid/progress');
   }
 
-  const sessionViewType = localStorage.getItem('viewType')
+  const sessionViewType : string = localStorage.getItem('viewType') || '' 
   
   useEffect(() => {
     if(!viewType){
@@ -43,7 +43,7 @@ const BidProgressSave = () => {
 
     if (viewType === '등록') {
       const currentDate = new Date();
-      let currentHours = currentDate.getHours();
+      let currentHours : string | number= currentDate.getHours();
       currentHours = currentHours < 10 ? '0' + currentHours : currentHours;
 
       const hours = `${currentHours}:00`;
@@ -254,7 +254,11 @@ const BidProgressSave = () => {
     if (bidContent.biModeCode === "A") {
       //등록되는 입찰 bino로 set
 
-      const custUserInfoFilter = {};
+      interface CustUserInfoFilter {
+        [key: string]: string;
+      }
+
+      const custUserInfoFilter: CustUserInfoFilter = {};
 
       custUserInfo.forEach(info => {
 
@@ -278,10 +282,21 @@ const BidProgressSave = () => {
 
 
       let fd = new FormData()
-      let tableContentData = []
+
+      interface TableContentType {
+        biNo: string;
+        seq : number;
+        name: string;
+        ssize: string;
+        unitcode: string;
+        orderQty: number;
+        orderUc: number;
+      }
+
+      let tableContentData : TableContentType[] = []
 
       if(bidContent.insModeCode === "1"){
-        fd.append("insFile", insFile)
+        fd.append("insFile", insFile as Blob)
       }else{
         tableContentData = tableContent.map((item, idx) => {
           return { ...item, seq: idx + 1, orderQty : Number(item.orderQty.replace(/,/g, '')),orderUc: Number(item.orderUc.replace(/,/g, ''))}
@@ -290,11 +305,9 @@ const BidProgressSave = () => {
 
 
       const type = sessionViewType === '등록' ? 'insert' : 'update'
-      let insFileCheck = ''
-      let delInnerFiles = []
-      let delInnerFilesAll = ''
-      let delOuterFiles = []
-      let delOuterFilesAll = ''
+      let insFileCheck :string = ''
+      let delInnerFiles : string[] = []
+      let delOuterFiles : string[] = []
 
       const updatedBidContent = {
         ...bidContent,
@@ -302,6 +315,11 @@ const BidProgressSave = () => {
         userId: loginInfo.userId,
         bdAmt : bidContent.bdAmt.replace(/[^\d-]/g, ''),
         type : type,
+        insFileCheck : '',
+        delInnerFiles : [] as string[],
+        delInnerFilesAll : '',
+        delOuterFiles : [] as string[],
+        delOuterFilesAll : '',
       };
 
       if(sessionViewType === '등록'){
@@ -316,19 +334,17 @@ const BidProgressSave = () => {
           })
         }
       }else if(sessionViewType === '수정'){
-        insFileCheck = bidContent.insModeCode ==='1' ? bidContent.insFileCheck : 'N'
-        updatedBidContent.insFileCheck = insFileCheck
+        insFileCheck = bidContent.insModeCode === '1' ? bidContent.insFileCheck : 'N'
+        updatedBidContent.insFileCheck = insFileCheck 
 
         // 대내용 파일 처리
         const innerFilesData = innerFiles.filter(item => !item.hasOwnProperty('fileId'))
         if(innerFilesData.length > 0){
           innerFilesData.forEach(file => {
             fd.append("innerFiles", file)
-          })
-  
+          })       
         }else if(innerFiles.length === 0){
-          delInnerFilesAll = 'Y'
-          updatedBidContent.delInnerFilesAll = delInnerFilesAll
+          updatedBidContent.delInnerFilesAll = 'Y'
         }
 
         const originInnerFileIds = originalInnerFiles.map(file => file.fileId)
@@ -341,7 +357,6 @@ const BidProgressSave = () => {
           delInnerFiles = missingInnerFileIds
           updatedBidContent.delInnerFiles = delInnerFiles
         }
-
   
         //대외용 파일 처리
         const outerFilesData = outerFiles.filter(item => !item.hasOwnProperty('fileId'))
@@ -349,10 +364,8 @@ const BidProgressSave = () => {
           outerFilesData.forEach(file => {
             fd.append("outerFiles", file)
           })
-  
         }else if(outerFiles.length === 0){
-          delOuterFilesAll = 'Y'
-          updatedBidContent.delOuterFilesAll = delOuterFilesAll
+          updatedBidContent.delOuterFilesAll = 'Y'
         }
 
         const originOuterFileIds = originalouterFiles.map(file => file.fileId)

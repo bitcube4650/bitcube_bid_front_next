@@ -1,25 +1,23 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import BidCommonInfo from '../components/BidCommonInfo';
 import BidProgressDel from '../components/BidProgressDel'
 import { BidContext } from '../context/BidContext';
 import BidBiddingPreview from '../components/BidBiddingPreview';
 
-
 const BidProgressDetail = () => {
 
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+  const loginInfo :any = JSON.parse(localStorage.getItem("loginInfo") || '{}')
 
   const loginId = loginInfo.userId
   const interNm = loginInfo.custName
-  const [data, setData] = useState({})
-  const [isEditUser,setIsEditUser] = useState(false)
-  const [isBidProgressDelModal, setIsBidProgressDelModal] = useState(false)
-  const [isBidBiddingPreviewModal,setIsBidBiddingPreviewModal] = useState(false)
+  const [data, setData] = useState<any>({})
+  const [isEditUser,setIsEditUser] = useState<boolean>(false)
+  const [isBidProgressDelModal, setIsBidProgressDelModal] = useState<boolean>(false)
+  const [isBidBiddingPreviewModal,setIsBidBiddingPreviewModal] = useState<boolean>(false)
   const navigate = useNavigate();
-  const location = useLocation();
 
   const {setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
 
@@ -52,12 +50,20 @@ const BidProgressDetail = () => {
 
   const onExcel = async() => {
     
-    const params = {
+    interface ParamsType {
+      fileName : string,
+      result : any,
+      tableContent : any[],
+      fileContent : any[],
+      custContent : any[],
+    }
+
+    const params : ParamsType = {
       fileName : `${biNo}_전자입찰요청서`,
       result : data,
-      tableContent : data.specInput ? data.specInput : [],
-      fileContent : data.specFile ? [...data.fileList,...data.specFile]: [...data.fileList],
-      custContent : data.custList,
+      tableContent: data.specInput ?? [],
+      fileContent: [...data.fileList, ...(data.specFile ?? [])], 
+      custContent: data.custList ?? [], 
     }
 
     try {
@@ -108,11 +114,15 @@ const BidProgressDetail = () => {
         interNm : interNm,
         biModeCode : data.biMode,
         cuserCode : data.createUser,
+        custCode : [] as string[],
+        custUserIds : [] as string[]
     }
 
     if(data.biMode === 'A'){
-      params.custCode = data.custList.map(item => item.custCode).join(',')
-      const userIds = data.custUserInfo.map(item => item.userId);
+      const custCodes: string[] = data.custList.map((item: { custCode: string }) => item.custCode);
+      const userIds: string[] = data.custUserInfo.map((item: { userId: string }) => item.userId);
+      
+      params.custCode = custCodes
       params.custUserIds = userIds
     }
     
@@ -198,8 +208,13 @@ const BidProgressDetail = () => {
 
     if(custUserInfo && custUserInfo.length > 0){
     
-      const custCodeUserName = custUserInfo.reduce((acc, userInfo) => {
-      const custCode = acc.find(item => item.custCode === userInfo.custCode);
+      interface UserInfo {
+        custCode: string;
+        userName: string;
+      }
+
+      const custCodeUserName: UserInfo[] = custUserInfo.reduce((acc: UserInfo[], userInfo: UserInfo) => {
+      const custCode = acc.find((item: UserInfo) => item.custCode === userInfo.custCode);
 
         if (custCode) {
           custCode.userName += ', ' + userInfo.userName;
@@ -224,7 +239,7 @@ const BidProgressDetail = () => {
       const insFileData = data.specFile[0]
       setInsFile(insFileData) // 세부내역 파일등록
     }else{
-      setTableContent(data.specInput.map(item => {
+      setTableContent(data.specInput.map((item : any) => {
         return { ...item, 
           orderQty : item.orderQty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
           orderUc: item.orderUc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -234,8 +249,8 @@ const BidProgressDetail = () => {
 
     const fileList = data.fileList
     if(fileList.length > 0){
-      const innerFilesData = fileList.filter(item => item.fileFlag === '0')
-      const outerFilesData = fileList.filter(item => item.fileFlag === '1')
+      const innerFilesData = fileList.filter((item : {fileFlag : string}) => item.fileFlag === '0')
+      const outerFilesData = fileList.filter((item : {fileFlag : string}) => item.fileFlag === '1')
 
       setInnerFiles(innerFilesData) // 첨부파일 (대내용)
       setOuterFiles(outerFilesData) // 첨부파일 (대외용)
@@ -291,7 +306,7 @@ const BidProgressDetail = () => {
           >
           </>
         }
-        { (isEditUser || data.gongoId === loginId) &&
+        { (isEditUser || data.gongoId=== loginId) &&
           <button
             className="btnStyle btnPrimary"
             title="입찰공고"

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import BidSaveExtraFile from './BidSaveExtraFile'
-import Calendar from '../../../components/Calendar'
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
 import BidUserList from './BidUserList';
@@ -8,16 +7,17 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from "date-fns/locale";
 import { format } from 'date-fns';
+import SrcInput from 'components/input/SrcInput';
 
-const BidSaveAddRegist = (props) => { 
+const BidSaveAddRegist = () => { 
 
   const {bidContent, setBidContent, insFile,setInsFile, tableContent, setTableContent} = useContext(BidContext);
 
 
-  const [userType, setUserType] = useState('');
-  const [isBidUserListModal, setIsBidUserListModal] = useState(false);
+  const [userType, setUserType] = useState<string>('');
+  const [isBidUserListModal, setIsBidUserListModal] = useState<boolean>(false);
 
-  const onChangeAddRegist = (e) => {
+  const onChangeAddRegist = (e : React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setBidContent({
         ...bidContent,
         [e.target.name]: e.target.value
@@ -31,22 +31,22 @@ const BidSaveAddRegist = (props) => {
       orderQty: '',
       unitcode: '',
       orderUc: '',
-      type: 'I'
+      seq: 0
     };
 
     setTableContent(tableContent => [...tableContent, newRow]);
   };
 
-  const formatNumber = (value) => {
+  const formatNumber = (value : string) => {
     if (!value) return '';
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  const unformatNumber = (value) => {
+  const unformatNumber = (value : string) => {
     return value.replace(/,/g, '');
   };
 
-  const onHandleInputChange = (index, field, value) => {
+  const onHandleInputChange = (index : number, field : string, value : string) => {
     if (field === 'orderUc' || field === 'orderQty') {
       value = value.replace(/^0+(?!$)/, '');
       value = value.replace(/[^0-9]/g, '');
@@ -72,7 +72,7 @@ const BidSaveAddRegist = (props) => {
     }, 0).toLocaleString();
   };
 
-  const onDeleteRow = (index) => {
+  const onDeleteRow = (index : number) => {
     setTableContent(tableContent.filter((_, i) => i !== index));
   };
 
@@ -85,15 +85,20 @@ const BidSaveAddRegist = (props) => {
 
   }, [bidContent.insModeCode]);
 
-  const onFileInputChangeInsFile = (e)=>{
-    e.preventDefault()
-    const fileData = e.target.files[0]
+  const onFileInputChangeInsFile = (e: React.ChangeEvent<HTMLInputElement>)=>{
+    e.preventDefault();
 
-      if(fileData.size > 10485760){
-        e.target.value = ''
-        Swal.fire('', '파일 크기는 최대 10MB까지입니다.\n파일 크기를 확인해 주세요.', 'warning');
-        return 
-      }
+    const fileData = e.target.files?.[0]; 
+
+    if (!fileData) {
+      return; 
+    }
+
+    if (fileData.size > 10485760) {
+      e.target.value = ''; 
+      Swal.fire('', '파일 크기는 최대 10MB까지입니다.\n파일 크기를 확인해 주세요.', 'warning');
+      return;
+    }
 
       setInsFile(fileData)
       setBidContent({
@@ -107,7 +112,7 @@ const BidSaveAddRegist = (props) => {
     setInsFile(null)
    }
 
-   const onUserListSelect = (type) =>{
+   const onUserListSelect = (type : string) =>{
     setUserType(type)
     setIsBidUserListModal(true)
    }
@@ -140,7 +145,7 @@ const BidSaveAddRegist = (props) => {
       });
     };
 
-    const onRemoveOpenAtt = (num) =>{
+    const onRemoveOpenAtt = (num : number) =>{
 
       if(num === 1){
 
@@ -163,23 +168,26 @@ const BidSaveAddRegist = (props) => {
     }
 
     
-  const onUpdateEstStartDay = (day) =>{
-
-    const selectedDate = new Date(day)
-    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-    setBidContent({
-      ...bidContent,
-      estStartDay : formattedDate
-    });
+  const onUpdateEstStartDay = (day : Date | null) =>{
+    if (day) { 
+      const selectedDate = new Date(day)
+      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+      setBidContent({
+        ...bidContent,
+        estStartDay : formattedDate
+      });
+    }
   }
 
-  const onUpdateEstEstCloseDay = (day) =>{
-    const selectedDate = new Date(day)
-    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-    setBidContent({
-      ...bidContent,
-      estCloseDay : formattedDate
-    });
+  const onUpdateEstEstCloseDay = (day : Date | null) =>{
+    if (day) { 
+      const selectedDate = new Date(day)
+      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+      setBidContent({
+        ...bidContent,
+        estCloseDay : formattedDate
+      });
+    }
   }
 
   return (
@@ -264,14 +272,7 @@ const BidSaveAddRegist = (props) => {
             <div className="flex align-items-center width100">
               <div className="formTit flex-shrink0 width170px">개찰자 <span className="star">*</span></div>
               <div className="flex align-items-center width100">
-                <input
-                  type="text"
-                  name="estOpener"
-                  className="inputStyle"
-                  placeholder=""
-                  disabled
-                  value={bidContent.estOpener}
-                />
+              <SrcInput name="estOpener" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.estOpener} disabled/>
                 <button
                   className="btnStyle btnSecondary ml10"
                   title="선택"
@@ -283,14 +284,7 @@ const BidSaveAddRegist = (props) => {
             <div className="flex align-items-center width100 ml80">
               <div className="formTit flex-shrink0 width170px">입찰공고자 <span className="star">*</span></div>
               <div className="flex align-items-center width100">
-                <input
-                  type="text"
-                  name="gongoId"
-                  className="inputStyle"
-                  placeholder=""
-                  disabled
-                  value={bidContent.gongoId}
-                />
+              <SrcInput name="gongoId" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.gongoId} disabled/>
                 <button
                   className="btnStyle btnSecondary ml10"
                   title="선택"
@@ -305,14 +299,7 @@ const BidSaveAddRegist = (props) => {
             <div className="flex align-items-center width100">
               <div className="formTit flex-shrink0 width170px">낙찰자 <span className="star">*</span></div>
               <div className="flex align-items-center width100">
-                <input
-                  type="text"
-                  name="estBidder"
-                  className="inputStyle"
-                  placeholder=""
-                  disabled
-                  value={bidContent.estBidder}
-                />
+              <SrcInput name="estBidder" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.estBidder} disabled/>
                 <button
                   className="btnStyle btnSecondary ml10"
                   title="선택"
@@ -329,18 +316,8 @@ const BidSaveAddRegist = (props) => {
               <div className="flex align-items-center width100">
                 <div className="formTit flex-shrink0 width170px">입회자1</div>
                 <div className="flex align-items-center width100">
-                  <input
-                    type="text"
-                    name="openAtt1"
-                    className="inputStyle"
-                    placeholder=""
-                    value={bidContent.openAtt1}
-                    style={{ marginRight: bidContent.openAtt1Code ? '5px' : '0' }}
-                    disabled
-                  />
-                  
+                <SrcInput name="openAtt1" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.openAtt1} style={{ marginRight: bidContent.openAtt1Code ? '5px' : '0' }} disabled/>
                   {bidContent.openAtt1Code && <i onClick={()=>onRemoveOpenAtt(1)} className="fa-regular fa-xmark textHighlight ml5"></i>}
-
                   <button 
                   className="btnStyle btnSecondary ml10" 
                   title="선택"
@@ -351,15 +328,7 @@ const BidSaveAddRegist = (props) => {
               <div className="flex align-items-center width100 ml80">
                 <div className="formTit flex-shrink0 width170px">입회자2</div>
                 <div className="flex align-items-center width100">
-                  <input
-                    type="text"
-                    name=""
-                    className="inputStyle"
-                    placeholder=""
-                    value={bidContent.openAtt2}
-                    style={{ marginRight: bidContent.openAtt2Code ? '5px' : '0' }}
-                    disabled
-                  />
+                <SrcInput name="openAtt2" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.openAtt2} style={{ marginRight: bidContent.openAtt2Code ? '5px' : '0' }} disabled/>
                   {bidContent.openAtt2Code && <i onClick={()=>onRemoveOpenAtt(2)}  className="fa-regular fa-xmark textHighlight ml5"></i>}
                   <button 
                   className="btnStyle btnSecondary ml10" 
@@ -399,14 +368,7 @@ const BidSaveAddRegist = (props) => {
             <div className="flex align-items-center width100 ml80">
               <div className="formTit flex-shrink0 width170px">납품조건 <span className="star">*</span></div>
               <div className="width100">
-                <input
-                  type="text"
-                  name="supplyCond"
-                  value={bidContent.supplyCond}
-                  className="inputStyle"
-                  placeholder=""
-                  onChange={onChangeAddRegist}
-                />
+              <SrcInput name="supplyCond" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.supplyCond} disabled/>
               </div>
             </div>
           </div>
@@ -434,7 +396,7 @@ const BidSaveAddRegist = (props) => {
                 </div>
               </i>
               : 
-              <button title="추가" className="btnStyle btnSecondary ml10" onClick={onAddRow}>추가</button>
+              <button title="추가" className="btnStyle btnSecondary ml10" onClick={()=>onAddRow()}>추가</button>
               }
               
             </div>
@@ -490,7 +452,7 @@ const BidSaveAddRegist = (props) => {
                   className="inputStyle inputSm"
                   value={val.name}
                   onChange={(e) => onHandleInputChange(idx, 'name', e.target.value)}
-                  maxLength="100"
+                  maxLength={100}
                 />
               </td>
               <td>
@@ -499,7 +461,7 @@ const BidSaveAddRegist = (props) => {
                   className="inputStyle inputSm"
                   value={val.ssize}
                   onChange={(e) => onHandleInputChange(idx, 'ssize', e.target.value)}
-                  maxLength="25"
+                  maxLength={25}
                 />
               </td>
               <td>
@@ -508,7 +470,7 @@ const BidSaveAddRegist = (props) => {
                   className="inputStyle inputSm"
                   value={val.unitcode}
                   onChange={(e) => onHandleInputChange(idx, 'unitcode', e.target.value)}
-                  maxLength="25"
+                  maxLength={25}
                 />
               </td>
               <td>
@@ -517,7 +479,7 @@ const BidSaveAddRegist = (props) => {
                   className="inputStyle inputSm text-right"
                   value={val.orderUc}
                   onChange={(e) => onHandleInputChange(idx, 'orderUc', e.target.value)}
-                  maxLength="15"
+                  maxLength={15}
                 />
               </td>
               <td>
@@ -526,7 +488,7 @@ const BidSaveAddRegist = (props) => {
                   className="inputStyle inputSm text-right"
                   value={val.orderQty}
                   onChange={(e) => onHandleInputChange(idx, 'orderQty', e.target.value)}
-                  maxLength="15"
+                  maxLength={15}
                 />
               </td>
               <td className="text-right">

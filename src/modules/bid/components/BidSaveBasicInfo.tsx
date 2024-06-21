@@ -10,20 +10,24 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from "date-fns/locale";
 import { format } from 'date-fns';
 import ItemPop from 'modules/signup/components/ItemPop';
+import SrcInput from '../../../components/input/SrcInput';
+import { MapType } from 'components/types';
+import EditTextArea from 'components/input/EditTextArea';
+import * as CommonUtils from 'components/CommonUtils';
 
-const BidSaveBasicInfo = (props) => {
+const BidSaveBasicInfo = () => {
 
   //세션 로그인 정보
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+  const loginInfo : any = JSON.parse(localStorage.getItem("loginInfo") || '{}')
   const userCustCode = loginInfo.custCode
 
   const {viewType, bidContent, setBidContent, custContent, setCustContent, custUserName, setCustUserName, custUserInfo, setCustUserInfo} = useContext(BidContext);
 
-  const [isBidPastModal, setIsBidPastModal] = useState(false);
-  const [isBidCustListModal, setIsBidCustListModal] = useState(false);
-  const [isBidCustUserListModal, setIsBidCustUserListModal] = useState(false);
-  const [itemPop, setItemPop] = useState(false);		
-  const [custCode, setcustCode] = useState('');
+  const [isBidPastModal, setIsBidPastModal] = useState<boolean>(false);
+  const [isBidCustListModal, setIsBidCustListModal] = useState<boolean>(false);
+  const [isBidCustUserListModal, setIsBidCustUserListModal] = useState<boolean>(false);
+  const [itemPop, setItemPop] = useState<boolean>(false);		
+  const [custCode, setcustCode] = useState<string>('');
 
   //로그인 정보에서 custCode가 롯데일 때 롯데 분류군 데이터 가져오기
   const getLotteCodeList = useCallback(async() => {
@@ -34,9 +38,9 @@ const BidSaveBasicInfo = (props) => {
         const data = response.data.data
         setBidContent({
           ...bidContent,
-          lotteDeptList : data.filter(list => list.colCode === 'MAT_DEPT'),
-          lotteProcList : data.filter(item => item.colCode === 'MAT_PROC'), 
-          lotteClsList	: data.filter(item => item.colCode === 'MAT_CLS')
+          lotteDeptList : data.filter((item :{colCode : string}) => item.colCode === 'MAT_DEPT'),
+          lotteProcList : data.filter((item :{colCode : string}) => item.colCode === 'MAT_PROC'), 
+          lotteClsList	: data.filter((item :{colCode : string}) => item.colCode === 'MAT_CLS')
       })
 
     } catch (error) {
@@ -51,17 +55,19 @@ const BidSaveBasicInfo = (props) => {
     }
   },[])
 
-  const onChangeBasicInfo = (e) => {
+  const onChangeBasicInfo = (e : React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setBidContent({
         ...bidContent,
         [e.target.name]: e.target.value
     });
   }
 
-  const onChangeNumberFormmat = (e) => {
+  const onChangeNumberFormmat = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/,/g, ''); 
-    if (!isNaN(value) && /^[0-9]*$/.test(value)) { 
-      const formattedValue = Number(value).toLocaleString(); 
+    const numValue = Number(value); // Parse the value to a number
+
+    if (!isNaN(numValue) && /^[0-9]*$/.test(value)) {
+      const formattedValue = numValue.toLocaleString();
       setBidContent({
         ...bidContent,
         [e.target.name]: formattedValue
@@ -113,28 +119,29 @@ const BidSaveBasicInfo = (props) => {
     setIsBidCustListModal(true)
   }
 
-  const onRemoveCust = ( custCode)=>{
+  const onRemoveCust = ( custCode : any)=>{
     
     setCustUserInfo(custUserInfo.filter(item => item.custCode != custCode));
     setCustUserName(custUserName.filter(item => item.custCode != custCode));
     setCustContent(custContent.filter(item => item.custCode != custCode));
   }
 
-  const onCustUserDetail = (custCode)=>{
+  const onCustUserDetail = (custCode : any)=>{
     setcustCode(custCode.toString())
     setIsBidCustUserListModal(true)
   }
 
-  const onUpdateSpotDay = useCallback((day) => {
-    const selectedDate = new Date(day)
-    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-    setBidContent({
+  const onUpdateSpotDay = useCallback((day: Date | null) => {
+    if (day) { 
+      const formattedDate = format(day, 'yyyy-MM-dd');
+      setBidContent({
         ...bidContent,
-        spotDay : formattedDate
-    });
-  })
+        spotDay: formattedDate,
+      });
+    }
+  },[bidContent.spotDay])
 
-  const itemSelectCallback = (data)=>{
+  const itemSelectCallback = (data : MapType)=>{
     setBidContent({
       ...bidContent,
       itemCode : data.itemCode,
@@ -178,14 +185,7 @@ const BidSaveBasicInfo = (props) => {
               입찰명 <span className="star">*</span>
             </div>
             <div className="width100">
-              <input
-                type="text"
-                name="biName"
-                value={bidContent.biName}
-                className="inputStyle"
-                onChange={onChangeBasicInfo}
-                maxLength="50"
-              />
+              <SrcInput name="biName" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.biName} maxLength={10}/>
             </div>
           </div>
 
@@ -194,14 +194,7 @@ const BidSaveBasicInfo = (props) => {
               품목 <span className="star">*</span>
             </div>
             <div className="flex align-items-center width100">
-              <input
-                type="text"
-                name="itemName"
-                className="inputStyle"
-                value={bidContent.itemName}
-                onChange={onChangeBasicInfo}
-                disabled
-              />
+            <SrcInput name="itemName" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.itemName}/>
               <button
                 className="btnStyle btnSecondary ml10"
                 title="조회"
@@ -216,24 +209,10 @@ const BidSaveBasicInfo = (props) => {
               입찰방식 <span className="star">*</span>
             </div>
             <div className="width100">
-              <input
-                type="radio"
-                value={bidContent.biModeCode}
-                id="bm1_1"
-                name="biModeCode"
-                className="radioStyle"
-                checked={bidContent.biModeCode === 'A'}
-                onChange={onChangeBiModeCode}
-              /><label htmlFor="bm1_1">지명경쟁입찰</label>
-              <input
-                type="radio"
-                value={bidContent.biModeCode}
-                id="bm1_2"
-                name="biModeCode"
-                className="radioStyle"
-                onChange={onChangeBiModeCode}
-                checked={bidContent.biModeCode === 'B'}
-              /><label htmlFor="bm1_2">일반경쟁입찰</label>
+              <input type="radio" value={bidContent.biModeCode} id="bm1_1" name="biModeCode" className="radioStyle" checked={bidContent.biModeCode === 'A'} onChange={onChangeBiModeCode}/>
+              <label htmlFor="bm1_1">지명경쟁입찰</label>
+              <input  type="radio" value={bidContent.biModeCode} id="bm1_2" name="biModeCode" className="radioStyle" onChange={onChangeBiModeCode} checked={bidContent.biModeCode === 'B'}/>
+              <label htmlFor="bm1_2">일반경쟁입찰</label>
             </div>
           </div>
 
@@ -242,30 +221,16 @@ const BidSaveBasicInfo = (props) => {
               입찰참가자격 <span className="star">*</span>
             </div>
             <div className="width100">
-              <input
-                type="text"
-                name="bidJoinSpec"
-                className="inputStyle"
-                onChange={onChangeBasicInfo}
-                maxLength="100"
-                value={bidContent.bidJoinSpec}
-              />
+            <SrcInput name="bidJoinSpec" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.bidJoinSpec} maxLength={100}/>
             </div>
           </div>
 
           <div className="flex mt20">
             <div className="formTit flex-shrink0 width170px">특수조건</div>
             <div className="width100">
-              <textarea
-                className="textareaStyle boxOverflowY"
-                name="specialCond"
-                onChange={onChangeBasicInfo}
-                value={bidContent.specialCond}
-              ></textarea>
+             <EditTextArea className='boxOverflowY' editData={ bidContent } setEditData={ setBidContent } name="specialCond" value={bidContent.specialCond}/>
             </div>
           </div>
-          
-
           <div className="flex align-items-center mt20">
             <div className="formTit flex-shrink0 width170px">
               현장설명일시 <span className="star">*</span>
@@ -312,14 +277,7 @@ const BidSaveBasicInfo = (props) => {
               현장설명장소 <span className="star">*</span>
             </div>
             <div className="width100">
-              <input
-                type="text"
-                name="spotArea"
-                className="inputStyle"
-                onChange={onChangeBasicInfo}
-                maxLength="80"
-                value={bidContent.spotArea}
-              />
+            <SrcInput name="spotArea" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.spotArea} maxLength={100}/>
             </div>
           </div>
 
@@ -411,39 +369,19 @@ const BidSaveBasicInfo = (props) => {
               금액기준 <span className="star">*</span>
             </div>
             <div className="width100">
-              <input
-                type="text"
-                name="amtBasis"
-                className="inputStyle"
-                onChange={onChangeBasicInfo}
-                maxLength="100"
-                value={bidContent.amtBasis}
-              />
+            <SrcInput name="amtBasis" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.amtBasis} maxLength={100}/>
             </div>
           </div>
           <div className="flex align-items-center mt10">
             <div className="formTit flex-shrink0 width170px">결제조건</div>
             <div className="width100">
-              <input
-                type="text"
-                name="payCond"
-                className="inputStyle"
-                onChange={onChangeBasicInfo}
-                maxLength="50"
-                value={bidContent.payCond}
-              />
+            <SrcInput name="payCond" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.payCond} maxLength={50}/>
             </div>
           </div>
           <div className="flex align-items-center mt10">
             <div className="formTit flex-shrink0 width170px">예산금액</div>
             <div className="flex align-items-center width100">
-              <input
-                type="text"
-                name="bdAmt"
-                className="inputStyle maxWidth200px"
-                onChange={onChangeNumberFormmat}
-                value={bidContent.bdAmt || ''}
-              />
+            <SrcInput name="bdAmt" className="maxWidth200px" srcData={ bidContent } setSrcData={ setBidContent } value={ CommonUtils.onComma(bidContent.bdAmt) || ''}/>
               <div className="ml10">원</div>
             </div>
           </div>
@@ -465,19 +403,19 @@ const BidSaveBasicInfo = (props) => {
             <div className="flex align-items-center width100">
               <select name="matDept" className="selectStyle" value={bidContent.matDept} onChange={onChangeBasicInfo}>
                 <option value=''>사업부를 선택 하세요.</option>
-                {bidContent.lotteDeptList.map((data) => (
+                {bidContent.lotteDeptList.map((data : MapType) => (
                   <option key={data.codeVal} value={data.codeVal}>{data.codeName}</option>
                 ))}
               </select>
               <select name="matProc" className="selectStyle" value={bidContent.matProc} onChange={onChangeBasicInfo} style={{margin: '0 10px'}}>
                 <option value=''>공정을 선택 하세요.</option>
-                {bidContent.lotteProcList.map((data) => (
+                {bidContent.lotteProcList.map((data : MapType) => (
                   <option key={data.codeVal} value={data.codeVal}>{data.codeName}</option>
                 ))}
               </select>
               <select name="matCls" className="selectStyle" value={bidContent.matCls} onChange={onChangeBasicInfo}>
                 <option value=''>분류를 선택 하세요.</option>
-                {bidContent.lotteClsList.map((data) => (
+                {bidContent.lotteClsList.map((data : MapType) => (
                   <option key={data.codeVal} value={data.codeVal}>{data.codeName}</option>
                 ))}
               </select>
@@ -486,41 +424,20 @@ const BidSaveBasicInfo = (props) => {
           <div className="flex align-items-center mt10">
             <div className="formTit flex-shrink0 width170px">공장동</div>
             <div className="width100">
-              <input
-                type="text"
-                name="matFactory"
-                className="inputStyle"
-                value={bidContent.matFactory}
-                onChange={onChangeBasicInfo}
-                maxLength="50"
-              />
+            <SrcInput name="matFactory" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.matFactory} maxLength={50}/>
             </div>
           </div>
           <div className="flex align-items-center mt10">
             <div className="flex align-items-center width100">
               <div className="formTit flex-shrink0 width170px">라인</div>
-              <div className="width100">
-                <input
-                  type="text"
-                  name="matFactoryLine"
-                  className="inputStyle"
-                  value={bidContent.matFactoryLine}
-                  onChange={onChangeBasicInfo}
-                  maxLength="25"
-                />
+              <div className="width100">.
+              <SrcInput name="matFactoryLine" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.matFactoryLine} maxLength={25}/>
               </div>
             </div>
             <div className="flex align-items-center width100 ml80">
               <div className="formTit flex-shrink0 width170px">호기</div>
               <div className="width100">
-                <input
-                  type="text"
-                  name="matFactoryCnt"
-                  className="inputStyle"
-                  value={bidContent.matFactoryCnt}
-                  onChange={onChangeBasicInfo}
-                  maxLength="25"
-                />
+              <SrcInput name="matFactoryCnt" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.matFactoryCnt} maxLength={25}/>
               </div>
             </div>
           </div>

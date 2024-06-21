@@ -7,26 +7,26 @@ const BidSaveExtraFile = () => {
   const {innerFiles, setInnerFiles, outerFiles, setOuterFiles} = useContext(BidContext);
 
   // innerFiles
-  const innerFilesClick = (event) => {
-    const fileList = Array.from(event.target.files);
-
+  const innerFilesClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = Array.from(event.target.files || []);
+  
     if (innerFiles.length + fileList.length > 20) {
       Swal.fire({ icon: 'warning', text: '대내용 파일은 최대 20개까지 추가 가능합니다.' });
       return;
     }
-
+  
     for (let file of fileList) {
       if (file.size > 10485760) {
         Swal.fire({ icon: 'warning', text: '파일 크기는 최대 10MB까지입니다.\n파일 크기를 확인해 주세요.' });
         return;
       }
     }
-
+  
     setInnerFiles([...innerFiles, ...fileList]);
-    event.target.value = ''
+    event.target.value = '';
   };
 
-  const innerFilesHandleDrop = (event) => {
+  const innerFilesHandleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const fileList = Array.from(event.dataTransfer.files);
 
@@ -46,10 +46,13 @@ const BidSaveExtraFile = () => {
   };
 
   const innerFilesPop = () => {
-    document.getElementById('innerFilesInput').click();
+    const innerFilesInput = document.getElementById('innerFilesInput')
+    if(innerFilesInput){
+      innerFilesInput.click()
+    }
   };
 
-  const removeInnerFiles = (idx) => {
+  const removeInnerFiles = (idx : 'ALL' | number) => {
     if (idx === 'ALL') {
       setInnerFiles([]);
     } else {
@@ -59,8 +62,8 @@ const BidSaveExtraFile = () => {
 
 
   //outerFiles
-  const outerFilesClick = (event) => {
-    const fileList = Array.from(event.target.files);
+  const outerFilesClick = (event : React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = Array.from(event.target.files || []);
 
     if (outerFiles.length + fileList.length > 20) {
       Swal.fire({ icon: 'warning', text: '대외용 파일은 최대 20개까지 추가 가능합니다.' });
@@ -78,7 +81,7 @@ const BidSaveExtraFile = () => {
     event.target.value = ''
   };
 
-  const outerFilesHandleDrop = (event) => {
+  const outerFilesHandleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const fileList = Array.from(event.dataTransfer.files);
 
@@ -98,10 +101,13 @@ const BidSaveExtraFile = () => {
   };
 
   const outerFilesPop = () => {
-    document.getElementById('outerFilesInput').click();
+    const outerFilesInput = document.getElementById('outerFilesInput');
+    if (outerFilesInput) {
+      outerFilesInput.click();
+    }
   };
 
-  const removeOuterFiles = (idx) => {
+  const removeOuterFiles = (idx : 'ALL' | number) => {
     if (idx === 'ALL') {
       setOuterFiles([]);
     } else {     
@@ -143,9 +149,9 @@ const BidSaveExtraFile = () => {
         ?
         <div
           className="width100"
-          onDragOver={(e) => e.preventDefault()}
-          onDragEnter={(e) => e.preventDefault()}
-          onDragLeave={(e) => e.preventDefault()}
+          onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragEnter={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragLeave={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
           onDrop={innerFilesHandleDrop}
           onClick={innerFilesPop}
           style={{ cursor: innerFiles && 'pointer'}}
@@ -164,9 +170,9 @@ const BidSaveExtraFile = () => {
         :  
         <div
           className="width100"
-          onDragOver={(e) => e.preventDefault()}
-          onDragEnter={(e) => e.preventDefault()}
-          onDragLeave={(e) => e.preventDefault()}
+          onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragEnter={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragLeave={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
           onDrop={innerFilesHandleDrop}
         >
           <div className="upload-boxWrap" style={{ minHeight: '80px', maxHeight: '190px', overflow: 'auto' }}>
@@ -231,9 +237,9 @@ const BidSaveExtraFile = () => {
         ?
         <div
           className="width100"
-          onDragOver={(e) => e.preventDefault()}
-          onDragEnter={(e) => e.preventDefault()}
-          onDragLeave={(e) => e.preventDefault()}
+          onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragEnter={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragLeave={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
           onDrop={outerFilesHandleDrop}
           onClick={outerFilesPop}
           style={{ cursor: outerFiles && 'pointer'}}
@@ -252,9 +258,9 @@ const BidSaveExtraFile = () => {
         :  
         <div
           className="width100"
-          onDragOver={(e) => e.preventDefault()}
-          onDragEnter={(e) => e.preventDefault()}
-          onDragLeave={(e) => e.preventDefault()}
+          onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragEnter={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+          onDragLeave={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
           onDrop={outerFilesHandleDrop}
         >
           <div className="upload-boxWrap" style={{ minHeight: '80px', maxHeight: '190px', overflow: 'auto' }}>

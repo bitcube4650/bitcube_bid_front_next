@@ -5,37 +5,38 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import BidCustUserList from './BidCustUserList';
 import { BidContext } from '../context/BidContext';
+import { MapType } from '../../../components/types';
+import SrcInput from '../../../components/input/SrcInput';
 
-const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
+interface BidCustListPropsType {
+  isBidCustListModal: boolean;
+  setIsBidCustListModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const BidCustList : React.FC<BidCustListPropsType> = ({ isBidCustListModal, setIsBidCustListModal }) => {
 
   const {custContent} = useContext(BidContext)
 
-  const [srcData, setSrcData] = useState({
+  const [srcData, setSrcData] = useState<MapType>({
       custName: '',
       chairman: '',
       size: 5,
       page: 0
   });
 
-  const [bidCustList, setBidCustList] = useState({});
 
-  const [custCode,setCustCode] = useState('');
+  const [bidCustList, setBidCustList] = useState<any>([]);
 
-  const [custName,setCustName] = useState('');
+  const [custCode,setCustCode] = useState<string>('');
 
-  const [isBidCustUserListModal, setIsBidCustUserListModal] = useState(false);
+  const [custName,setCustName] = useState<string>('');
+
+  const [isBidCustUserListModal, setIsBidCustUserListModal] = useState<boolean>(false);
   
   const onBidCustListModalHide = () => {
       setIsBidCustListModal(false);
     };
   
-    const onChangeSrcData = (e) => {
-      setSrcData({
-        ...srcData,
-        [e.target.name]: e.target.value
-      });
-    };
-
     const onSearch = useCallback(async () => {
       try {
         const response = await axios.post('/api/v1/bid/custList', srcData);
@@ -75,13 +76,14 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
     }
     
     // 업체 선택 후 업체 정보로 협력사 사용자 팝업 오픈 함수
-    const onBidCustSelect = (srcCustCode,srcCustName) => {
-      const hasCustCode = custContent.some(item => item.custCode === srcCustCode);
+    const onBidCustSelect = (srcCustCode : string,srcCustName : string) => {
+      const hasCustCode = custContent.some((item : {custCode : string}) => item.custCode == srcCustCode);
       setCustCode(srcCustCode)
       setCustName(srcCustName)
+
       //custContent에 이미 등록된 업체가 아닐 때만 등록
       if (!hasCustCode) {
-          onBidCustUserListModal(true);
+        onBidCustUserListModal();
       } else {
           Swal.fire('이미 등록된 업체입니다.', '', 'error');
           
@@ -94,8 +96,8 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
       <Modal className={`modalStyle ${isBidCustUserListModal ? 'modal-cover' : ''}`} show={isBidCustListModal} onHide={onBidCustListModalHide} size="xl">
           <Modal.Body>
               <button className="ModalClose" title="닫기" onClick={()=>{onBidCustListModalHide()}}
-              ><i className="fa-solid fa-xmark"></i
-              ></button>
+              ><i className="fa-solid fa-xmark"></i>
+              </button>
               <h2 className="modalTitle">업체조회</h2>
               <div className="modalTopBox">
               <ul>
@@ -109,33 +111,28 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
               <div className="flex align-items-center">
                   <div className="sbTit mr30">업체명</div>
                   <div className="width150px">
-                  <input
-                      type="text"
-                      name="custName"
-                      className="inputStyle"
-                      autoComplete="off"
-                      onChange={onChangeSrcData}
-                      value={srcData.custName}
-                      onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
-                      maxLength="50"
+                  <SrcInput
+                    name="custName"
+                    srcData={ srcData } 
+                    setSrcData={ setSrcData }
+                    onSearch={ onSearch }
+                    maxLength={50}
                   />
                   </div>
                   <div className="sbTit mr30 ml50">대표자명</div>
                   <div className="width150px">
-                  <input
-                      type="text"
-                      name="chairman"
-                      className="inputStyle"
-                      onChange={onChangeSrcData}
-                      value={srcData.chairman}
-                      onKeyDown={(e) => { if (e.key === 'Enter') onSearch() }}
-                      maxLength="25"
+                  <SrcInput
+                    name="chairman"
+                    srcData={ srcData } 
+                    setSrcData={ setSrcData }
+                    onSearch={ onSearch }
+                    maxLength={25}
                   />
                   </div>
                   <button className="btnStyle btnSearch" 
                   onClick={()=>{onSearch()}}
-                  >검색</button
-                  >
+                  >검색
+                  </button>
               </div>
               </div>
               <table className="tblSkin1 mt30">
@@ -153,7 +150,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
               <tbody>
               {
               bidCustList?.content?.length > 0 ? (
-                  bidCustList.content.map((item) => (
+                  bidCustList.content.map((item : MapType) => (
                     <tr key={item.custCode}>
                       <td>{item.custName}</td>
                       <td>{item.combinedAddr}</td>       
@@ -169,7 +166,7 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
               ) :
               (
               <tr>
-                  <td className="end" colSpan="4">조회된 데이터가 없습니다.</td>
+                  <td className="end" colSpan={4}>조회된 데이터가 없습니다.</td>
               </tr>
               )
               }
@@ -179,13 +176,11 @@ const BidCustList = ({ isBidCustListModal, setIsBidCustListModal }) => {
   
               <div className="row mt30">
               <div className="col-xs-12">
-              <Pagination onChangeSrcData={onChangeSrcData} list={bidCustList} />
+              <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ bidCustList } />
               </div>
               </div>
               <div className="modalFooter">
-              <button className="modalBtnClose" title="닫기" onClick={()=>{onBidCustListModalHide()}}
-                  >닫기</button
-              >
+              <button className="modalBtnClose" title="닫기" onClick={()=>{onBidCustListModalHide()}}>닫기</button>
               </div>
 
           </Modal.Body>

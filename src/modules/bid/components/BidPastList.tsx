@@ -3,17 +3,30 @@ import React, { useCallback, useContext } from 'react';
 import Swal from 'sweetalert2';
 import { BidContext } from '../context/BidContext';
 
-function BidPastList({bidPastList,onBidPastModalHide}) {
-  const { bidContent, setBidContent, custContent, setCustContent,tableContent, setTableContent,custUserInfo, setCustUserInfo,custUserName,setCustUserName} = useContext(BidContext);
+interface BidPastListType {
+  bidPastList : {
+    biNo : string;
+    biName : string;
+    estCloseDate : string;
+    biMode : string;
+    ingTag : string;
+    insMode : string
+  },
+  onBidPastModalHide: () => void;
+}
 
-    const onBidPastSelect = useCallback(async(biNo) => {
+
+const BidPastList :React.FC<BidPastListType> = ({bidPastList , onBidPastModalHide}) => {
+  const { bidContent, setBidContent, setCustContent, setTableContent, setCustUserInfo, setCustUserName} = useContext(BidContext);
+
+    const onBidPastSelect = useCallback(async(biNo : string) => {
       
       try {
           const response = await axios.post("/api/v1/bid/progresslistDetail", {biNo});
           const data = response.data.data
           const bid = data[0][0]
           const currentDate = new Date()
-          let currentHours = currentDate.getHours()
+          let currentHours : string | number = currentDate.getHours();
           currentHours = currentHours < 10 ? '0' + currentHours : currentHours
           const hours = `${currentHours}:00`
 
@@ -21,21 +34,33 @@ function BidPastList({bidPastList,onBidPastModalHide}) {
           
           if(bid.biModeCode === 'A'){
 
-            const custUSerInfoData = data[4]
+            interface UserInfoType {
+              custCode: string;
+              userId : string;
+              userName: string;
+            }
+            
+            const custUserInfoData: UserInfoType[] = data[4];
 
-            if(custUSerInfoData.length >0){
-    
-              const custCodeUserName = custUSerInfoData.reduce((acc, userInfo) => {
-              const custCode = acc.find(item => item.custCode === userInfo.custCode);
-    
-                if (custCode) {
-                  custCode.userName += ', ' + userInfo.userName;
+            if(custUserInfoData.length >0){
+  
+              interface AccType {
+                custCode: string;
+                userName: string;
+              }
+
+
+              const custCodeUserName = custUserInfoData.reduce<AccType[]>((acc, userInfo) => {
+                const custCodeItem = acc.find(item => item.custCode === userInfo.custCode);
+              
+                if (custCodeItem) {
+                  custCodeItem.userName += ', ' + userInfo.userName;
                 } else {
-                    acc.push({ custCode: userInfo.custCode, userName: userInfo.userName });
+                  acc.push({ custCode: userInfo.custCode, userName: userInfo.userName });
                 }
-    
-                  return acc;
-                }, []);
+              
+                return acc;
+              }, []);
                 setCustContent(data[3])
                 setCustUserName(custCodeUserName)
                 setCustUserInfo(data[4])
@@ -46,7 +71,7 @@ function BidPastList({bidPastList,onBidPastModalHide}) {
             }
           }
           
-          const loginInfo = JSON.parse(localStorage.getItem("loginInfo"))
+          const loginInfo: any = JSON.parse(localStorage.getItem("loginInfo") || "{}");
           const userCustCode = loginInfo.custCode;
 
           //과거입찰 선택 시 세팅
@@ -83,22 +108,28 @@ function BidPastList({bidPastList,onBidPastModalHide}) {
             openAtt2: bid.openAtt2,
             openAtt2Code: bid.openAtt2Code,
             insModeCode: bid.insModeCode,
-            supplyCond: bid.supplyCond
+            supplyCond: bid.supplyCond,
+            matDept : '',
+            matProc : '',
+            matCls : '',
+            matFactory : '',
+            matFactoryLine : '',
+            matFactoryCnt : ''
           };
 
           if (userCustCode === '02') {
-            updatedBidContent.matDept = bid.matDept;
-            updatedBidContent.matProc = bid.matProc;
-            updatedBidContent.matCls = bid.matCls;
-            updatedBidContent.matFactory = bid.matFactory ? bid.matFactory : '';
-            updatedBidContent.matFactoryLine = bid.matFactoryLine ? bid.matFactoryLine : '';
-            updatedBidContent.matFactoryCnt = bid.matFactoryCnt ? bid.matFactoryCnt : '';
+            updatedBidContent.matDept = bid.matDept as string;
+            updatedBidContent.matProc = bid.matProc as string;
+            updatedBidContent.matCls = bid.matCls as string;
+            updatedBidContent.matFactory = bid.matFactory ? bid.matFactory as string : '';
+            updatedBidContent.matFactoryLine = bid.matFactoryLine ? bid.matFactoryLine as string: '';
+            updatedBidContent.matFactoryCnt = bid.matFactoryCnt ? bid.matFactoryCnt as string : '';
           }
     
           setBidContent(updatedBidContent);
 
           if(bid.insModeCode === '2'){
-             setTableContent(data[1].map(item => {
+             setTableContent(data[1].map((item: any) => {
                 return { ...item, 
                   orderQty : item.orderQty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
                   orderUc: item.orderUc.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
