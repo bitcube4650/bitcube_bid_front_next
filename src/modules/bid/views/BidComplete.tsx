@@ -1,26 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from "react-router-dom";
 import List from '../components/BidCompleteList'
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from 'components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns';
-import { ko } from "date-fns/locale";
 import Ft from '../api/filters';
+import { MapType } from 'components/types'
+import SrcInput from 'components/input/SrcInput'
+import SrcCheck from 'components/input/SrcCheckBox'
+import DatePicker from 'components/input/SrcDatePicker'
+import SelectListSize from 'components/SelectListSize'
 
 const BidComplete = () => {
     const { keyword } = useParams();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
-    const isMounted = useRef(true);
+    const isMounted = useRef<Boolean>(true);
 
-    //조회 결과
-    const [list, setList] = useState([]);
+     //조회 결과
+     const [list, setList] = useState<MapType>({
+        totalElements   : 0,
+        val         : [{}]
+    });
 
     //조회조건
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         biNo : ''						//조회조건 : 입찰번호
     ,	biName : ''						//조회조건 : 입찰명
     ,	succBi : true					//조회조건 : 완료상태 - 입찰완료
@@ -31,14 +35,7 @@ const BidComplete = () => {
     ,   endDate : Ft.getCurretDate()                 //조회조건 : 입찰완료 - 종료일
     });
 
-    const onChangeSrcData = (e) => {
-        setSrcData({
-            ...srcData,
-            [e.target.name]: (e.target.className === 'checkStyle') ? e.target.checked : e.target.value
-        });
-    }
-
-    const onSearch = useCallback(async() => {
+    const onSearch = async() => {
         await axios.post("/api/v1/bidComplete/list", srcData).then((response) =>{
             if (response.data.code === "OK") {
                 setList(response.data.data);
@@ -46,7 +43,7 @@ const BidComplete = () => {
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
             }
         })
-    }, [srcData]);
+    };
 
     //메인화면에서 진입시 파라미터 분기처리
     useEffect(() => {
@@ -73,25 +70,7 @@ const BidComplete = () => {
         } else {
             onSearch();
         }
-    },[srcData]);
-
-    const onChgStartDate = (day) => {
-        const selectedDate = new Date(day)
-        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-        setSrcData({
-            ...srcData,
-            startDate: formattedDate
-        });
-    }
-
-    const onChgEndDate = (day) => {
-        const selectedDate = new Date(day)
-        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-        setSrcData({
-            ...srcData,
-            endDate: formattedDate
-        });
-    }
+    },[srcData.size, srcData.page]);
     
     return (
         <div className="conRight">
@@ -116,39 +95,36 @@ const BidComplete = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30 width100px">입찰완료일</div>
                         <div className="flex align-items-center" style={{ width:'320px'}}>
-                            <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={srcData.startDate} onChange={(date) => onChgStartDate(date)} dateFormat="yyyy-MM-dd"/>
+                            <DatePicker name="startDate" selected={srcData.startDate} srcData={srcData} setSrcData={setSrcData} />
                             <span style={{margin:"0 10px"}}>~</span>
-                            <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={srcData.endDate} onChange={(date) => onChgEndDate(date)} dateFormat="yyyy-MM-dd"/>
+                            <DatePicker name="endDate" selected={srcData.endDate} srcData={srcData} setSrcData={setSrcData} />
                         </div>
                     
                         <div className="sbTit mr30 ml50">완료상태</div>
                         <div className="flex align-items-center width300px">
-                            <input type="checkbox" id="progress1-1" onClick={onChangeSrcData} name="succBi" defaultChecked={srcData.succBi} checked={srcData.succBi} className="checkStyle"/><label htmlFor="progress1-1">입찰완료</label>
-                            <input type="checkbox" id="progress1-2" onClick={onChangeSrcData} name="failBi" defaultChecked={srcData.failBi} checked={srcData.failBi} className="checkStyle"/><label htmlFor="progress1-2" className="ml50">유찰</label>
+                            <SrcCheck id="progress1-1" name="succBi" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.succBi} text="입찰완료" />
+                            <SrcCheck id="progress1-2" name="failBi" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.failBi} text="유찰" />
                         </div>
                     </div>
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit mr30 width100px">입찰번호</div>
                         <div style={{ width:'320px'}}>
-                            <input type="text" onChange={onChangeSrcData} name="biNo" className="inputStyle" placeholder="" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
+                            <SrcInput onSearch={onSearch} name="biNo" srcData={ srcData } setSrcData={ setSrcData }/>
                         </div>
                         <div className="sbTit mr30 ml50">입찰명</div>
                         <div style={{ width:'320px'}}>
-                            <input type="text" onChange={onChangeSrcData} name="biName" className="inputStyle" placeholder="" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} />
+                            <SrcInput onSearch={onSearch} name="biName" srcData={ srcData } setSrcData={ setSrcData }/>
                         </div>
-                        <a href={()=>false} onClick={onSearch} className="btnStyle btnSearch">검색</a>
+                        <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}
 
-                <div className="width100 mt10">
-                    전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
-                    <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
-                        <option value="10">10개씩 보기</option>
-                        <option value="20">20개씩 보기</option>
-                        <option value="30">30개씩 보기</option>
-                        <option value="50">50개씩 보기</option>
-                    </select>
+                <div className="flex align-items-center justify-space-between mt40">
+                    <div className="width100">
+                        전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
+                        <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
+                    </div>
                 </div>
                 
                 <table className="tblSkin1 mt10">
@@ -173,21 +149,21 @@ const BidComplete = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { list.content?.map((data) => <List key={data.biNo} data={data} />) }
+                        { list.content?.map((data: MapType) => <List key={data.biNo} data={data} />) }
                         { (list.content === undefined || list.content === null || list.content.length === 0)&&
                             <tr>
-                                <td className="end" colSpan="7">조회된 데이터가 없습니다.</td>
+                                <td className="end" colSpan={7}>조회된 데이터가 없습니다.</td>
                             </tr> }
                     </tbody>
                 </table>
 
-                {/* pagination */}
+                {/* pagination  */}
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={list} />
+                        <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ list } />
                     </div>
                 </div>
-                {/* pagination */}
+                {/* pagination  */}
 
             </div>
             {/* contents */}

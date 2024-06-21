@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import List from '../components/BidStatusList'
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from 'components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import SrcInput from '../../../components/input/SrcInput'
-import SrcCheck from '../../../components/input/SrcCheckBox'
-import SelectListSize from '../../../components/SelectListSize'
-import { MapType } from '../../../components/types'
+import SrcInput from 'components/input/SrcInput'
+import SrcCheck from 'components/input/SrcCheckBox'
+import SelectListSize from 'components/SelectListSize'
+import { MapType } from 'components/types'
 
 const BidStatus = () => {
 
