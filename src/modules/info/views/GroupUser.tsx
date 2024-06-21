@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import Pagination from '../../../components/Pagination';
 import GroupUserListJs from '../components/GroupUserList'
-import GroupUserDetailPop from './GroupUserDatail'
+import GroupUserDetailPop from './GroupUserDatail_old'
 import GroupUserPasswordComfirm from '../../../components/modal/UserPasswordComfirm'
-import InterrelatedCustCodeSelect from '../components/InterrelatedCustCodeSelect'
 import Swal from 'sweetalert2'; // 공통 팝업창
 import { MapType } from '../../../../src/components/types'
 import SrcInput from '../../../../src/components/input/SrcInput'
@@ -162,7 +161,7 @@ const GroupUser = () => {
                 </table>
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        {/* <Pagination onChangeSrcData={onChangeSrcData} list={GroupUserList} /> */}
+                        <Pagination srcData={ srcData } setSrcData={ setSrcData } list={GroupUserList} />
                     </div>
                 </div>
             </div>

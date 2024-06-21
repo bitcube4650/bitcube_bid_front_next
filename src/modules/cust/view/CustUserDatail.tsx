@@ -3,9 +3,18 @@ import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import * as CommonUtils from 'components/CommonUtils';
+import { MapType } from 'components/types'
 
 
-const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCustUserDetailPopOpen, onSearch}) => {
+interface CustUserDatailProps {
+    srcUserId : string;
+    CreateUser : boolean;
+    CustUserDetailPopOpen: boolean;
+    setCustUserDetailPopOpen: (open: boolean) => void;
+    onSearch : () => void
+}
+
+const CustUserDetailPop : React.FC<CustUserDatailProps> = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCustUserDetailPopOpen, onSearch}) => {
     const [CustUserDetailData, setCustUserDetailData] = useState({
         "isCreate"              : CreateUser,
         "userId"                : "",
@@ -27,7 +36,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
     const [UserIdChkYn, setUserIdChkYn] = useState(false);
     
     // 값 세팅
-    const onSetCustUserData = (e) => {
+    const onSetCustUserData = (e : React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, } = e.target;
 
         setCustUserDetailData((prevData) => ({
@@ -67,13 +76,29 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
     //팝업 닫기
     const onClosePop = useCallback( () => {
         // 입력값 초기화
-        setCustUserDetailData({});
+        setCustUserDetailData({
+            "isCreate"              : CreateUser,
+            "userId"                : "",
+            "userPwd"               : "",
+            "userPwdConfirm"        : "",
+            "userName"              : "",
+            "interrelatedCustCode"  : "",
+            "userAuth"              : "",
+            "openauth"              : "",
+            "bidauth"               : "",
+            "userHp"                : "",
+            "userTel"               : "",
+            "userEmail"             : "",
+            "userPosition"          : "",
+            "userBuseo"             : "",
+            "useYn"                 : "Y",
+        });
         // 모달 닫기
         setCustUserDetailPopOpen(false);
-    });
+    }, [setCustUserDetailData, setCustUserDetailPopOpen]);
 
     // 로그인 ID 변경 시, 아이디 중복체크 false 처리하기위해....
-    const onUserIdChange = (e) => {
+    const onUserIdChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         onSetCustUserData(e);
         setUserIdChkYn(false);
     }
@@ -81,7 +106,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
     // 로그인ID 중복 확인
     async function idDuplicateCheck(){
         if(!CustUserDetailData.userId){
-            Swal.fire({ type: "warning", text: "로그인ID를 입력해주세요." });
+            Swal.fire('', '로그인ID를 입력해주세요.', 'warning');
             return false;
         } else {
             const response = await axios.post("/api/v1/cust/idcheck", CustUserDetailData);
@@ -210,10 +235,10 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
     };
 
     // 비밀번호 유효성 검사
-    const onPwdvaildation = (password) => {
+    const onPwdvaildation = (password : string) => {
         const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
         if (!pwdRegex.test(password)) {
-            Swal.fire({ type: "warning", text: "비밀번호는 최소 8자 이상, 숫자와 특수문자를 포함해야 합니다." });
+            Swal.fire('', '비밀번호는 최소 8자 이상, 숫자와 특수문자를 포함해야 합니다.', 'warning');
             return false;
         }
         return true;
@@ -241,7 +266,7 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
                         CreateUser? 
                         <div  className="flex align-items-center width100">
                             <div className="width100">
-                                <input type="text" name="userId" className="inputStyle" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" maxLength="10" autoComplete="off" onChange={onUserIdChange}/>
+                                <input type="text" name="userId" className="inputStyle" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" maxLength={10} autoComplete="off" onChange={onUserIdChange}/>
                             </div>
                             <Button onClick={idDuplicateCheck} className="btnStyle btnSecondary flex-shrink0 ml10" title="중복 확인">중복 확인</Button>
                         </div>
@@ -265,11 +290,11 @@ const CustUserDetailPop = ({srcUserId, CreateUser, CustUserDetailPopOpen, setCus
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">휴대폰 ☎  <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userHp" className="inputStyle" value={CommonUtils.onAddDashTel(CustUserDetailData.userHp)} placeholder="숫자만" maxLength="13" onChange={onSetCustUserData}/></div>
+                    <div className="width100"><input type="text" name="userHp" className="inputStyle" value={CommonUtils.onAddDashTel(CustUserDetailData.userHp)} placeholder="숫자만" maxLength={13} onChange={onSetCustUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">유선전화 ☎  <span className="star">*</span></div>
-                    <div className="width100"><input type="text" name="userTel" className="inputStyle" value={CommonUtils.onAddDashTel(CustUserDetailData.userTel)} placeholder="숫자만" maxLength="13" onChange={onSetCustUserData}/></div>
+                    <div className="width100"><input type="text" name="userTel" className="inputStyle" value={CommonUtils.onAddDashTel(CustUserDetailData.userTel)} placeholder="숫자만" maxLength={13} onChange={onSetCustUserData}/></div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">직급</div>

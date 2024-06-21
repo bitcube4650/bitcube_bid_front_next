@@ -3,16 +3,22 @@ import { Modal } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
+interface GroupUserPasswordComfirmProps {
+    srcUserId: string;
+    GroupUserPasswordComfirmOpen: boolean;
+    setGroupUserPasswordComfirmOpen: (open: boolean) => void;
+    onUserDetailPop: (userId: string) => void;
+}
 
-const GroupUserPasswordComfirm = ({srcUserId, GroupUserPasswordComfirmOpen, setGroupUserPasswordComfirmOpen, onUserDetailPop}) => {
+const GroupUserPasswordComfirm : React.FC<GroupUserPasswordComfirmProps> = ({srcUserId, GroupUserPasswordComfirmOpen, setGroupUserPasswordComfirmOpen, onUserDetailPop}) => {
     const [GroupUserPasswordComfirmData, setGroupUserPasswordComfirmData] = useState({})
     //팝업 닫기
-    const onClosePop = useCallback( () => {
+    const onClosePop = useCallback(() => {
         // 모달 닫기
         setGroupUserPasswordComfirmOpen(false);
-    });
+    }, [setGroupUserPasswordComfirmOpen]);
 
-    const onSetGroupUserPasswordComfirmData = (e) => {
+    const onSetGroupUserPasswordComfirmData = (e : React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
         setGroupUserPasswordComfirmData((prevData) => ({

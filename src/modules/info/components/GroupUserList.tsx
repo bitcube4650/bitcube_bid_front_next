@@ -1,7 +1,14 @@
-import {React} from 'react';
+import React from 'react';
 import * as CommonUtils from 'components/CommonUtils';
+import { MapType } from 'components/types'
 
-function GroupUserListJS(props) {
+interface GroupUserListProps {
+    groupUser: MapType;
+    isMain?: boolean;
+    onUserDetailPopUserIdChange : any
+}
+
+function GroupUserListJS(props : GroupUserListProps) {
     return (
         <tr>
             <td className="text-left">

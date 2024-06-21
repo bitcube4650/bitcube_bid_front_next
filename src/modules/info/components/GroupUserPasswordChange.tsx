@@ -4,15 +4,24 @@ import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 
 
-const GroupUserPasswordChange = ({srcUserId, GroupUserPasswordChangeOpen, setGroupUserPasswordChangeOpen}) => {
-    const [GroupUserPasswordData, setGroupUserPasswordData] = useState({})
+interface GroupUserPasswordChangeProps {
+    srcUserId : string;
+    GroupUserPasswordChangeOpen: boolean;
+    setGroupUserPasswordChangeOpen: (open: boolean) => void;
+}
+
+const GroupUserPasswordChange : React.FC<GroupUserPasswordChangeProps> = ({srcUserId, GroupUserPasswordChangeOpen, setGroupUserPasswordChangeOpen}) => {
+    const [GroupUserPasswordData, setGroupUserPasswordData] = useState({
+        chgPassword : "",
+        chgPasswordChk : ""
+    })
     //팝업 닫기
     const onClosePop = useCallback( () => {
         // 모달 닫기
         setGroupUserPasswordChangeOpen(false);
-    });
+    }, [setGroupUserPasswordChangeOpen]);
 
-    const onSetGroupUserPasswordData = (e) => {
+    const onSetGroupUserPasswordData = (e : React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
         setGroupUserPasswordData((prevData) => ({
@@ -23,10 +32,10 @@ const GroupUserPasswordChange = ({srcUserId, GroupUserPasswordChangeOpen, setGro
     };
 
     // 비밀번호 유효성 검사
-    const onPwdvaildation = (password) => {
+    const onPwdvaildation = (password : string) => {
         const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
         if (!pwdRegex.test(password)) {
-            Swal.fire({ type: "warning", text: "비밀번호는 최소 8자 이상, 숫자와 특수문자를 포함해야 합니다." });
+            Swal.fire('', '비밀번호는 최소 8자 이상, 숫자와 특수문자를 포함해야 합니다.', 'warning');
             return false;
         }
         if (GroupUserPasswordData.chgPasswordChk !== GroupUserPasswordData.chgPassword) {
