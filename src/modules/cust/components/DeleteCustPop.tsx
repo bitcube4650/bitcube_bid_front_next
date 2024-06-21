@@ -181,7 +181,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 				</ul>
 			</div>
 
-			<EditTextArea editData={ etcInfo } setEditData={ setEtcInfo } name="etc" defaultValue={ etcInfo.etc } placeholder={deleteType === "refuse" ? '반려사유 필수 입력' :(deleteType === "delete" ? '삭제사유 필수 입력' : '탈퇴사유 필수 입력')} />
+			<EditTextArea editData={ etcInfo } setEditData={ setEtcInfo } name="etc" value={ etcInfo.etc } placeholder={deleteType === "refuse" ? '반려사유 필수 입력' :(deleteType === "delete" ? '삭제사유 필수 입력' : '탈퇴사유 필수 입력')} />
 			<div className="modalFooter">
 				<button data-dismiss="modal" title="취소" className="modalBtnClose" onClick={() => setDeletePop(false)}>취소</button>
 				<button data-toggle="modal" title={title} className="modalBtnCheck" onClick={deleteType === "refuse" ? onRefuse :(deleteType === "delete" ? onDelete : onLeave)}>{title}</button>

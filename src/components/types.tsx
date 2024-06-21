@@ -10,7 +10,7 @@ export interface SrcInputProps {
     setSrcData: Dispatch<SetStateAction<MapType>>;
     type?: string;
     className?: string;
-    defaultValue?: string;
+    value?: string;
     placeholder?: string;
     name?: string;
     maxLength?: number;
@@ -51,7 +51,7 @@ export interface EditInputProps {
     setEditData: Dispatch<SetStateAction<MapType>>;
     type?: string;
     className?: string;
-    defaultValue?: string;
+    value?: string;
     placeholder?: string;
     name?: string;
     maxLength?: number;

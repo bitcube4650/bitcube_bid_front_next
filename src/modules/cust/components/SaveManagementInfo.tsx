@@ -21,13 +21,13 @@ const SaveManagementInfo = ({custInfo, setCustInfo}:SaveCustAdminProps) => {
 			<div className="flex align-items-center mt20">
 				<div className="formTit flex-shrink0 width170px">D업체평가</div>
 				<div className="width100">
-					<EditTextArea editData={ custInfo } setEditData={ setCustInfo } name="bcontent" defaultValue={ custInfo.careContent } maxLength={2000} />
+					<EditTextArea editData={ custInfo } setEditData={ setCustInfo } name="bcontent" value={ custInfo.careContent } maxLength={2000} />
 				</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">관리단위</div>
 				<div className="width100">
-					<EditInput name="custValuation" editData={custInfo} setEditData={setCustInfo} defaultValue={custInfo.custValuation || ''} maxLength={100} />
+					<EditInput name="custValuation" editData={custInfo} setEditData={setCustInfo} value={custInfo.custValuation || ''} maxLength={100} />
 				</div>
 			</div>
 		</div>

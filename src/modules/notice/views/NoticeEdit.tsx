@@ -182,7 +182,7 @@ const NoticeEdit = () => {
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width170px">제목</div>
                         <div className="width100">
-                            <EditInput name="btitle" maxLength={ 300 } editData={ detailData } setEditData={ setDetailData } defaultValue={ detailData.btitle } />
+                            <EditInput name="btitle" maxLength={ 300 } editData={ detailData } setEditData={ setDetailData } value={ detailData.btitle } />
                         </div>
                     </div>
                     <div className="flex align-items-center mt20">
@@ -222,7 +222,7 @@ const NoticeEdit = () => {
                     <div className="flex mt20">
                         <div className="formTit flex-shrink0 width170px">공지내용</div>
                         <div className="width100">
-                            <EditTextArea editData={ detailData } setEditData={ setDetailData } name="bcontent" defaultValue={ detailData.bcontent } />
+                            <EditTextArea editData={ detailData } setEditData={ setDetailData } name="bcontent" value={ detailData.bcontent } />
                         </div>
                     </div>
                     <div className="text-center mt50">

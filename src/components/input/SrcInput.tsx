@@ -26,10 +26,10 @@ const SrcInput = (props: SrcInputProps) => {
 
     return (
         <input type={ props.type?props.type:"text" } className={ "inputStyle " + (props.className?props.className:"") }
-            defaultValue={ props.defaultValue } placeholder={ props.placeholder }
+            value={ props.value } placeholder={ props.placeholder }
             name={ props.name } maxLength={ props.maxLength }
             readOnly={ props.readOnly } disabled={ props.disabled }
-            onKeyUp={ onFormEventSrcData }
+            onChange={ onFormEventSrcData }
             onKeyDown={ (e) => { if(e.key === 'Enter') props.onSearch()} }
         />
     )
