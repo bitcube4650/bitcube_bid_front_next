@@ -1,18 +1,28 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import NoticeList from 'modules/notice/components/NoticeList';
+import NoticeList from '../../notice/components/NoticeList';
 import PwInitPop from '../components/PwInitPop';
 
-const Main = () => {
+interface Notice {
+    bno: number;
+}
+
+interface NoticeResponse {
+    data: {
+        content: Notice[];
+    };
+}
+
+const Main: React.FC = () => {
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
 
     const navigate = useNavigate();
 
-    const [noticeList, setNoticeList] = useState({});
-    const [bidInfo, setBidInfo] = useState({});
-    const [partnerInfo, setPartnerInfo] = useState({});
+    const [noticeList, setNoticeList] = useState<NoticeResponse['data']>({ content: [] });
+    const [bidInfo, setBidInfo] = useState({planning: "", noticing: "", beforeOpening: "", opening: "", completed: "", unsuccessful: ""});
+    const [partnerInfo, setPartnerInfo] = useState({request: "", approval: "", deletion: ""});
     const [pwInit, setPwInit] = useState(false);
 
     useEffect(() => {
@@ -21,15 +31,16 @@ const Main = () => {
         selectPartnerCnt();         // 협력사 업체수 조회
         fnChkPwChangeEncourage();   // 비밀번호 변경 권장
     },[]);
-
+    
     const selectNotice = useCallback(async() => {
-        try {
-            const noticeResponse = await axios.post("/api/v1/notice/noticeList", {size: 7, page: 0});
-            setNoticeList(noticeResponse.data.data);
-        } catch (error) {
-            console.log(error);
-        }
-    });
+        await axios.post("/api/v1/notice/noticeList", {size: 7, page: 0}).then((response) =>{
+            if (response.data.code === "OK") {
+                setNoticeList(response.data.data);
+            } else {
+                console.log(response.data.msg);
+            }
+        })
+    }, []);
 
     const selectBidCnt = useCallback(async() => {
         try {
@@ -38,7 +49,7 @@ const Main = () => {
         } catch (error) {
             console.log(error);
         }
-    });
+    }, []);
 
     const selectPartnerCnt = useCallback(async() => {
         try {
@@ -47,7 +58,7 @@ const Main = () => {
         } catch (error) {
             console.log(error);
         }
-    });
+    }, []);
 
     const fnChkPwChangeEncourage = () => {
         const params = {
@@ -63,7 +74,7 @@ const Main = () => {
         });
     };
 
-    const moveBiddingPage = (keyword) => {
+    const moveBiddingPage = (keyword:string) => {
         if(keyword == 'planning'){//입찰계획 이동
             navigate('/bid/progress');
         }else if(keyword == 'completed' || keyword == 'unsuccessful'){//입찰완료 이동
@@ -132,7 +143,7 @@ const Main = () => {
                         <div className="mainConBox" style={{height: '381.41px'}}>
                             <h2 className="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
                             <div className="notiList">
-                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} content={notice} isMain='true' />) }
+                                { noticeList.content?.map((notice: Notice) => <NoticeList key={notice.bno} content={notice} isMain={true} />) }
                             </div>
                         </div>
                     </div>

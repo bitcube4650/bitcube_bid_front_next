@@ -1,26 +1,31 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, ChangeEvent } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
-const PwInitPop = ({pwInit, setPwInit}) => {
+interface PwInitPopProps {
+    pwInit : boolean;
+    setPwInit : React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const PwInitPop: React.FC<PwInitPopProps> = ({pwInit, setPwInit}) => {
     const pwParamInit = {password : "", passwordChk : ""};
-    const [pw, setPw] = useState(pwInit);
+    const [pw, setPw] = useState(pwParamInit);
     
     // 팝업 닫기
     const fnClosePwInitPop = useCallback(() => {
         setPw(pwParamInit);
         setPwInit(false);
-    })
+    }, [])
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === "Enter") {
             e.preventDefault();
             savePwd();
         }
     }
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPw((prevState) => ({
             ...prevState,
