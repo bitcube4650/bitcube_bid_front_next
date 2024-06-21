@@ -28,7 +28,7 @@ const EditTextArea = (props: EditInputProps) => {
             name={ props.name } value={ props.value } placeholder={ props.placeholder } 
             readOnly={ props.readOnly } disabled={ props.disabled }
             onChange={ onFormEventSrcData }
-            />
+        />
     )
 }
 

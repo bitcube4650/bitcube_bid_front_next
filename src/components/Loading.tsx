@@ -1,6 +1,8 @@
+import React from 'react';
 import { RingLoader } from 'react-spinners'
+import { MapType } from 'components/types'
 
-export const Loading = (props) => {
+export const Loading = (props: MapType) => {
   return (
     props.loading &&
 

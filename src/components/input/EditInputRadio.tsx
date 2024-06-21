@@ -32,7 +32,7 @@ const EditInputRadio = (props: EditInputRadioProps) => {
                 checked={ props.checked }
                 disabled={ props.disabled }
                 readOnly={ props.readOnly }
-                />
+            />
             <label htmlFor={ props.id }>{ props.label }</label>
         </>
     )
