@@ -38,9 +38,9 @@ const CustDetail = ({isApproval, custInfo}:custInfoProps) => {
 		val = val.replace(/[^0-9]/g, '')
 		
 		let tmp = ''
-		tmp += val.substr(0, 6);
+		tmp += val.substring(0, 6);
 		tmp += '-';
-		tmp += val.substr(6,7);
+		tmp += val.substring(6, val.length);
 		
 		return tmp;
 	}

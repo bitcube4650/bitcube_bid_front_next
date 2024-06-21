@@ -1,6 +1,6 @@
 import React from 'react'
 import { CustInfoProps } from '../types/types';
-import EditInputRadio from '../../../components/input/EditInputRadio';
+import EditInputRadio from 'components/input/EditInputRadio';
 
 const ManagementInfo = ({custInfo, setCustInfo}:CustInfoProps) => {
   return (

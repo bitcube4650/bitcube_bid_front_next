@@ -75,10 +75,24 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode, setUploadR
 			fax : CommonUtils.onAddDashTel(custInfo.fax),
 			capital : CommonUtils.onComma(custInfo.capital)
 		})
+	}, [custInfo.capital, custInfo.tel, custInfo.fax])
 
-		console.log(custInfo);
+	
+	useEffect(() => {
+		if(CommonUtils.isEmpty(custInfo.regnumFileName)){
+			setCustInfo({
+				...custInfo,
+				regnumPath : ''
+			})
+		}
 
-	}, [custInfo.capital, custInfo.tel])
+		if(CommonUtils.isEmpty(custInfo.bFileName)){
+			setCustInfo({
+				...custInfo,
+				bFilePath : ''
+			})
+		}
+	}, [custInfo.regnumFileName, custInfo.bFileName])
 
 	return (
 		<>

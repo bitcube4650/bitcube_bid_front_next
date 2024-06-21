@@ -13,7 +13,7 @@ interface BidCustUserListPropsType {
   setIsBidCustUserListModal: React.Dispatch<React.SetStateAction<boolean>>;
   srcCustCode : string;
   srcCustName? : string,
-  type : string;
+  type? : string;
 }
 
 interface CustUserListType {

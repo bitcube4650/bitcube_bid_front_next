@@ -11,6 +11,7 @@ import { MapType } from 'components/types'
 import SrcInput from 'components/input/SrcInput'
 import SrcSelectBox from 'components/input/SrcSelectBox'
 import SelectListSize from 'components/SelectListSize'
+import EditInput from 'components/input/EditInput';
 
 const CustList = () => {
 	const url = useLocation().pathname;
@@ -134,8 +135,8 @@ const CustList = () => {
 						}
 						<div className="sbTit mr30 ml50">업체유형</div>
 						<div className="flex align-items-center">
-							<input type="text" placeholder="우측 검색 버튼을 클릭해 주세요" className="inputStyle width280px readonly" name="custTypeNm" value={srcData.custTypeNm || ''} readOnly/>
-							<input type="hidden" name="custType" />
+							<EditInput name="custTypeNm1" className="width280px readonly" editData={srcData} setEditData={setSrcData} value={srcData.custTypeNm || ''} readOnly={true} placeholder="우측 검색 버튼을 클릭해 주세요" />
+							<EditInput type="hidden" name="custType" editData={srcData} setEditData={setSrcData} value={srcData.custType || ''} />
 							<button type="button"  title="조회" className="btnStyle btnSecondary ml10" onClick={() => {setItemPop(true)}}>조회</button>
 							<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : `${!CommonUtils.isEmpty(srcData.custType) ? "inline-flex" : "none"}`}} onClick={() => {setSrcData({...srcData, custType : '', custTypeNm : ''})}}>삭제</button>
 						</div>
@@ -205,7 +206,7 @@ const CustList = () => {
 			<ItemPop itemPop={itemPop} setItemPop={setItemPop} popClick={itemSelectCallback} />
 			
 			{/* 협력사 사용자 팝업 */}
-			{/* <BidCustUserList isBidCustUserListModal={isBidCustUserListModal} setIsBidCustUserListModal={setIsBidCustUserListModal} srcCustCode={custCode} /> 	 */}
+			<BidCustUserList isBidCustUserListModal={isBidCustUserListModal} setIsBidCustUserListModal={setIsBidCustUserListModal} srcCustCode={custCode} /> 	
 		</div>
 	)
 }

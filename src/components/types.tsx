@@ -45,6 +45,7 @@ export interface SrcSelectBoxProps {
     valueKey?: string;
     nameKey?: string;
     totalText?: string;
+    value?: string;
 }
 
 export interface EditInputProps {

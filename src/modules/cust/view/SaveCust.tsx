@@ -331,8 +331,8 @@ const SaveCust = () => {
 
 					{/* 업체 정보 등록 및 수정 버튼 */}
 					<div className="text-center mt50">
-						<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
-						<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입 신청' : '저장' } onClick={onSave}>{!isEdit ? '회원가입 신청' : '저장' }</button>
+						<button className="btnStyle btnOutline" title="목록" onClick={onMove}>목록</button>
+						<button className="btnStyle btnPrimary" title={!isEdit ? '회원가입' : '저장' } onClick={onSave}>{!isEdit ? '회원가입' : '저장' }</button>
 					</div>
 					</>
 				:
@@ -340,7 +340,7 @@ const SaveCust = () => {
 					<>
 						{/* 협력사 정보 수정 버튼 */}
 						<div className="text-center mt50">
-							<button className="btnStyle btnOutline" title="취소" onClick={onMove}>취소</button>
+							<button className="btnStyle btnOutline" title="이전" onClick={onMove}>이전</button>
 							<button className="btnStyle btnPrimary" title='저장' onClick={onSave}>저장</button>
 						</div>
 						{/* 협력사 사용자 로그인시 관리자 정보 조회 */}

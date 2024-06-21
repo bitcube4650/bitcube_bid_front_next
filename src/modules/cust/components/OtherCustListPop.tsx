@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import Pagination from '../../../components/Pagination'
+import Pagination from 'components/Pagination'
 import axios from 'axios'
 import { Modal } from 'react-bootstrap'
 import * as CommonUtils from 'components/CommonUtils';
 import ItemPop from '../../signup/components/ItemPop';
 import { MapType } from 'components/types'
 import { OtherCustListProps } from '../types/types';
-import SrcInput from '../../../components/input/SrcInput';
+import SrcInput from 'components/input/SrcInput';
 
 /* 타계열사 업체 조회 팝업 */
 const OtherCustListPop = ({otherCustModal, setOtherCustModal, setSelCustCode}:OtherCustListProps) => {
