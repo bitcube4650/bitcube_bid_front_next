@@ -1,18 +1,28 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import NoticeList from 'modules/notice/components/NoticeList';
+import NoticeList from '../../notice/components/NoticeList';
 import PwInitPop from '../components/PwInitPop';
 
-const PartnerMain = () => {
+interface Notice {
+    bno: number;
+}
+
+interface NoticeResponse {
+    data: {
+        content: Notice[];
+    };
+}
+
+const PartnerMain: React.FC = () => {
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
 
     const navigate = useNavigate();
 
-    const [noticeList, setNoticeList] = useState({});
-    const [bidInfo, setBidInfo] = useState({});
-    const [completeInfo, setCompleteInfo] = useState({});
+    const [noticeList, setNoticeList] = useState<NoticeResponse['data']>({ content: [] });
+    const [bidInfo, setBidInfo] = useState({noticing: "", submitted: "", awarded: "", unsuccessful: ""});
+    const [completeInfo, setCompleteInfo] = useState({posted: "", submitted: "", awarded: ""});
     const [pwInit, setPwInit] = useState(false);
 
     useEffect(() => {
@@ -23,7 +33,7 @@ const PartnerMain = () => {
     },[]);
 
 
-    const moveBiddingPage = (keyword) => {
+    const moveBiddingPage = (keyword: string) => {
         if(keyword == 'awarded' || keyword == 'awardedAll' || keyword == 'unsuccessful'){//입찰완료로 이동
             navigate('/bid/partnerComplete/'+keyword);
         }else{//입찰진행 이동
@@ -38,7 +48,7 @@ const PartnerMain = () => {
         } catch (error) {
             console.log(error);
         }
-    });
+    }, []);
 
     const selectPartnerBidCnt = useCallback(async() => {
         try {
@@ -47,7 +57,7 @@ const PartnerMain = () => {
         } catch (error) {
             console.log(error);
         }
-    });
+    }, []);
 
     const selectCompletedBidCnt = useCallback(async() => {
         try {
@@ -56,7 +66,7 @@ const PartnerMain = () => {
         } catch (error) {
             console.log(error);
         }
-    });
+    }, []);
 
     const fnChkPwChangeEncourage = () => {
         const params = {
@@ -133,7 +143,7 @@ const PartnerMain = () => {
                         <div className="mainConBox" style={{height: '381.41px'}}>
                             <h2 className="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
                             <div className="notiList">
-                                { noticeList.content?.map((notice) => <NoticeList key={notice.bno} content={notice} isMain='true' />) }
+                                { noticeList.content?.map((notice: Notice) => <NoticeList key={notice.bno} content={notice} isMain={true} />) }
                             </div>
                         </div>
                     </div>
