@@ -43,6 +43,7 @@ export interface SrcSelectBoxProps {
     optionList?: Array<MapType>;
     valueKey?: string;
     nameKey?: string;
+    totalText?: string;
 }
 
 export interface EditInputProps {
