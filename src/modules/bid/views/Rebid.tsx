@@ -3,39 +3,37 @@ import axios from 'axios';
 import Ft from '../api/filters';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns';
-import { ko } from "date-fns/locale";
 import Modal from 'react-bootstrap/Modal';
+import { MapType } from 'components/types';
+import DatePicker from 'components/input/EditDatePicker'
 
 const Rebid = () => {
 
     //마운트 여부
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     const navigate = useNavigate();
 
     //재입찰 마감시간
-    const [estCloseDay, setEstCloseDay] = useState('');
-    const [estCloseTime, setEstCloseTime] = useState('');
+    const [estCloseDay, setEstCloseDay] = useState<Date>();
+    const [estCloseTime, setEstCloseTime] = useState<string>('');
 
     //데이터
-    const [data, setData] = useState({})
+    const [data, setData] = useState({} as MapType)
 
     //재입찰 대상업체 리스트
-    const [reCustList, setReCustList] = useState([]);
+    const [reCustList, setReCustList] = useState([] as number[]);
 
     //재입찰 팝업 및 사유
-    const [reBidPop, setReBidPop] = useState(false);
-    const [whyA3, setWhyA3] = useState('');
+    const [reBidPop, setReBidPop] = useState<boolean>(false);
+    const [whyA3, setWhyA3] = useState<string>('');
 
     //재입찰 마감일 변경
-    const onChgEstCloseDay = (day) => {
-        const selectedDate = new Date(day)
-        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-        setEstCloseDay(formattedDate);
-    }
+    // const onChgEstCloseDay = (day) => {
+    //     const selectedDate = new Date(day)
+    //     const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+    //     setEstCloseDay(formattedDate);
+    // }
 
     //데이터 조회
     const onSearch = async() => {
@@ -73,7 +71,7 @@ const Rebid = () => {
         if (isMounted.current) {
             onSearch();
             let reCustCodeStr = localStorage.getItem('reCustCode');
-            setReCustList(reCustCodeStr.split(",").map(Number))
+            setReCustList((reCustCodeStr as string).split(",").map(Number))
             isMounted.current = false;
           }
     },[]);
@@ -163,7 +161,7 @@ const Rebid = () => {
                             <div className="flex align-items-center mt10">
                                 <div className="formTit flex-shrink0 width170px">입찰명</div>
                                 <div className="width100">
-                                    <input type="text" className="inputStyle" defaultValue={data.biName} maxLength="50" disabled/>
+                                    <input type="text" className="inputStyle" defaultValue={data.biName} maxLength={50} disabled/>
                                 </div>
                             </div>
                             <div className="flex align-items-center mt10">
@@ -175,7 +173,7 @@ const Rebid = () => {
                             <div className="flex align-items-center mt20">
                                 <div className="formTit flex-shrink0 width170px">입찰방식</div>
                                 <div className="width100">
-                                    <input type="radio" className="radioStyle" defaultChecked="true" id="bm1_1" />
+                                    <input type="radio" className="radioStyle" defaultChecked={true} id="bm1_1" />
                                     <label htmlFor="bm1_1">지명경쟁입찰</label>
                                 </div>
                             </div>
@@ -216,13 +214,13 @@ const Rebid = () => {
                                 <div className="formTit flex-shrink0 width170px">입찰참가업체</div>
                                 <div className="flex align-items-center width100">
                                 <div className="overflow-y-scroll boxStSm width100" style={{display: 'inline'}} >
-                                { data.custList?.map((val) =>
+                                { data.custList?.map((val:MapType) =>
                                     <div>
                                         { reCustList?.map((data, idx2) =>
                                         <div>
                                             {data === val.custCode &&
                                             <>
-                                            <a href={()=>false}>{ val.custName }</a>
+                                            <a>{ val.custName }</a>
                                             {(data === val.custCode && idx2 !== reCustList.length - 1) &&
                                                 <span>,</span>
                                             }
@@ -309,7 +307,8 @@ const Rebid = () => {
                                 <div className="flex align-items-center width100 ml80">
                                     <div className="formTit flex-shrink0 width170px">제출마감일시 <span className="star">*</span></div>
                                     <div className="flex align-items-center width100">
-                                        <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={estCloseDay} onChange={(date) => onChgEstCloseDay(date)} dateFormat="yyyy-MM-dd"/>
+                                        <DatePicker name="startDate" selected={estCloseDay} data={estCloseDay} setData={setEstCloseDay} />
+                                        {/* <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={estCloseDay} onChange={(date) => onChgEstCloseDay(date)} dateFormat="yyyy-MM-dd"/> */}
                                         <select className="inputStyle ml10" key={estCloseTime} defaultValue={estCloseTime} onChange={(e)=>setEstCloseTime(e.target.value)} style={{background:"url('/images/selectArw.png') no-repeat right 15px center",maxWidth: "110px"}}>
                                             <option value="">시간 선택</option>
                                             <option value="01:00">01:00</option>
@@ -379,7 +378,7 @@ const Rebid = () => {
                                 <div className="flex align-items-center width100">
                                     <div className="formTit flex-shrink0 width170px">내역방식</div>
                                     <div className="width100">
-                                        <input type="radio" name="bm2" value="data.insMode" id="bm2_1" className="radioStyle" defaultChecked="true" /><label htmlFor="bm2_1">{ Ft.ftInsMode(data.insMode) }</label>
+                                        <input type="radio" name="bm2" value="data.insMode" id="bm2_1" className="radioStyle" defaultChecked={true} /><label htmlFor="bm2_1">{ Ft.ftInsMode(data.insMode) }</label>
                                     </div>
                                 </div>
                                 <div className="flex align-items-center width100 ml80">
@@ -408,7 +407,7 @@ const Rebid = () => {
                                     <div className="upload-boxWrap">
                                         <div className="upload-box">
                                             <div className="uploadTxt">
-                                                {data.specFile?.map((file)=>
+                                                {data.specFile?.map((file:MapType)=>
                                                 <>
                                                 <i className="fa-regular fa-upload"></i> 
                                                 <div>{ file.fileNm }</div>
@@ -447,7 +446,7 @@ const Rebid = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {data.specInput?.map((val, idx)=>
+                                            {data.specInput?.map((val:MapType, idx:string)=>
                                             <tr key={idx}>
                                                 <td><input type="text" className="inputStyle inputSm" defaultValue={val.name} disabled/> </td>
                                                 <td><input type="text" className="inputStyle inputSm" defaultValue={val.ssize} disabled/></td>
@@ -483,7 +482,7 @@ const Rebid = () => {
                                     <div className="upload-boxWrap">
                                         <div className="upload-box">
                                             <div className="uploadTxt">
-                                            {data.fileList?.map((file, idx) => {
+                                            {data.fileList?.map((file:MapType, idx:string) => {
                                                 if(file.fileFlag === '0') {return <><i className="fa-regular fa-upload"></i><div key={idx}>{ file.fileNm }</div></>} else { return <></>}
                                             })}
                                             </div>
@@ -511,7 +510,7 @@ const Rebid = () => {
                                     <div className="upload-boxWrap">
                                         <div className="upload-box">
                                             <div className="uploadTxt">
-                                                {data.fileList?.map((file, idx)=> {
+                                                {data.fileList?.map((file:MapType, idx:string)=> {
                                                     if(file.fileFlag === '1') {return <><i className="fa-regular fa-upload"></i><div key={idx}>{ file.fileNm }</div></>} else { return <></>}
                                                 })}
                                             </div>
@@ -523,8 +522,8 @@ const Rebid = () => {
                             </div>
                         </div>
                         <div className="text-center mt50">
-                            <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                            <a href={()=>false} onClick={onValidation} className="btnStyle btnPrimary" title="재입찰" >재입찰</a>
+                            <a className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                            <a onClick={onValidation} className="btnStyle btnPrimary" title="재입찰" >재입찰</a>
                         </div>
                     </div>
                 </div>
@@ -533,7 +532,7 @@ const Rebid = () => {
                 {/* 재입찰  */}
                 <Modal className="modalStyle" id="reBidding" show={reBidPop} onHide={()=>setReBidPop(false)} keyboard={true}>
                     <Modal.Body>
-                        <a href={()=>false} className="ModalClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                        <a className="ModalClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                         <h2 className="modalTitle">재입찰</h2>
                         <div className="modalTopBox">
                             <ul>
@@ -546,8 +545,8 @@ const Rebid = () => {
                         </div>
                         <textarea className="textareaStyle height150px mt20" placeholder="재입찰 사유 필수 입력 (200자 이내)" defaultValue={whyA3} onChange={(e)=>setWhyA3(e.target.value)}></textarea>
                         <div className="modalFooter">
-                            <a href={()=>false} className="modalBtnClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="취소">취소</a>
-                            <a href={()=>false} className="modalBtnCheck" title="재입찰" onClick={onSave}>재입찰</a>
+                            <a className="modalBtnClose" onClick={()=>setReBidPop(false)} data-dismiss="modal" title="취소">취소</a>
+                            <a className="modalBtnCheck" title="재입찰" onClick={onSave}>재입찰</a>
                         </div>
                     </Modal.Body>
                 </Modal>

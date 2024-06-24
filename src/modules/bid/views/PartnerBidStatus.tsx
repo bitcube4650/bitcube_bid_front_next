@@ -2,20 +2,28 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from "react-router-dom";
 import List from '../components/PartnerBidStatusList'
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from 'components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
+import { MapType } from 'components/types'
+import SrcInput from 'components/input/SrcInput'
+import SrcCheck from 'components/input/SrcCheckBox'
+import DatePicker from 'components/input/SrcDatePicker'
+import SelectListSize from 'components/SelectListSize'
 
 const PartnerBidStatus = () => {
     const { keyword } = useParams();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState([]);
+    const [list, setList] = useState<MapType>({
+        totalElements   : 0,
+        val         : [{}]
+    });
 
     //조회조건
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         bidNo : ''
     ,   bidName : ''
     ,   bidModeA : true
@@ -26,14 +34,7 @@ const PartnerBidStatus = () => {
     ,	page : 0						//클릭한 페이지번호
     });
 
-    const onChangeSrcData = (e) => {
-        setSrcData({
-            ...srcData,
-            [e.target.name]: (e.target.className === 'checkStyle') ? e.target.checked : e.target.value
-        });
-    }
-
-    const onSearch = useCallback(async() => {
+    const onSearch = async() => {
         await axios.post("/api/v1/bidPtStatus/statuslist", srcData).then((response) =>{
             if (response.data.code === "OK") {
                 setList(response.data.data);
@@ -41,7 +42,7 @@ const PartnerBidStatus = () => {
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
             }
         })
-    }, [srcData]);
+    };
 
     //메인화면에서 진입시 파라미터 분기처리
     useEffect(() => {
@@ -68,7 +69,7 @@ const PartnerBidStatus = () => {
         } else {
             onSearch();
         }
-    },[srcData]);
+    },[srcData.size, srcData.page]);
 
     return (
         <div className="conRight">
@@ -94,38 +95,36 @@ const PartnerBidStatus = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">입찰번호</div>
                         <div className="width250px">
-                            <input type="text" className="inputStyle" placeholder="" onChange={onChangeSrcData} name="bidNo" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} maxLength="10" />
+                            <SrcInput onSearch={onSearch} name="bidNo" srcData={ srcData } setSrcData={ setSrcData }/>
                         </div>
                         <div className="sbTit mr30 ml50">입찰명</div>
                         <div className="width250px">
-                            <input type="text" className="inputStyle" placeholder="" onChange={onChangeSrcData} name="bidName" onKeyUp={(e) => { if(e.key === 'Enter') onSearch()}} maxLength="50" />
+                            <SrcInput onSearch={onSearch} name="bidName" srcData={ srcData } setSrcData={ setSrcData }/>
                         </div>
                     </div>
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit mr30">입찰방식</div>
                         <div className="flex align-items-center width100">
-                            <input type="checkbox" id="progress1-1" className="checkStyle" onClick={onChangeSrcData} name="bidModeA" defaultChecked={srcData.bidModeA} /><label htmlFor="progress1-1">지명</label>
-                            <input type="checkbox" id="progress1-2" className="checkStyle" onClick={onChangeSrcData} name="bidModeB" defaultChecked={srcData.bidModeB} /><label htmlFor="progress1-2" className="ml50">일반</label>
+                            <SrcCheck id="progress1-1" name="bidModeA" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.bidModeA} text="지명" />
+                            <SrcCheck id="progress1-2" name="bidModeB" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.bidModeB} text="일반" />
                         </div>
                         <div className="sbTit mr30 ml50">투찰상태</div>
                         <div className="flex align-items-center width100">
-                            <input type="checkbox" id="s1-1" className="checkStyle" onClick={onChangeSrcData} name="esmtYnN" defaultChecked={srcData.esmtYnN} checked={srcData.esmtYnN} /><label htmlFor="s1-1">미투찰(재입찰 포함)</label>
-                            <input type="checkbox" id="s1-2" className="checkStyle" onClick={onChangeSrcData} name="esmtYnY" defaultChecked={srcData.esmtYnY} checked={srcData.esmtYnY} /><label htmlFor="s1-2" className="ml50">투찰</label>
+                            <SrcCheck id="progress2-1" name="esmtYnN" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.esmtYnN} text="미투찰(재입찰 포함)" />
+                            <SrcCheck id="progress2-2" name="esmtYnY" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.esmtYnY} text="투찰" />
                         </div>
-                        <a href={()=>false} className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                        <a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}
 
-                <div className="width100 mt10">
-                    전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
-                    <select onChange={onChangeSrcData} name="size" className="selectStyle maxWidth140px ml20">
-                        <option value="10">10개씩 보기</option>
-                        <option value="20">20개씩 보기</option>
-                        <option value="30">30개씩 보기</option>
-                        <option value="50">50개씩 보기</option>
-                    </select>
+                <div className="flex align-items-center justify-space-between mt40">
+                    <div className="width100">
+                        전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
+                        <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
+                    </div>
                 </div>
+                
                 <table className="tblSkin1 mt10">
                     <colgroup>
                         <col style={{width: "12%" }} />
@@ -150,21 +149,22 @@ const PartnerBidStatus = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { list.content?.map((data) => <List key={data.biNo} data={data} />) }
+                        { list.content?.map((data:MapType) => <List key={data.biNo} data={data} />) }
                         { (list.content === undefined || list.content === null || list.content.length === 0)&&
                         <tr>
-                            <td className="end" colSpan="8">조회된 데이터가 없습니다.</td>
+                            <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
                         </tr> }
                     </tbody>
                 </table>
-
-                {/* pagination */}
+                
+                {/* pagination  */}
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={list} />
+                        <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ list } />
                     </div>
                 </div>
-                {/* //pagination */}
+                {/* pagination  */}
+                
             </div>
             {/* //contents */}
         </div>

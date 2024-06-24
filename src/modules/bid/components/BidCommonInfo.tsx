@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Ft from '../api/filters';
 import Api from '../api/api';
-// import CustUserPop from './BidCustUserList';
+import CustUserPop from './BidCustUserList';
 import Swal from 'sweetalert2';
 import BidAttSignPop from './BidAttSignPop';
 import { MapType } from 'components/types'
@@ -330,9 +330,9 @@ const BidCommonInfo = (props:any) => {
             {/* 입회자 서명 */}
 
             {/* 협력사 사용자 */}
-            {/* {custUserPop && 
+            {custUserPop && 
             <CustUserPop key={'cust_'+props.data.biNo} srcCustCode={custCode} isBidCustUserListModal={custUserPop} setIsBidCustUserListModal={setCustUserPop} srcCustName={custName}/>
-            } */}
+            }
             {/* 협력사 사용자 */}
             
         </div>

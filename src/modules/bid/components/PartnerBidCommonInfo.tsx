@@ -1,8 +1,13 @@
 import React from 'react'
 import Ft from '../api/filters';
 import Api from '../api/api';
+import { MapType } from 'components/types'
 
-const PartnerBidCommonInfo = ({ data }) => {
+interface props {
+    data: MapType;
+}
+
+const PartnerBidCommonInfo:React.FC<props> = ({ data }) => {
     return (
         <div>
             <h3 className="h3Tit">입찰에 부치는 사람</h3>
@@ -111,7 +116,7 @@ const PartnerBidCommonInfo = ({ data }) => {
                     <div className="formTit flex-shrink0 width170px">세부내역</div>
                     { data.insMode == '1' && 
                     <div className="width100">
-                        { data.specFile?.map((specFile, idx) => 
+                        { data.specFile?.map((specFile:MapType, idx:string) => 
                         <a key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>)
                         }
                     </div>
@@ -132,7 +137,7 @@ const PartnerBidCommonInfo = ({ data }) => {
                             </tr>
                             </thead>
                             <tbody>
-                            { data.specInput?.map((spec, idx) => 
+                            { data.specInput?.map((spec:MapType, idx:string) => 
                                 <tr key={idx}>
                                     <td className="text-left">{ spec.name }</td>
                                     <td className="text-right">{ spec.ssize }</td>
@@ -149,7 +154,7 @@ const PartnerBidCommonInfo = ({ data }) => {
                 <div className="flex align-items-center mt20">
                     <div className="formTit flex-shrink0 width170px">첨부파일</div>
                     <div className="width100">
-                        { data.fileList?.map((file, idx) => 
+                        { data.fileList?.map((file:MapType, idx:string) => 
                         <div key={idx} className={file.fileFlag == '1' ? 'textHighlight' : ''}>
                             <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a><br/>
                         </div>) 

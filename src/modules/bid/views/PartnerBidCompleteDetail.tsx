@@ -6,22 +6,23 @@ import Ft from '../api/filters';
 import Api from '../api/api';
 import PartnerCmmnInfo from '../components/PartnerBidCommonInfo'
 import Modal from 'react-bootstrap/Modal';
+import { MapType } from 'components/types'
 
 const PartnerBidCompleteDetail = () => {
 
     const navigate = useNavigate();
 
     //마운트 여부
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [data, setData] = useState({});
+    const [data, setData] = useState({} as MapType);
 
-    const [custEsmtYnTitle, setCustEsmtYnTitle] = useState("");
-    const [custEsmtYnContent, setCustEsmtYnContent] = useState("")
+    const [custEsmtYnTitle, setCustEsmtYnTitle] = useState<string>("");
+    const [custEsmtYnContent, setCustEsmtYnContent] = useState<string>("")
 
     //낙찰확인 팝업
-    const [bidConfirmPop, setBidConfirmPop] = useState(false);
+    const [bidConfirmPop, setBidConfirmPop] = useState<boolean>(false);
 
     //데이터 조회
     const onSearch = async() => {
@@ -92,7 +93,7 @@ const PartnerBidCompleteDetail = () => {
             <div className="contents">
                 <div className="formWidth">
                     { !Ft.isEmpty(data) &&
-                    <PartnerCmmnInfo key={'info_'+data.biNo} data={data} attSign="Y" />
+                    <PartnerCmmnInfo key={'info_'+data.biNo} data={data} />
                     }
                     <h3 className="h3Tit mt50">{ custEsmtYnTitle }</h3>
                     <div className="conTopBox mt20">
@@ -119,13 +120,13 @@ const PartnerBidCompleteDetail = () => {
                         <div className="flex mt20">
                             <div className="formTit flex-shrink0 width170px">견적내역파일</div>
                             <div className="width100">
-                                <a href={()=>false} onClick={ () => Api.fnCustSpecFileDown(data.custList[0].fileNm, data.custList[0].filePath) } className="textUnderline">{ data.custList[0].fileNm }</a>
+                                <a onClick={ () => Api.fnCustSpecFileDown(data.custList[0].fileNm, data.custList[0].filePath) } className="textUnderline">{ data.custList[0].fileNm }</a>
                             </div>
                         </div>
                         <div className="flex mt20">
                             <div className="formTit flex-shrink0 width170px">기타첨부</div>
                             <div className="width100">
-                                <a href={()=>false} onClick={ () => Api.fnCustSpecFileDown(data.custList[0].etcFile, data.custList[0].etcPath) } className="textUnderline">{ data.custList[0].etcFile }</a>
+                                <a onClick={ () => Api.fnCustSpecFileDown(data.custList[0].etcFile, data.custList[0].etcPath) } className="textUnderline">{ data.custList[0].etcFile }</a>
                             </div>
                         </div>
                         {(data.ingTag === 'A5' && data.custList[0].succYn === 'Y' ) && 
@@ -153,7 +154,7 @@ const PartnerBidCompleteDetail = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                { data.custList[0].bidSpec?.map( (spec, index) =>
+                                { data.custList[0].bidSpec?.map( (spec:MapType, index:string) =>
                                 <tr key={index}>
                                     <td className="text-left">{ spec.name }</td>
                                     <td className="text-left">{ spec.ssize }</td>
@@ -180,7 +181,7 @@ const PartnerBidCompleteDetail = () => {
                         <div className="flex mt20">
                             <div className="formTit flex-shrink0 width170px">기타첨부</div>
                             <div className="width100">
-                                <a href={()=>false} onClick={ () => Api.fnCustSpecFileDown(data.custList[0].etcFile, data.custList[0].etcPath) } className="textUnderline">{ data.custList[0].etcFile }</a>
+                                <a onClick={ () => Api.fnCustSpecFileDown(data.custList[0].etcFile, data.custList[0].etcPath) } className="textUnderline">{ data.custList[0].etcFile }</a>
                             </div>
                         </div>
                         { (data.ingTag === 'A5' && data.custList[0].succYn === 'Y' ) && 
@@ -203,9 +204,9 @@ const PartnerBidCompleteDetail = () => {
                     }
 
                     <div className="text-center mt50">
-                        <a href={()=>false} onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
+                        <a onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
                         { (data.ingTag === 'A5' && data.custList[0].succYn === 'Y' && data.custList[0].esmtYn === '2' ) && 
-                        <a href={()=>false} onClick={()=>setBidConfirmPop(true)} className="btnStyle btnPrimary" title="낙찰확인">낙찰확인</a>
+                        <a onClick={()=>setBidConfirmPop(true)} className="btnStyle btnPrimary" title="낙찰확인">낙찰확인</a>
                         }
                     </div>
                 </div>
@@ -215,11 +216,11 @@ const PartnerBidCompleteDetail = () => {
             {/* //  낙찰확인  */}
             <Modal className="modalStyle" id="biddingCheck" show={bidConfirmPop} onHide={()=>setBidConfirmPop(false)} keyboard={true}>
                 <Modal.Body>
-                    <a href={()=>false} className="ModalClose" data-dismiss="modal" onClick={()=>setBidConfirmPop(false)} title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                    <a className="ModalClose" data-dismiss="modal" onClick={()=>setBidConfirmPop(false)} title="닫기"><i className="fa-solid fa-xmark"></i></a>
                     <div className="alertText2">본 입찰의 업체선정 됨을 확인합니다.<br/>낙찰된 건에 대해 승인하시겠습니까?</div>
                     <div className="modalFooter">
-                        <a href={()=>false} className="modalBtnClose" data-dismiss="modal" onClick={()=>setBidConfirmPop(false)} title="취소">취소</a>
-                        <a href={()=>false} onClick={onSave} className="modalBtnCheck" data-toggle="modal" title="승인">승인</a>
+                        <a className="modalBtnClose" data-dismiss="modal" onClick={()=>setBidConfirmPop(false)} title="취소">취소</a>
+                        <a onClick={onSave} className="modalBtnCheck" data-toggle="modal" title="승인">승인</a>
                     </div>
                 </Modal.Body>				
             </Modal>

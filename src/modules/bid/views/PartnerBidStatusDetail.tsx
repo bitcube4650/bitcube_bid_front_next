@@ -4,37 +4,44 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Ft from '../api/filters';
 import PartnerCmmnInfo from '../components/PartnerBidCommonInfo'
+import { MapType } from 'components/types'
+
+interface SubmitDataItem {
+    esmtUc: any;
+    [key: string]: any;
+}
 
 const PartnerBidStatusDetail = () => {
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [data, setData] = useState({});
+    const [data, setData] = useState<MapType>({});
 
     //업체 직접입력
-    const [submitData, setSubmitData] = useState([]);
+    const [submitData, setSubmitData] = useState([{} as SubmitDataItem]);
 
     //총 견적금액 자동입력
-    const [totalAmt, setTotalAmt] = useState(0);
+    const [totalAmt, setTotalAmt] = useState<number>(0);
 
     //총 견적금액 직접입력
-    const [amt, setAmt] = useState("");
-    const [amtHangle, setAmtHangle] = useState("");
-    const onChangeAmt = (val)=>{
+    const [amt, setAmt] = useState<string>("");
+    const [amtHangle, setAmtHangle] = useState<string>("");
+
+    const onChangeAmt = (val:string)=>{
         let letAmt = val.toString().replace(/[^-0-9]/g, '');
         setAmt(letAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-        onConvertToKoreanNumber(letAmt);
+        onConvertToKoreanNumber(Number(letAmt));
     }
 
     //첨부파일
-    const [detailFile, setDetailFile] = useState("");
-    const [etcFile, setEtcFile] = useState("");
+    const [detailFile, setDetailFile] = useState<any>("");
+    const [etcFile, setEtcFile] = useState<any>("");
 
     //견적금액 단위
-    const [esmtCurr, setEsmtCurr] = useState("");
-    const [currList, setCurrList] = useState([]);
+    const [esmtCurr, setEsmtCurr] = useState<string>("");
+    const [currList, setCurrList] = useState([{} as MapType]);
 
     //데이터 조회
     const onSearch = async() => {
@@ -148,14 +155,14 @@ const PartnerBidStatusDetail = () => {
     }, [esmtCurr, amt, totalAmt, data])
 
     //직접입력 총 금액 견적
-    const onTotalAmt = useCallback((e, idx) => {
+    const onTotalAmt = useCallback((e:React.FormEvent<HTMLInputElement>, idx:number) => {
         let total = 0;
         
-        let letSubmitData = Object.assign([], submitData);
-        letSubmitData[idx].esmtUc = e.target.value;
+        let letSubmitData: SubmitDataItem[] = [...submitData];
+        letSubmitData[idx].esmtUc = e.currentTarget.value;
 
         for(let i = 0 ; i < letSubmitData.length ; i++){
-            let esmtUc = letSubmitData[i].esmtUc;
+            let esmtUc = letSubmitData[i].esmtUc.toString();
             if(esmtUc !== undefined && esmtUc !== null){
                 esmtUc = esmtUc.replace(/[^-0-9]/g, '');
                 total += Number(esmtUc);
@@ -169,7 +176,7 @@ const PartnerBidStatusDetail = () => {
     }, [submitData])
 
     //투찰
-    const bidSubmitting = useCallback((formData) => {
+    const bidSubmitting = useCallback((formData:any) => {
         axios.post("/api/v1/bidPtStatus/bidSubmitting", formData).then((response) => {
             if (response.data.code === "OK") {
                 Swal.fire('', '투찰했습니다.', 'success');
@@ -189,22 +196,21 @@ const PartnerBidStatusDetail = () => {
         });
     }, [onMovePage])
 
-    const fileInputChange = (event) => {//견적세부파일
+    const fileInputChange = (event:any) => {//견적세부파일
         setDetailFile(event.target.files[0]);
     }
 
-    const fileInput2Change = (event) => {//기타파일
+    const fileInput2Change = (event:any) => {//기타파일
         setEtcFile(event.target.files[0]);
     }
 
     const signData = useCallback(() =>{//인증서 서명
         var formData = new FormData();
 
-        let letSubmitData = Object.assign([], submitData);
-
+        let letSubmitData: SubmitDataItem[] = [...submitData];
         var itemData = '';
         for(let i = 0 ; i < letSubmitData.length ; i++){
-            let esmtUc = letSubmitData[i].esmtUc;
+            let esmtUc = letSubmitData[i].esmtUc.toString();
             if(esmtUc !== undefined && esmtUc !== null){
                 if(i > 0 && itemData.length > 0){
                     itemData += '$';
@@ -289,7 +295,7 @@ const PartnerBidStatusDetail = () => {
     }, [submitData, amt, esmtCurr, detailFile, etcFile, data])
 
     //파일등록 견적 총 금액 한글표기
-    const onConvertToKoreanNumber = useCallback((number) => {
+    const onConvertToKoreanNumber = useCallback((number:number) => {
         const koreanNumber = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
         const tenUnit = ['', '십', '백', '천'];
         const tenThousandUnit = ['해', '경', '조', '억', '만', ''];
@@ -387,7 +393,7 @@ const PartnerBidStatusDetail = () => {
             <div className="contents">
                 <div className="formWidth">
                     { !Ft.isEmpty(data) &&
-                    <PartnerCmmnInfo key={'info_'+data.biNo} data={data} attSign="Y" />
+                    <PartnerCmmnInfo key={'info_'+data.biNo} data={data} />
                     }
                     
                     {/* // 견적을 제출 했을 경우 */}
@@ -545,12 +551,12 @@ const PartnerBidStatusDetail = () => {
                     {/* // 견적을 아직 제출 안한 경우 */}
 
                     <div className="text-center mt50">
-                        <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={()=>onMovePage()}> 목록 </a>
+                        <a className="btnStyle btnOutline" title="목록" onClick={()=>onMovePage()}> 목록 </a>
                         { (esmtPossible && data.custEsmtYn === '1' && (data.ingTag === 'A1' || (data.ingTag === 'A3' && data.custRebidYn === 'Y'))) &&
-                        <a href={()=>false} onClick={()=>onCheck()} className="btnStyle btnPrimary" title="견적서 제출">견적서 제출</a>
+                        <a onClick={()=>onCheck()} className="btnStyle btnPrimary" title="견적서 제출">견적서 제출</a>
                         }
                         { ( esmtPossible && data.custEsmtYn === '1' && data.ingTag === 'A3' && data.custRebidYn === 'N' ) &&
-                        <a href={()=>false} onClick={()=>{Swal.fire('', '재입찰 대상이 아닙니다.', 'warning')}} className="btnStyle btnPrimary" style={{opacity: "0.5", cursor: "not-allowed"}} title="견적서 제출">견적서 제출</a>
+                        <a onClick={()=>{Swal.fire('', '재입찰 대상이 아닙니다.', 'warning')}} className="btnStyle btnPrimary" style={{opacity: "0.5", cursor: "not-allowed"}} title="견적서 제출">견적서 제출</a>
                         }
                     </div>
                 </div>

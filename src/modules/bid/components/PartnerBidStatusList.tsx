@@ -1,23 +1,28 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import Ft from '../api/filters';
+import { MapType } from 'components/types'
 
-const PartnerBidStatusList = ({data}) => {
+interface props {
+    data: MapType;
+}
+
+const PartnerBidStatusList:React.FC<props> = ({data}) => {
 
     const navigate = useNavigate();
 
-    const clickBidDetail = (biNo) => {
+    const clickBidDetail = (biNo:string) => {
         localStorage.setItem("biNo", biNo);
         navigate('/bid/partnerStatus/detail');
     };
 
-    function fnIsPastDate(dateString) {
+    function fnIsPastDate(dateString:string) {
         const currentDate = new Date();
         const targetDate = new Date(dateString);
         return targetDate < currentDate;
     }
 
-    function fnIngTag(data) {
+    function fnIngTag(data:MapType) {
         let ingTag = data.ingTag;
         let esmtYn = data.esmtYn;
 
@@ -34,10 +39,10 @@ const PartnerBidStatusList = ({data}) => {
     return (
         <tr>
             <td className="textUnderline">
-                <a href={()=>false} style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)}>{ data.biNo }</a>
+                <a style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)}>{ data.biNo }</a>
             </td>
             <td className="textUnderline text-left">
-                <a href={()=>false} style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)} >{ data.biName }</a>
+                <a style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)} >{ data.biName }</a>
             </td>
             <td className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''}>
                 <i className="fa-regular fa-timer"></i>{ data.estStartDate }
