@@ -145,7 +145,7 @@ const SaveCust = () => {
 		}
 		
 		// 업체 등록인 경우 사업자등록증 필수 아님
-		if((params?.custCode || '') !== '' && CommonUtils.isEmpty(custInfo.regnumFileName)){
+		if(loginInfo.custType === 'cust' && CommonUtils.isEmpty(custInfo.regnumFileName)){
 			Swal.fire('', '사업자등록증을 첨부해주세요.', 'warning')
 			return false;
 		}

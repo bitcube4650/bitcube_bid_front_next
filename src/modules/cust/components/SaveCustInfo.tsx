@@ -269,7 +269,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode, setUploadR
 
 					
 					<div className="flex mt10">
-						<div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star" style={{display : (params?.custCode || '') !== '' ? '' : 'none' }} >*</span></div>
+						<div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star" style={{display : loginInfo.custType !== 'inter' ? '' : 'none' }} >*</span></div>
 						<div className="width100">
 							{/* 다중파일 업로드 */}
 							<EditInputFileBox name='regnumFileName' fileName={ custInfo.regnumFileName } setUploadFile={ setUploadRegnumFile } editData={ custInfo } setEditData={ setCustInfo }/>
