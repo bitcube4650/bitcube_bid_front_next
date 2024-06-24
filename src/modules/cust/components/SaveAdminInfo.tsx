@@ -7,6 +7,11 @@ import * as CommonUtils from 'components/CommonUtils';
 
 const SaveAdminInfo = ({isEdit, custInfo, setCustInfo}:SaveCustAdminProps) => {
 	const onIdCheck = async () => {
+		if(CommonUtils.isEmpty(custInfo.userId)){
+			Swal.fire('', '아이디를 입력해주세요.', 'warning')
+			return
+		}
+
 		const response = await axios.post('/api/v1/cust/idcheck', custInfo)
 		var result = response.data;
 
@@ -23,7 +28,7 @@ const SaveAdminInfo = ({isEdit, custInfo, setCustInfo}:SaveCustAdminProps) => {
 				idCheck : false
 			})
 		} else {
-			Swal.fire('', '입력한 아이디를 사용할 수 있습니다.', 'error');
+			Swal.fire('', '입력한 아이디를 사용할 수 없습니다.', 'error');
 			setCustInfo({
 				...custInfo,
 				idCheck : false

@@ -18,7 +18,11 @@ const ManagementInfo = ({custInfo, setCustInfo}:CustInfoProps) => {
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">D업체평가</div>
-					<div className="width100">{ custInfo.careContent }</div>
+					<div className="width100">
+						<pre style={{overflow:"hidden", whiteSpace: "pre-wrap", wordBreak:"break-all", wordWrap:"break-word"}}>
+							{ custInfo.careContent }
+						</pre>
+					</div>
 				</div>
 				<div className="flex align-items-center mt20">
 					<div className="formTit flex-shrink0 width170px">관리단위</div>

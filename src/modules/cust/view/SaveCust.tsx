@@ -134,8 +134,13 @@ const SaveCust = () => {
 			return false;
 		}
 
-		if(CommonUtils.isEmpty(custInfo.zipcode) || CommonUtils.isEmpty(custInfo.addr) || CommonUtils.isEmpty(custInfo.addrDetail)){
+		if(CommonUtils.isEmpty(custInfo.zipcode) || CommonUtils.isEmpty(custInfo.addr)){
 			Swal.fire('', '회사주소를 입력해주세요.', 'warning')
+			return false;
+		}
+
+		if(CommonUtils.isEmpty(custInfo.addrDetail)){
+			Swal.fire('', '회사 상세주소를 입력해주세요.', 'warning')
 			return false;
 		}
 		

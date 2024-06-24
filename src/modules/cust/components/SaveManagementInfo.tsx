@@ -21,7 +21,7 @@ const SaveManagementInfo = ({custInfo, setCustInfo}:SaveCustAdminProps) => {
 			<div className="flex align-items-center mt20">
 				<div className="formTit flex-shrink0 width170px">D업체평가</div>
 				<div className="width100">
-					<EditTextArea editData={ custInfo } setEditData={ setCustInfo } name="bcontent" value={ custInfo.careContent } maxLength={2000} />
+					<EditTextArea editData={ custInfo } setEditData={ setCustInfo } name="careContent" value={ custInfo.careContent } maxLength={2000} />
 				</div>
 				</div>
 				<div className="flex align-items-center mt20">

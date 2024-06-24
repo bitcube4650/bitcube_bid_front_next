@@ -307,7 +307,8 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode, setUploadR
 				</div>
 			</div>
 			{/* // 회사정보 */}
-			{otherCustModal &&
+			{/* 타계열사 업체조회 */}
+			{(params?.custCode || '') === '' &&
 				<OtherCustListPop otherCustModal={otherCustModal} setOtherCustModal={setOtherCustModal} setSelCustCode={setSelCustCode} />
 			}
 			{/* 업체유형 팝업 */}
