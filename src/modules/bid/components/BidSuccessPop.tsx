@@ -4,11 +4,20 @@ import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
 
-const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }) => {
+interface props {
+    biNo : string;
+    custCode : string;
+    custName : string;
+    biName : string;
+    succPop : boolean;
+    setSuccPop : any;
+}
+
+const BidSuccessPop:React.FC<props> = ({ biNo, custCode, custName, biName, succPop, setSuccPop }) => {
 
     const navigate = useNavigate();
 
-    const [succDetail, setSuccDetail] = useState("");
+    const [succDetail, setSuccDetail] = useState<string>("");
 
     //팝업닫기
     const onClosePop = () => {
@@ -41,7 +50,7 @@ const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }
     return (
         <Modal className="modalStyle" id="bidSucc" show={succPop} onHide={onClosePop} keyboard={true}>
             <Modal.Body>
-                <a href={()=>false} className="ModalClose" data-dismiss="modal" onClick={onClosePop} title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a className="ModalClose" data-dismiss="modal" onClick={onClosePop} title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">낙찰</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -52,8 +61,8 @@ const BidSuccessPop = ({ biNo, custCode, custName, biName, succPop, setSuccPop }
                 </div>
                 <textarea className="textareaStyle height150px mt20" placeholder="추가합의 사항(필수아님)" value={succDetail} onChange={(e) => setSuccDetail(e.target.value)}></textarea>
                 <div className="modalFooter">
-                    <a href={()=>false} className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="취소">취소</a>
-                    <a href={()=>false} className="modalBtnCheck" title="낙찰" onClick={bidSucc}>낙찰</a>
+                    <a className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="취소">취소</a>
+                    <a className="modalBtnCheck" title="낙찰" onClick={bidSucc}>낙찰</a>
                 </div>
             </Modal.Body>
         </Modal>

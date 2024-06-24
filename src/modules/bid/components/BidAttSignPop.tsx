@@ -3,9 +3,18 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 
-const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpdate}) => {
+interface props {
+    biNo : string;
+    whoAtt : string;
+    attSignId : string;
+    setAttPop : any;
+    attPop : boolean;
+    onAttSignUpdate : any;
+}
 
-    const [attPw, setAttPw] = useState("");
+const BidAttSignPop:React.FC<props> = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpdate}) => {
+
+    const [attPw, setAttPw] = useState<string>("");
     
     //입회자 서명 팝업 닫기
     const onCloseAttSignPop =  () => {
@@ -44,7 +53,7 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpd
     return (
         <Modal className="modalStyle" id="attSignPop" show={attPop} onHide={onCloseAttSignPop} keyboard={true}>
             <Modal.Body>
-                <a href={()=>false} onClick={onCloseAttSignPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a onClick={onCloseAttSignPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">입회자 확인</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -58,8 +67,8 @@ const BidAttSignPop = ({biNo, whoAtt, attSignId, setAttPop, attPop, onAttSignUpd
                     </div>
                 </div>
                 <div className="modalFooter">
-                    <a href={()=>false} onClick={onCloseAttSignPop} className="modalBtnClose" data-bs-dismiss="modal" title="취소">취소</a>
-                    <a href={()=>false} onClick={onAttSign} className="modalBtnCheck" title="확인">확인</a>
+                    <a onClick={onCloseAttSignPop} className="modalBtnClose" data-bs-dismiss="modal" title="취소">취소</a>
+                    <a onClick={onAttSign} className="modalBtnCheck" title="확인">확인</a>
                 </div>
             </Modal.Body>
         </Modal>

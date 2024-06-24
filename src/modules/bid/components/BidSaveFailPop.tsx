@@ -4,15 +4,19 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 
-const BidSaveFailPop = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => {
+interface props {
+    biNo : string;
+    biName : string;
+    bidSaveFailPop : boolean;
+    setBidSaveFailPop : any;
+}
+
+const BidSaveFailPop:React.FC<props> = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => {
 
     const navigate = useNavigate();
 
     //유찰사유
     const [reason, setReason] = useState("");
-    const onSetReason = (e) => {
-        setReason(e.target.value);
-    };
 
     //유찰팝업 닫기
     const onCloseSaveFailPop = () => {
@@ -52,7 +56,7 @@ const BidSaveFailPop = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => 
     return (
         <Modal className="modalStyle" id="biddingReserve" show={bidSaveFailPop} onHide={onCloseSaveFailPop} keyboard={true}>
             <Modal.Body>
-                <a href={()=>false} onClick={onCloseSaveFailPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a onClick={onCloseSaveFailPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">유찰</h2>
                 <div className="modalTopBox">
                     <ul>
@@ -61,10 +65,10 @@ const BidSaveFailPop = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => 
                         </li>
                     </ul>
                 </div>
-                <textarea className="textareaStyle height150px mt20" placeholder="유찰사유 필수 입력" value={reason} onChange={onSetReason}></textarea>
+                <textarea className="textareaStyle height150px mt20" placeholder="유찰사유 필수 입력" value={reason} onChange={(e)=>setReason(e.target.value)}></textarea>
                 <div className="modalFooter">
-                    <a href={()=>false} className="modalBtnClose" onClick={onCloseSaveFailPop} data-bs-dismiss="modal" title="취소">취소</a>
-                    <a href={()=>false} className="modalBtnCheck" title="유찰" onClick={ bidFailure }>유찰</a>
+                    <a className="modalBtnClose" onClick={onCloseSaveFailPop} data-bs-dismiss="modal" title="취소">취소</a>
+                    <a className="modalBtnCheck" title="유찰" onClick={ bidFailure }>유찰</a>
                 </div>
             </Modal.Body>
         </Modal>

@@ -8,17 +8,18 @@ import Api from '../api/api';
 import Modal from 'react-bootstrap/Modal';
 import BidSubmitHistoryPop from '../components/BidSubmitHistoryPop';
 import BidResultReport from '../components/BidResultReport';
+import { MapType } from 'components/types';
 
 const BidCompleteDetail = () => {
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [data, setData] = useState({});
+    const [data, setData] = useState<MapType>({});
 
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
     const userId = loginInfo.userId;
 
     //데이터 조회
@@ -37,10 +38,10 @@ const BidCompleteDetail = () => {
     };
 
     //실제계약금액 팝업
-    const [realAmtPop, setRealAmtPop] = useState(false);
+    const [realAmtPop, setRealAmtPop] = useState<boolean>(false);
 
     //실제계약금액
-    const [realAmt, setRealAmt] = useState("");
+    const [realAmt, setRealAmt] = useState<string>("");
 
     //실제계약금액 저장
     const onSave = useCallback(() => {
@@ -68,14 +69,14 @@ const BidCompleteDetail = () => {
     },[realAmt])
 
     //업체 견적사항 이벤트
-    const onEvent = useCallback( (event, cust) => {
+    const onEvent = useCallback( (event:React.MouseEvent<HTMLElement>, cust:MapType) => {
         if(cust.esmtYn === '2' && data.estOpenDate === null){
             Swal.fire('', '복호화되지 않아 상세를 불러올 수 없습니다.', 'warning');
         }else if(cust.esmtYn === '2' && data.estOpenDate !== null){
             if(data.insMode === '1'){
                 Api.fnCustSpecFileDown(cust.fileNm, cust.filePath);
             }else if(data.insMode === '2'){
-                let detailView = event.target.closest('tr').nextSibling;
+                let detailView = (event.target as HTMLElement).closest('tr')?.nextSibling as HTMLElement;
                 if(detailView.style.display === '' || detailView.style.display==='none'){
                     detailView.style.display = "table-row";
                 }else{
@@ -92,15 +93,15 @@ const BidCompleteDetail = () => {
     }
 
     //업체 제출 이력
-    const [submitHistPop, setSubmitHistPop] = useState(false);
-    const [histCust, setHistCust] = useState({});
-    const onShowCustSubmitHist = (cust) =>{
+    const [submitHistPop, setSubmitHistPop] = useState<boolean>(false);
+    const [histCust, setHistCust] = useState<MapType>({});
+    const onShowCustSubmitHist = (cust:MapType) =>{
         setHistCust(cust);
         setSubmitHistPop(true);
     };
 
     //입찰결과 보고서 팝업
-    const [reportPop, setReportPop] = useState(false);
+    const [reportPop, setReportPop] = useState<boolean>(false);
 
     useEffect(() => {
         if (isMounted.current) {
@@ -151,15 +152,15 @@ const BidCompleteDetail = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                { data.custList?.map((cust, idx) => 
+                                { data.custList?.map((cust:MapType, idx:string) => 
                                 <>
                                 <tr key={idx}>
                                     <td className="text-left">
-                                        <a href={()=>false} onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
+                                        <a onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
                                     </td>
                                     <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
                                     <td>
-                                        <a href={()=>false} onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
+                                        <a onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
                                     </td>
                                     <td>{ cust.submitDate }</td>
                                     <td>{ cust.presName }</td>
@@ -172,7 +173,7 @@ const BidCompleteDetail = () => {
                                     <td>{ cust.updateDate }</td>
                                 </tr>
                                 <tr key={'sub_'+idx} className="detailView">
-                                    <td colSpan="8" className="end">
+                                    <td colSpan={8} className="end">
                                         <table className="tblSkin2">
                                             <colgroup>
                                                 <col />
@@ -188,7 +189,7 @@ const BidCompleteDetail = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                { cust.bidSpec?.map((spec, idx) =>
+                                                { cust.bidSpec?.map((spec:MapType, idx:string) =>
                                                 <tr key={idx}>
                                                     <td className="text-left">{ spec.name }</td>
                                                     <td className="text-left">{ spec.ssize }</td>
@@ -213,10 +214,10 @@ const BidCompleteDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a href={()=>false} onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
-                        <a href={()=>false} onClick={()=>setReportPop(true)} className="btnStyle btnSecondary" title="입찰결과 보고서">입찰결과 보고서</a>
+                        <a onClick={onMovePage} className="btnStyle btnOutline" title="목록">목록</a>
+                        <a onClick={()=>setReportPop(true)} className="btnStyle btnSecondary" title="입찰결과 보고서">입찰결과 보고서</a>
                         { ( data.ingTag === 'A5' && data.createUser === userId ) &&
-                        <a href={()=>false} onClick={()=>setRealAmtPop(true)} className="btnStyle btnPrimary" title="실제 계약금액">실제 계약금액
+                        <a onClick={()=>setRealAmtPop(true)} className="btnStyle btnPrimary" title="실제 계약금액">실제 계약금액
                             <i className="fas fa-question-circle toolTipSt ml5">
                                 <div className="toolTipText" style={{width: "480px"}}>
                                     <ul className="dList">
@@ -237,7 +238,7 @@ const BidCompleteDetail = () => {
             {realAmtPop && 
             <Modal className="modalStyle" id="realAmtSave" show={realAmtPop} onHide={()=>setRealAmtPop(false)} keyboard={true}>
                 <Modal.Body>
-                    <a href={()=>false} onClick={()=>setRealAmtPop(false)} className="ModalClose" data-dismiss="modal" title="닫기">
+                    <a onClick={()=>setRealAmtPop(false)} className="ModalClose" data-dismiss="modal" title="닫기">
                         <i className="fa-solid fa-xmark"></i>
                     </a>
                     <h2 className="modalTitle">실제 계약금액</h2>
@@ -255,8 +256,8 @@ const BidCompleteDetail = () => {
                         <div className="width100"><input type="text" className="inputStyle inputSm" defaultValue={realAmt} onChange={(e)=> setRealAmt(e.target.value)} placeholder="숫자만 입력"/></div>
                     </div>
                     <div className="modalFooter">
-                        <a href={()=>false} className="modalBtnClose" onClick={()=>setRealAmtPop(false)} data-dismiss="modal" title="취소">취소</a>
-                        <a href={()=>false} className="modalBtnCheck" data-toggle="modal" title="저장" onClick={onSave}>저장</a>
+                        <a className="modalBtnClose" onClick={()=>setRealAmtPop(false)} data-dismiss="modal" title="취소">취소</a>
+                        <a className="modalBtnCheck" data-toggle="modal" title="저장" onClick={onSave}>저장</a>
                     </div>
                 </Modal.Body>
             </Modal>

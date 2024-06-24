@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import CmmnInfo from '../components/BidCommonInfo'
 import Ft from '../api/filters';
 import Api from '../api/api';
+import { MapType } from 'components/types'
 import BidSaveFailPop from '../components/BidSaveFailPop';
 import BidResultReport from '../components/BidResultReport';
 import BidSubmitHistoryPop from '../components/BidSubmitHistoryPop';
@@ -13,16 +14,16 @@ import BidSuccessPop from '../components/BidSuccessPop';
 const BidStatusDetail = () => {
 
     //마운트 여부
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     const navigate = useNavigate();
 
     //조회 결과
-    const [data, setData] = useState({});
+    const [data, setData] = useState<MapType>({});
 
     //선택된 업체 리스트
-    const [custCheck, setCustCheck] = useState([]);
-    const onChecked = useCallback((checked, custCode) => {
+    const [custCheck, setCustCheck] = useState<string[]>([]);
+    const onChecked = useCallback((checked:boolean, custCode:string) => {
         if (checked) {
             setCustCheck([...custCheck, custCode]);
         } else {
@@ -31,11 +32,11 @@ const BidStatusDetail = () => {
     },[custCheck]);
 
     //개찰 후 업체 전체선택
-    const onAllChk = useCallback((checked) => {
+    const onAllChk = useCallback((checked:boolean) => {
         if (checked) {
-            const checkedListArray = [];
+            const checkedListArray = [] as string[];
             const list = data.custList;
-            list.forEach((cust) => checkedListArray.push(cust.custCode));
+            list.forEach((cust:MapType) => checkedListArray.push(cust.custCode));
             setCustCheck(checkedListArray);
         } else {
             setCustCheck([]);
@@ -43,14 +44,14 @@ const BidStatusDetail = () => {
     },[data.custList])
 
     //유찰 팝업
-    const [bidSaveFailPop, setBidSaveFailPop] = useState(false);
+    const [bidSaveFailPop, setBidSaveFailPop] = useState<boolean>(false);
 
     const onOpenBidSaveFailPop = () => {
         setBidSaveFailPop(true);
     }
 
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
     const userId = loginInfo.userId;
 
     //데이터 조회
@@ -162,17 +163,17 @@ const BidStatusDetail = () => {
                 cancelButtonText: '취소',       // conrifm 에 나오는 닫기버튼 옵션
         }).then((result) => {
             if(result.value){
-                localStorage.setItem("reCustCode", custCheck);
+                localStorage.setItem("reCustCode", custCheck.toString() as string);
                 navigate('/bid/rebid');
             }
         });
     }, [custCheck])
 
-    const onEvent = useCallback( (event, cust) => {
+    const onEvent = useCallback( (event:React.MouseEvent<HTMLElement>, cust:MapType) => {
         if(data.insMode === '1' && cust.esmtYn === '2'){
             Api.fnCustSpecFileDown(cust.fileNm, cust.filePath)
         }else if(data.insMode === '2' && cust.esmtYn === '2'){
-            let detailView = event.target.closest('tr').nextSibling;
+            let detailView = (event.target as HTMLElement).closest('tr')?.nextSibling as HTMLElement;
             if(detailView.style.display === '' || detailView.style.display === 'none'){
                 detailView.style.display = "table-row";
             }else{
@@ -182,17 +183,17 @@ const BidStatusDetail = () => {
     }, [data.insMode])
 
     //낙찰
-    const [succPop, setSuccPop] = useState(false);
-    const [succCust, setSuccCust] = useState({});
-    const onSuccSelect = (cust) =>{
+    const [succPop, setSuccPop] = useState<boolean>(false);
+    const [succCust, setSuccCust] = useState<MapType>({});
+    const onSuccSelect = (cust:MapType) =>{
         setSuccCust(cust)
         setSuccPop(true);
     }
 
     //업체 제출 이력
-    const [submitHistPop, setSubmitHistPop] = useState(false);
-    const [histCust, setHistCust] = useState({});
-    const onShowCustSubmitHist = (cust) =>{
+    const [submitHistPop, setSubmitHistPop] = useState<boolean>(false);
+    const [histCust, setHistCust] = useState<MapType>({});
+    const onShowCustSubmitHist = (cust:MapType) =>{
         setHistCust(cust);
         setSubmitHistPop(true);
     };
@@ -210,7 +211,7 @@ const BidStatusDetail = () => {
     },[]);
 
     //상세 및 기타첨부파일 열람 시 알림창
-    const onRejectDetail = (cust) =>{
+    const onRejectDetail = (cust:MapType) =>{
         if(cust.esmtYn === '2'){
             Swal.fire('', '개찰 전 견적 내용은 확인할 수 없습니다.', 'warning');
         }
@@ -257,11 +258,11 @@ const BidStatusDetail = () => {
                             </tr>
                             </thead>
                             <tbody>
-                                { data.custList?.map((cust) => 
+                                { data.custList?.map((cust:MapType) => 
                                     <tr>
                                         <td className="text-left">{ cust.custName }</td>
                                         <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
-                                        <td><a href={()=>false} onClick={()=>onRejectDetail(cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a></td>
+                                        <td><a onClick={()=>onRejectDetail(cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a></td>
                                         <td>{ cust.submitDate }</td>
                                         <td>{ cust.damdangName }</td>
                                         <td className="end">
@@ -274,12 +275,12 @@ const BidStatusDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                        <a className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
                         { (data.ingTag === 'A1' || data.ingTag === 'A3') && (data.bidAuth || data.openAuth || (data.createUser === userId)) &&
-                        <a href={()=>false} onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
+                        <a onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
                         { ((data.ingTag === 'A1' || data.ingTag === 'A3') && data.openAuth && (data.estCloseCheck === 1)) && 
-                        <a href={()=>false} onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
+                        <a onClick={onCheck} className="btnStyle btnPrimary" title="개찰">개찰</a>
                         }
                     </div>
                     </>
@@ -308,7 +309,7 @@ const BidStatusDetail = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                            { data.custList?.map((cust, idx) => 
+                            { data.custList?.map((cust:MapType, idx:string) => 
                                 <>
                                 <tr>
                                     <td>
@@ -319,11 +320,11 @@ const BidStatusDetail = () => {
                                         <label htmlFor={idx}></label>
                                     </td>
                                     <td className="text-left">
-                                        <a href={()=>false} onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
+                                        <a onClick={()=>onShowCustSubmitHist(cust)} className="textUnderline">{ cust.custName }</a>
                                     </td>
                                     <td className="text-overflow">{ Ft.ftEsmtAmt(cust) }</td>
                                     <td>
-                                        <a href={()=>false} onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
+                                        <a onClick={(e)=>onEvent(e, cust)} className={cust.esmtYn === '2' ? 'textUnderline textMainColor ' : ''}>{ Ft.ftEsmtYn(cust.esmtYn) }</a>
                                     </td>
                                     <td>{ cust.submitDate }</td>
                                     <td>{ cust.damdangName }</td>
@@ -334,12 +335,12 @@ const BidStatusDetail = () => {
                                     </td>
                                     <td>
                                         {(cust.esmtYn === '2' && (data.openAuth || data.bidAuth)) &&
-                                        <a href={()=>false} onClick={()=>onSuccSelect(cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
+                                        <a onClick={()=>onSuccSelect(cust)} className="btnStyle btnSecondary btnSm" title="낙찰">낙찰</a>
                                         }
                                     </td>
                                 </tr>
                                 <tr className="detailView">
-                                    <td colSpan="8" className="end">
+                                    <td colSpan={8} className="end">
                                         <table className="tblSkin2">
                                             <colgroup>
                                                 <col />
@@ -355,7 +356,7 @@ const BidStatusDetail = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                { cust.bidSpec?.map((spec) =>
+                                                { cust.bidSpec?.map((spec:MapType) =>
                                                 <tr>
                                                     <td className="text-left">{ spec.name }</td>
                                                     <td className="text-left">{ spec.ssize }</td>
@@ -376,13 +377,13 @@ const BidStatusDetail = () => {
                     </div>
 
                     <div className="text-center mt50">
-                        <a href={()=>false} className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
-                        <a href={()=>false} className="btnStyle btnOutline" title="개찰결과 보고서" onClick={onOpenReportPop} >개찰결과 보고서</a>
+                        <a className="btnStyle btnOutline" title="목록" onClick={onMovePage}>목록</a>
+                        <a className="btnStyle btnOutline" title="개찰결과 보고서" onClick={onOpenReportPop} >개찰결과 보고서</a>
                         { (data.openAuth || data.bidAuth || (data.createUser === userId)) &&
-                        <a href={()=>false} onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
+                        <a onClick={onOpenBidSaveFailPop} className="btnStyle btnSecondary" title="유찰">유찰</a>
                         }
                         { ((data.createUser === userId) || data.openAuth) &&
-                        <a href={()=>false} onClick={onRebid} className="btnStyle btnOutlineRed" title="선택업체 재입찰">선택업체 재입찰하러 가기</a>
+                        <a onClick={onRebid} className="btnStyle btnOutlineRed" title="선택업체 재입찰">선택업체 재입찰하러 가기</a>
                         }
                     </div>
                     </>

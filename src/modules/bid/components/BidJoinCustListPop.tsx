@@ -3,14 +3,21 @@ import React, { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 import Ft from '../api/filters';
+import { MapType } from 'components/types';
 
-const BidJoinCustListPop = ({ biNo, joinCustPop, setJoinCustPop }) => {
+interface props {
+    biNo : string;
+    joinCustPop : boolean;
+    setJoinCustPop : any;
+}
+
+const BidJoinCustListPop:React.FC<props> = ({ biNo, joinCustPop, setJoinCustPop }) => {
 
     //마운트 여부
-    const isMounted = useRef(false);
+    const isMounted = useRef<boolean>(false);
 
     //데이터
-    const [popData, setPopData] = useState([]);
+    const [popData, setPopData] = useState<any>([]);
 
     const onSearch = async() => {
         let params = {
@@ -44,7 +51,8 @@ const BidJoinCustListPop = ({ biNo, joinCustPop, setJoinCustPop }) => {
             <Modal.Body className="modal-body">
                 <a className="ModalClose" data-dismiss="modal" onClick={onClosePop} title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">투찰 정보</h2>
-                <div className="modalBoxSt mt10" v-if="popData.length != 0">
+                { popData.length != 0 && 
+                <div className="modalBoxSt mt10">
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width120px">입찰번호</div>
                         <div className="width100">{ popData.length > 0 && popData[0].biNo }</div>
@@ -58,6 +66,7 @@ const BidJoinCustListPop = ({ biNo, joinCustPop, setJoinCustPop }) => {
                         <div className="width100">{ popData.length > 0 && popData[0].succYn == 'Y' ? popData[0].custName : '' }</div>
                     </div>
                 </div>
+                }
 
                 <table className="tblSkin1 mt20">
                     <thead>
@@ -68,7 +77,7 @@ const BidJoinCustListPop = ({ biNo, joinCustPop, setJoinCustPop }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {popData?.map((cust, index) => 
+                        {popData?.map((cust:MapType, index:string) => 
                         <tr key={index}>
                             <td className={cust.succYn == 'Y' ? 'text-left textHighlight' : 'text-left'} >{ cust.custName }</td>
                             <td className={cust.succYn == 'Y' ? 'text-right textHighlight' : 'text-right'} >{ Ft.numberWithCommas(cust.esmtAmt) }</td>

@@ -1,35 +1,36 @@
 import React, { useState } from 'react'
 import Ft from '../api/filters';
 import Api from '../api/api';
-import CustUserPop from './BidCustUserList';
+// import CustUserPop from './BidCustUserList';
 import Swal from 'sweetalert2';
 import BidAttSignPop from './BidAttSignPop';
+import { MapType } from 'components/types'
 
-const BidCommonInfo = (props) => {
+const BidCommonInfo = (props:any) => {
     
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
     const userId = loginInfo.userId;
 
     //협력사 사용자 조회 팝업
-    const [custUserPop, setCustUserPop] = useState(false);
-    const [custCode, setCustCode] = useState("");
-    const [custName, setCustName] = useState("");
+    const [custUserPop, setCustUserPop] = useState<boolean>(false);
+    const [custCode, setCustCode] = useState<string>("");
+    const [custName, setCustName] = useState<string>("");
     
     //입회자 서명
-    const [whoAtt, setWhoAtt] = useState("");
-    const [attSignId, setAttSignId] = useState("");
-    const [attPop, setAttPop] = useState(false);
+    const [whoAtt, setWhoAtt] = useState<string>("");
+    const [attSignId, setAttSignId] = useState<string>("");
+    const [attPop, setAttPop] = useState<boolean>(false);
 
     //협력사 사용자 조회 팝업 오픈
-    const onOpenCustUserPop = (cust) => {
+    const onOpenCustUserPop = (cust:MapType) => {
         setCustUserPop(true);
         setCustCode(cust.custCode);
         setCustName(cust.custName);
     }
 
     //입회자 서명 팝업 오픈
-    const onOpenAttSignPop = (att, attSignId, signYn) => {
+    const onOpenAttSignPop = (att:string, attSignId:string, signYn:string) => {
         if(signYn === 'N'){
             let currDate = new Date();
             let currDateTime = currDate.getTime();
@@ -49,7 +50,7 @@ const BidCommonInfo = (props) => {
         }
     }
 
-    const onAttSignUpdate = (whoAtt) => {
+    const onAttSignUpdate = (whoAtt:string) => {
         if(whoAtt === '1'){
             props.data.openAtt1Sign ='Y'
         }else if(whoAtt === '2'){
@@ -105,8 +106,8 @@ const BidCommonInfo = (props) => {
                     { props.data.biMode === 'A' &&
                     <div className="width100">
                         <div className="overflow-y-scroll boxStSm width100" style={{height:"50px"}}>
-                            { props.data.custList?.map((cust, idx) => 
-                                <a href={()=>false} key={idx} onClick={()=>onOpenCustUserPop(cust)} className="textUnderline">{ cust.custName }
+                            { props.data.custList?.map((cust:MapType, idx:string) => 
+                                <a key={idx} onClick={()=>onOpenCustUserPop(cust)} className="textUnderline">{ cust.custName }
                                 {props.data.custList.length !== (idx+1) &&
                                 <span>, </span>
                                 }
@@ -119,7 +120,7 @@ const BidCommonInfo = (props) => {
                     { props.data.biMode === 'B' &&
                         <div className="flex align-items-center width100">
                             <div className="boxStSm width100 boxOverflowY">
-                                <a href={()=>false}>가입회원사 전체</a>
+                                <a>가입회원사 전체</a>
                             </div>
                         </div>
                     }
@@ -264,7 +265,7 @@ const BidCommonInfo = (props) => {
                     
                     { props.data.insMode === '1' && 
                     <div className="width100">
-                        { props.data.specFile?.map((specFile, idx) => <a href={()=>false} key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
+                        { props.data.specFile?.map((specFile:MapType, idx:string) => <a key={idx} onClick={ () => Api.downloadFile(specFile)} className="textUnderline">{ specFile.fileNm }</a>) }
                     </div>
                     }
 
@@ -285,7 +286,7 @@ const BidCommonInfo = (props) => {
                             </tr>
                             </thead>
                             <tbody>
-                            { props.data.specInput?.map((spec, idx) => 
+                            { props.data.specInput?.map((spec:MapType, idx:string) => 
                                 <tr key={idx}>
                                     <td className="text-left">{ spec.name }</td>
                                     <td className="text-right">{ spec.ssize }</td>
@@ -304,9 +305,9 @@ const BidCommonInfo = (props) => {
                 <div className="flex mt20">
                     <div className="formTit flex-shrink0 width170px">첨부파일</div>
                     <div className="width100">
-                        { props.data.fileList?.map((file, idx) => 
+                        { props.data.fileList?.map((file:MapType, idx:string) => 
                             <div key={idx} className={file.fileFlag === '1' ? 'textHighlight' : ''}>
-                                <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a href={()=>false} onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
+                                <span className="mr20">{ Ft.ftFileFlag(file.fileFlag) }</span><a onClick={ () => Api.downloadFile(file)} className="textUnderline">{ file.fileNm }</a>
                             </div>) }
                     </div>
                 </div>
@@ -329,9 +330,9 @@ const BidCommonInfo = (props) => {
             {/* 입회자 서명 */}
 
             {/* 협력사 사용자 */}
-            {custUserPop && 
+            {/* {custUserPop && 
             <CustUserPop key={'cust_'+props.data.biNo} srcCustCode={custCode} isBidCustUserListModal={custUserPop} setIsBidCustUserListModal={setCustUserPop} srcCustName={custName}/>
-            }
+            } */}
             {/* 협력사 사용자 */}
             
         </div>

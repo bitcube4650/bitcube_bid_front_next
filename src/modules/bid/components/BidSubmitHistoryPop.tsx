@@ -3,18 +3,31 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
 import Ft from '../api/filters';
-import Pagination from '../../../components/Pagination';
+import Pagination from 'components/Pagination';
+import { MapType } from 'components/types';
 
-const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop, setSubmitHistPop}) => {
+interface props {
+    biNo : string;
+    custCode : string;
+    custName : string;
+    userName : string;
+    submitHistPop : boolean;
+    setSubmitHistPop : any;
+}
+
+const BidSubmitHistoryPop:React.FC<props> = ({biNo, custCode, custName, userName, submitHistPop, setSubmitHistPop}) => {
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
-    const isMounted = useRef(true);
+    const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState([]);
+    const [list, setList] = useState<MapType>({
+        totalElements   : 0,
+        val         : [{}]
+    });
 
     //조회조건
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         biNo : biNo
     ,   custCode : custCode
     ,	size : 10
@@ -44,17 +57,10 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
         }
     },[srcData]);
 
-    const onChangeSrcData = (e) => {
-        setSrcData({
-            ...srcData,
-            [e.target.name]: e.target.value
-        });
-    }
-
     return (
         <Modal className="modalStyle" id="submitHistPop" show={submitHistPop} onHide={onClosePop} keyboard={true} size="lg">
             <Modal.Body>
-                <a href={()=>false} className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">제출 이력</h2>
                 <table className="tblSkin1 mt20">
                     <colgroup>
@@ -70,7 +76,7 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
                         </tr>
                     </thead>
                     <tbody>
-                    { list?.map((val) =>
+                    { list?.map((val:MapType) =>
                         <tr>
                             <td>{val.biOrder}</td>
                             <td className="text-left">{custName}</td>
@@ -81,15 +87,15 @@ const BidSubmitHistoryPop = ({biNo, custCode, custName, userName, submitHistPop,
                     )}
                     </tbody>
                 </table>
-                {/* pagination */}
-                <div className="row mt30">
+                {/* pagination  */}
+                <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={list} />
+                        <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ list } />
                     </div>
                 </div>
-                {/* //pagination */}
+                {/* pagination  */}
                 <div className="modalFooter">
-                    <a href={()=>false} className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
+                    <a className="modalBtnClose" data-dismiss="modal" onClick={onClosePop} title="닫기">닫기</a>
                 </div>
             </Modal.Body>
         </Modal>

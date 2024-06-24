@@ -2,8 +2,16 @@ import React from 'react'
 import Ft from '../api/filters';
 import Api from '../api/api';
 import Modal from 'react-bootstrap/Modal';
+import { MapType } from 'components/types';
 
-const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
+interface props {
+    title : string;
+    data : MapType;
+    reportPop : boolean;
+    setReportPop : any;
+}
+
+const BidResultReport:React.FC<props> = ({ title, data, reportPop, setReportPop}) => {
 
     const onClosePop = () => {
         setReportPop(false);
@@ -13,7 +21,7 @@ const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
         // 입찰결과 보고서
         <Modal className="modalStyle printDiv" id="resultsReport" show={reportPop} onHide={onClosePop} keyboard={true} size="lg">
             <Modal.Body>
-                <a href={()=>false} className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                <a className="ModalClose" onClick={onClosePop} data-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
                 <h2 className="modalTitle">{ title }</h2>
                 <h4 className="h4Tit mt20">입찰정보</h4>
                 <div className="modalBoxSt mt10">
@@ -93,7 +101,7 @@ const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
                         </tr>
                     </thead>
                     <tbody>
-                        { data.custList?.map((cust, idx) => 
+                        { data.custList?.map((cust:MapType, idx:string) => 
                             <tr key={idx}>
                                 <td>{ idx+1 }</td>
                                 <td className="text-left">{ cust.custName }</td>
@@ -107,8 +115,8 @@ const BidResultReport = ({ title, data, reportPop, setReportPop}) => {
                 </table>
 
                 <div className="modalFooter">
-                    <a href={()=>false} className="modalBtnClose" onClick={onClosePop} data-dismiss="modal" title="닫기">닫기</a>
-                    <a href={()=>false} onClick={()=>Api.fnPrint()} className="modalBtnCheck" title="인쇄하기">인쇄하기</a>
+                    <a className="modalBtnClose" onClick={onClosePop} data-dismiss="modal" title="닫기">닫기</a>
+                    <a onClick={()=>Api.fnPrint()} className="modalBtnCheck" title="인쇄하기">인쇄하기</a>
                 </div>
             </Modal.Body>
         </Modal>

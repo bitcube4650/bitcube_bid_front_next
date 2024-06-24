@@ -1,7 +1,14 @@
 import React from 'react'
 import Ft from '../api/filters';
+import { MapType } from 'components/types'
 
-const BidHistoryList = ({data, lotteMat, onSetPopData}) => {
+interface props {
+    data: MapType;
+    lotteMat: boolean;
+    onSetPopData: any;
+}
+
+const BidHistoryList:React.FC<props> = ({data, lotteMat, onSetPopData}) => {
     return (
         <tr>
             <td>{ data.biNo }</td>
@@ -20,7 +27,7 @@ const BidHistoryList = ({data, lotteMat, onSetPopData}) => {
             <td className="text-right">{ Ft.numberWithCommas(data.succAmt) }</td>
             <td className="text-left">{ data.custName }</td>
             <td>
-                <a href={()=>false} onClick={()=>onSetPopData(data.biNo)} className="textUnderline" title="투찰 정보 페이지가 열림" >{ data.joinCustCnt }</a>
+                <a onClick={()=>onSetPopData(data.biNo)} className="textUnderline" title="투찰 정보 페이지가 열림" >{ data.joinCustCnt }</a>
             </td>
             <td>{ data.estStartDate }</td>
             <td>{ data.estCloseDate }</td>
