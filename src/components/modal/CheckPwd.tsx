@@ -5,9 +5,18 @@ import axios from 'axios';
 import ModPwdPop from './ModPwdPop'
 import PersonalInfoInterPop from './PersonalInfoInterPop'
 import PersonalInfoCustPop from './PersonalInfoCustPop'
+import { MapType } from '../../components/types';
+import SrcInput from '../../components/input/SrcInput';
 
-const CheckPwdPop = ({checkPwdPop, setCheckPwdPop, modPop}) => {
-    const [pwd, setPwd] = useState("");
+interface CheckPwdPopProps {
+    checkPwdPop : boolean;
+    setCheckPwdPop : React.Dispatch<React.SetStateAction<boolean>>;
+    modPop : string;
+}
+
+const CheckPwdPop: React.FC<CheckPwdPopProps> = ({checkPwdPop, setCheckPwdPop, modPop}) => {
+    const pwParamInit = {password : ""};
+    const [srcData, setSrcData] = useState<MapType>(pwParamInit);
     const [modPwd, setModPwd] = useState(false);
     const [infoInter, setInfoInter] = useState(false);
     const [infoCust, setInfoCust] = useState(false);
@@ -16,21 +25,18 @@ const CheckPwdPop = ({checkPwdPop, setCheckPwdPop, modPop}) => {
 
     useEffect(() => {
         if(checkPwdPop) {
-            setPwd("");
+            setSrcData(pwParamInit);
         }
     }, [checkPwdPop]);
 
-    const handleInputChange = (e) => {
-        setPwd(e.target.value);
-    }
-
     // 팝업 닫기
     const fnCloseCheckPwdPop = useCallback(() => {
+        setSrcData(pwParamInit);
         setCheckPwdPop(false);
-    })
+    }, [])
 
     const checkPwd = () => {
-        axios.post("/api/v1/main/checkPwd", {password : pwd}).then((response) => {
+        axios.post("/api/v1/main/checkPwd", {password : srcData.password}).then((response) => {
             const result = response.data;
             if(result) {
                 if("info" === modPop) {
@@ -54,13 +60,6 @@ const CheckPwdPop = ({checkPwdPop, setCheckPwdPop, modPop}) => {
         });
     }
 
-    const handleKeyDown = (e) => {
-        if(e.key === "Enter") {
-            e.preventDefault();
-            checkPwd();
-        }
-    }
-
     return (
         <Modal className="modalStyle" show={checkPwdPop} onHide={fnCloseCheckPwdPop} keyboard={true}>
             <Modal.Body>
@@ -69,7 +68,7 @@ const CheckPwdPop = ({checkPwdPop, setCheckPwdPop, modPop}) => {
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width100px">비밀번호</div>
                         <div className="width100">
-                            <input name="pwd" type="password" onKeyDown={handleKeyDown} onChange={handleInputChange} value={pwd} className="inputStyle" placeholder="" />
+                            <SrcInput name="password" type="password" srcData={ srcData } setSrcData={ setSrcData } onSearch={ checkPwd } />
                         </div>
                     </div>
                     <p className="text-center mt20"><i className="fa-light fa-circle-info"></i> 안전을 위해서 비밀번호를 입력해 주십시오</p>

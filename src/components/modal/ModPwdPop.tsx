@@ -2,35 +2,27 @@ import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { MapType } from '../../components/types';
+import SrcInput from '../../components/input/SrcInput';
 
+interface ModPwdPopProps {
+    modPwd: boolean;
+    setModPwd : React.Dispatch<React.SetStateAction<boolean>>;
+    fnCloseCheckPwdPop: () => void;
+}
 
-const ModPwdPop = ({modPwd, setModPwd, fnCloseCheckPwdPop}) => {
+const ModPwdPop: React.FC<ModPwdPopProps> = ({modPwd, setModPwd, fnCloseCheckPwdPop}) => {
     const initPwd = {
         savePwd: '',
         checkSavePwd: ''
     };
-    const [pwd, setPwd] = useState(initPwd); 
+    const [srcData, setSrcData] = useState<MapType>(initPwd); 
 
     useEffect(() => {
         if(modPwd) {
-            setPwd(initPwd);
+            setSrcData(initPwd);
         }
     }, [modPwd]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setPwd((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
-    }
-
-    const handleKeyDown = (e) => {
-        if(e.key === "Enter") {
-            e.preventDefault();
-            fnSavePwd();
-        }
-    }
 
     const fnCloseModPwdPop = () => {
         setModPwd(false);
@@ -39,7 +31,7 @@ const ModPwdPop = ({modPwd, setModPwd, fnCloseCheckPwdPop}) => {
 
     const fnSavePwd = () => {
         if(checkValid()){
-            axios.post("/api/v1/main/changePwd", {password : pwd.savePwd}).then((response) => {
+            axios.post("/api/v1/main/changePwd", {password : srcData.savePwd}).then((response) => {
                 const result = response.data;
                 if(result) {
                     Swal.fire('', '비밀번호를 저장하였습니다.', 'info');
@@ -52,8 +44,8 @@ const ModPwdPop = ({modPwd, setModPwd, fnCloseCheckPwdPop}) => {
     }
 
     const checkValid = () => {
-        const password = pwd.savePwd;
-        const checkSavePwd = pwd.checkSavePwd;
+        const password = srcData.savePwd;
+        const checkSavePwd = srcData.checkSavePwd;
         const hasUpperCase = /[A-Z]/.test(password);//대문자
         const hasLowerCase = /[a-z]/.test(password);//소문자
         const hasDigit = /\d/.test(password);//숫자
@@ -84,13 +76,13 @@ const ModPwdPop = ({modPwd, setModPwd, fnCloseCheckPwdPop}) => {
                 <div className="flex align-items-center">
                     <div className="formTit flex-shrink0 width120px">비밀번호</div>
                     <div className="width100">
-                    <input name="savePwd" type="password" onKeyDown={handleKeyDown} onChange={handleInputChange} value={pwd.savePwd} className="inputStyle" placeholder="대/소문자, 숫자, 특수문자중에서 2가지 이상 조합(길이 8~16자리)" />
+                        <SrcInput name="savePwd" type="password" srcData={ srcData } setSrcData={ setSrcData } onSearch={ fnSavePwd } />
                     </div>
                 </div>
                 <div className="flex align-items-center mt10">
                     <div className="formTit flex-shrink0 width120px">비밀번호 확인</div>
                     <div className="width100">
-                        <input name="checkSavePwd" type="password" onKeyDown={handleKeyDown} onChange={handleInputChange} value={pwd.checkSavePwd} className="inputStyle" placeholder="비밀번호와 동일해야 합니다." />
+                        <SrcInput name="checkSavePwd" type="password" srcData={ srcData } setSrcData={ setSrcData } onSearch={ fnSavePwd } />
                     </div>
                 </div>
                 <div className="modalFooter">

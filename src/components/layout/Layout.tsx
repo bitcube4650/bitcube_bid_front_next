@@ -5,7 +5,6 @@ import Menu from './Menu'
 import Header from './Header'
 import Footer from './Footer'
 import Main from '../../modules/main/views/Main';
-import Login from '../../modules/login/views/Login';
 import PartnerMain from '../../modules/main/views/PartnerMain';
 
 const Layout = () => {

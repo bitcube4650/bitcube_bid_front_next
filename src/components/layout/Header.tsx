@@ -15,9 +15,7 @@ const Header = () => {
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
 
-    const changeStatus = (flag) => {
-        // this.$store.commit('updatePwdOrInfo', word);
-        // $('#mody1').modal('show');
+    const changeStatus = (flag:string) => {
        setModPop(flag);
        setCheckPwdPop(true);
     }

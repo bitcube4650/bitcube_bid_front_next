@@ -3,13 +3,29 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import * as CommonUtils from '../CommonUtils'
+import { MapType } from '../../components/types';
+import SrcInput from '../../components/input/SrcInput';
 
-const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
+interface PersonalInfoCustPopProps {
+    infoCust: boolean;
+    setInfoCust : React.Dispatch<React.SetStateAction<boolean>>;
+    fnCloseCheckPwdPop: () => void;
+}
+
+const PersonalInfoCustPop: React.FC<PersonalInfoCustPopProps> = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
+    const initData = {
+        pwdChgDate     : "",
+        userHp          : "",
+        userTel         : "",
+        userEmail       : "",
+        userPosition    : "",
+        userBuseo       : ""
+    };
+
+    const [srcData, setSrcData] = useState<MapType>(initData);
+    const [confirmPop, setConfirmPop] = useState(false);
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
-
-    const [userInfo, setUserInfo] = useState({});
-    const [confirmPop, setConfirmPop] = useState(false);
 
     useEffect(() => {
         if(infoCust) {
@@ -17,25 +33,12 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
         }
     }, [infoCust]);
 
-    useEffect(() => {
-        setUserInfo((prevDetail) => ({
-            ...prevDetail,
-            userHp: CommonUtils.onAddDashTel(prevDetail.userHp),
-        }));
-    }, [userInfo.userHp]);
-
-    useEffect(() => {
-        setUserInfo((prevDetail) => ({
-            ...prevDetail,
-            userTel: CommonUtils.onAddDashTel(prevDetail.userTel),
-        }));
-    }, [userInfo.userTel]);
-
     const fnInit = () => {
+        setSrcData(initData);
         axios.post("/api/v1/main/selectUserInfo", {}).then((response) => {
             const result = response.data;
             if(result.code === "OK") {
-                setUserInfo(result.data);
+                setSrcData(result.data);
             } else {
                 Swal.fire('', result.msg, 'warning');
             }
@@ -46,21 +49,6 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
         setInfoCust(false);
     }
 
-    const handleKeyDown = (e) => {
-        if(e.key === "Enter") {
-            e.preventDefault();
-            confirm();
-        }
-    }
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setUserInfo((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
-    }
-
     const confirm = () => {
         if(validChek()){
             setConfirmPop(true);
@@ -68,31 +56,31 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
     }
 
     const validChek = () => {
-        if(userInfo.userHp == null || userInfo.userHp == ''){
+        if(srcData.userHp == null || srcData.userHp == ''){
             Swal.fire('', '휴대폰 번호를 입력해주세요', 'warning');
             return false;
-        }else if(userInfo.userTel == null || userInfo.userTel == ''){
+        }else if(srcData.userTel == null || srcData.userTel == ''){
             Swal.fire('', '유선전화 번호를 입력해주세요', 'warning');
             return false;
-        }else if(userInfo.userEmail == null || userInfo.userEmail == ''){
+        }else if(srcData.userEmail == null || srcData.userEmail == ''){
             Swal.fire('', '이메일을 입력해주세요', 'warning');
             return false;
-        }else if(!validateEmail(userInfo.userEmail)){
+        }else if(!validateEmail(srcData.userEmail)){
             Swal.fire('', '이메일 형식에 맞게 입력해주세요', 'warning');
             return false;
         }
         return true;
     }
 
-    const validateEmail = (email) => {
+    const validateEmail = (email:string) => {
         // 이메일 주소를 검사하기 위한 정규 표현식
-        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            
+        const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;          
         // 정규 표현식을 사용하여 이메일 주소를 검사하고 결과를 반환
         return regex.test(email);
     }
 
     const saveInfo = () => {
+        var userInfo = srcData;
         axios.post("/api/v1/main/saveUserInfo", {userInfo}).then((response) => {
             const result = response.data;
             if(result.code === "OK") {
@@ -104,7 +92,6 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
                 Swal.fire('', result.msg, 'warning');
             }
         });
-
     }
 
     const fnCloseConfirm = () => {
@@ -115,8 +102,8 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
         <div>
             <Modal className="modalStyle" show={infoCust} onHide={fnCloseCustPop} keyboard={true}>
                 <Modal.Body>
-                    <a onClick={setInfoCust} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
-                    <h2 className="modalTitle">개인정보</h2>
+                    <a onClick={fnCloseCustPop} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
+                    <h2 className="modalTitle">개인정2보</h2>
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width120px">로그인ID</div>
                         <div className="width100">{ loginInfo.userId }</div>
@@ -128,39 +115,44 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">비밀번호</div>
                         <div className="flex align-items-center width100">
-                            <div className="width100">최종변경일 : { userInfo.pwdEditDate }</div>
+                            <div className="width100">최종변경일 : { srcData.pwdChgDate }</div>
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">휴대폰 <span className="star">*</span></div>
-                        <div className="width100"><input type="text" onKeyDown={handleKeyDown} onChange={handleInputChange} name="userHp" id="" className="inputStyle" placeholder="" value={userInfo.userHp} /></div>
-                        
-                        {/* <div className="width100"><input type="text" name="" id="" className="inputStyle" placeholder="" value={userInfo.userHp} @input="formatPhoneNumber"></div> */}
+                        <div className="width100">
+                            <SrcInput name="userHp" srcData={ srcData } setSrcData={ setSrcData } onSearch={ confirm } value={ CommonUtils.onAddDashTel(srcData.userHp) || ''} />
+                        </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">유선전화 <span className="star">*</span></div>
-                        <div className="width100"><input type="text" onKeyDown={handleKeyDown} onChange={handleInputChange} name="userTel" id="" className="inputStyle" placeholder="" value={userInfo.userTel} /></div>
-                        
-                        {/* <div className="width100"><input type="text" name="" id="" className="inputStyle" placeholder="" value={userInfo.userTel} @input="formatLandlineNumber"></div> */}
+                        <div className="width100">
+                            <SrcInput name="userTel" srcData={ srcData } setSrcData={ setSrcData } onSearch={ confirm } value={ CommonUtils.onAddDashTel(srcData.userTel) || ''} />
+                        </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">이메일 <span className="star">*</span></div>
-                        <div className="width100"><input type="text" onKeyDown={handleKeyDown} onChange={handleInputChange} name="userEmail" id="" className="inputStyle" placeholder="" value={userInfo.userEmail} /></div>
+                        <div className="width100">
+                            <SrcInput name="userEmail" srcData={ srcData } setSrcData={ setSrcData } onSearch={ confirm } value={srcData.userEmail} />
+                        </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">직급</div>
-                        <div className="width100"><input type="text" onKeyDown={handleKeyDown} onChange={handleInputChange} name="userPosition" id="" className="inputStyle" placeholder="" value={userInfo.userPosition} /></div>
+                        <div className="width100">
+                            <SrcInput name="userPosition" srcData={ srcData } setSrcData={ setSrcData } onSearch={ confirm } value={srcData.userPosition} />
+                        </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width120px">부서</div>
-                        <div className="width100"><input type="text" onKeyDown={handleKeyDown} onChange={handleInputChange} name="userBuseo" id="" className="inputStyle" placeholder="" value={userInfo.userBuseo} /></div>
+                        <div className="width100">
+                            <SrcInput name="userBuseo" srcData={ srcData } setSrcData={ setSrcData } onSearch={ confirm } value={srcData.userBuseo}/>
+                        </div>
                     </div>
 
                     <div className="modalFooter">
                         <a onClick={fnCloseCustPop} className="modalBtnClose" title="닫기">닫기</a>
                         <a onClick={confirm} className="modalBtnCheck" title="저장">저장</a>
                     </div>
-
                 </Modal.Body>
             </Modal>
 
@@ -172,7 +164,6 @@ const PersonalInfoCustPop = ({infoCust, setInfoCust, fnCloseCheckPwdPop}) => {
                         <a onClick={fnCloseConfirm} className="modalBtnClose" data-dismiss="modal" title="취소">취소</a>
                         <a onClick={saveInfo} className="modalBtnCheck" data-toggle="modal" title="저장">저장</a>
                     </div>
-                    
                 </Modal.Body>
             </Modal>
         </div>

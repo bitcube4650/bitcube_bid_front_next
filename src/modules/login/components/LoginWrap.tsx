@@ -45,7 +45,7 @@ function LoginWrap(props: {logoUrl: string}) {
     const onLogin = async () => {
         const id = loginInfo.loginId.trim();
         if(id === "") {
-            Swal.fire('', '아아디를 입력해 주십시오', 'error');
+            Swal.fire('', '아이디를 입력해 주십시오', 'error');
             return;
         }
 
@@ -95,7 +95,7 @@ function LoginWrap(props: {logoUrl: string}) {
         setPwSearchPop(true);
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === "Enter") {
             e.preventDefault();
             onLogin();
@@ -103,10 +103,9 @@ function LoginWrap(props: {logoUrl: string}) {
     }
     
     return (
-        <div className="loginWrap" onKeyDown={handleKeyDown}>
+        <div className="loginWrap">
             <div className="loginLeft">
                 <h1><img src={props.logoUrl} className="img-responsive" alt="일진그룹 로고" /></h1>
-
                 <input
                     type="text"
                     value={loginInfo.loginId}
@@ -116,6 +115,7 @@ function LoginWrap(props: {logoUrl: string}) {
                     placeholder="아이디"
                     autoFocus
                     className="loginInputStyle"
+                    onKeyDown={handleKeyDown}
                 />
                 <input
                     type="password"
@@ -125,6 +125,7 @@ function LoginWrap(props: {logoUrl: string}) {
                     name="password"
                     className="loginInputStyle mt10"
                     placeholder="비밀번호"
+                    onKeyDown={handleKeyDown}
                 />
                 <div className="loginFindWrap">
                     <input type="checkbox" id="chkID" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="loginCheckStyle"/>

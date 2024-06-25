@@ -30,7 +30,7 @@ const SrcInput = (props: SrcInputProps) => {
             name={ props.name } maxLength={ props.maxLength }
             readOnly={ props.readOnly } disabled={ props.disabled }
             onChange={ onFormEventSrcData }
-            onKeyDown={ (e) => { if(e.key === 'Enter' && props.onSearch) props.onSearch()} }
+            onKeyDown={ (e) => { if(e.key === 'Enter' && props.onSearch) props.onSearch(e)} }
             style={props.style}
         />
     )

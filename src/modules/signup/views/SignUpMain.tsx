@@ -7,9 +7,15 @@ import axios from 'axios';
 import ItemPop from '../components/ItemPop';
 import AddrPop from '../../../components/AddrPop';
 import * as CommonUtils from '../../../components/CommonUtils'
+import { MapType } from '../../../components/types';
+import SrcInput from '../../../components/input/SrcInput';
+import SrcSelectBox from '../../../components/input/SrcSelectBox';
+import EditInputFileBox from '../../../components/input/EditInputFileBox';
 
 const SignUpMain = () => {
-    const initDetail = {
+    const srcInit = {
+        regnumFileName : "",
+        bFileName : "",
         interrelatedCustCode: '',
         custTypeNm1: '',
         custType1: '',
@@ -37,23 +43,17 @@ const SignUpMain = () => {
         userPwdConfirm: '',
         userHp: '',
         userTel: ''
-    };
+    }
 
+    const [srcData, setSrcData] = useState<MapType>(srcInit);
     const [interrelatedList, setInterrelatedList] = useState([]); 
     const [type, setType] = useState("type1");
     const [itemPop, setItemPop] = useState(false);
     const [addrPop, setAddrPop] = useState(false);
-    const [detail, setDetail] = useState(initDetail); 
     const [showConfirm, setShowConfirm] = useState(false);
     const [successConfirm, setSuccessConfirm] = useState(false);
-
-    const [regnumFile, setRegnumFile] = useState(null);
-    const [regnumFileName, setRegnumFileName] = useState('');
-    const regnumFileInputRef = useRef(null);
-
-    const [bFile, setBFile] = useState(null);
-    const [bFileName, setBFileName] = useState('');
-    const bFileInputRef = useRef(null);
+    const [regnumFile, setRegnumFile] = useState<File|null>();
+    const [bFile, setBFile] = useState<File|null>();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -64,10 +64,11 @@ const SignUpMain = () => {
             Swal.fire('', '올바르지 못한 접근입니다.', 'warning');
             navigate('/');
         }
+        init();
     }, []);
 
     const init = async () => {
-        setDetail(initDetail);
+        setSrcData(srcInit);
         const params = {};
         axios.post("/login/interrelatedList", params).then((response) => {
             const result = response.data;
@@ -79,15 +80,15 @@ const SignUpMain = () => {
         });
     };
 
-    const itemSelectCallback = (data) => {
+    const itemSelectCallback = (data:MapType) => {
         if("type1" === type) {
-            setDetail((prevDetail) => ({
+            setSrcData((prevDetail) => ({
                 ...prevDetail,
                 custType1: data.itemCode,
                 custTypeNm1 : data.itemName
             }));
         } else if("type2" === type) {
-            setDetail((prevDetail) => ({
+            setSrcData((prevDetail) => ({
                 ...prevDetail,
                 custType2: data.itemCode,
                 custTypeNm2 : data.itemName
@@ -95,23 +96,15 @@ const SignUpMain = () => {
         }
     }
 
-    const addrPopCallback = (data) => {
-        setDetail((prevDetail) => ({
+    const addrPopCallback = (data:MapType) => {
+        setSrcData((prevDetail) => ({
             ...prevDetail,
             zipcode: data.zipcode,
             addr : data.addr
         }));
     }
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setDetail((prevState) => ({
-          ...prevState,
-          [name]: value
-        }));
-    };
-
-    const openItemPop = (type) => {
+    const openItemPop = (type:string) => {
         setType(type);
         setItemPop(true);
     }
@@ -120,56 +113,24 @@ const SignUpMain = () => {
         setAddrPop(true);
     }
 
-    const changeRegnumFile = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setRegnumFile(file);
-            setRegnumFileName(file.name);
-        }
-    };
-
-    const changeBFile = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setBFile(file);
-            setBFileName(file.name);
-        }
-    };
-
-    const fnRemoveAttachFile = (fileNm) => {
-        if("reg" === fileNm) {
-            setRegnumFile(null);
-            setRegnumFileName('');
-            if (regnumFileInputRef.current) {
-                regnumFileInputRef.current.value = '';
-            }
-        } else if("bfile" === fileNm) {
-            setBFile(null);
-            setBFileName('');
-            if (bFileInputRef.current) {
-                bFileInputRef.current.value = '';
-            }
-        }   
-    };
-
-    const idcheck = (e) => {
+    const fnIdcheck = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        if (detail.userId == null || detail.userId == '') {
+        if (srcData.userId == null || srcData.userId == '') {
             Swal.fire('', '아이디를 입력해주세요.', 'warning');
             return;
         }
-        axios.post("/login/idcheck", detail).then((response) => {
+        axios.post("/login/idcheck", srcData).then((response) => {
             const result = response.data;
             if(result.code == 'OK') {
 
                 Swal.fire('', '입력한 아이디를 사용할 수 있습니다.', 'info');
-                setDetail((prevDetail) => ({
+                setSrcData((prevDetail) => ({
                     ...prevDetail,
                     idcheck: true
                 }));
             } else {
                 Swal.fire('', '입력한 아이디를 사용할 수 없습니다.', 'warning');
-                setDetail((prevDetail) => ({
+                setSrcData((prevDetail) => ({
                     ...prevDetail,
                     idcheck: false
                 }));
@@ -177,31 +138,31 @@ const SignUpMain = () => {
         });
     };
 
-    const validate = (e) => {
+    const validate = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        if (!detail.custType1) {
+        if (!srcData.custType1) {
             Swal.fire('', '업체유형1을 선택해주세요.', 'warning');
             return;
         }
-        if (!detail.custName) {
+        if (!srcData.custName) {
             Swal.fire('', '회사명을 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.presName) {
+        if (!srcData.presName) {
             Swal.fire('', '대표자명을 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.regnum1 || !detail.regnum2 || !detail.regnum3) {
+        if (!srcData.regnum1 || !srcData.regnum2 || !srcData.regnum3) {
             Swal.fire('', '사업자등록번호를 입력해주세요.', 'warning');
             return;
         }
-        if (detail.regnum1.length !== 3 || detail.regnum2.length !== 2 || detail.regnum3.length !== 5) {
+        if (srcData.regnum1.length !== 3 || srcData.regnum2.length !== 2 || srcData.regnum3.length !== 5) {
             Swal.fire('', '사업자등록번호를 정확히 입력해주세요.', 'warning');
             return;
         }
       
-        const presJuminNo1 = detail.presJuminNo1 || '';
-        const presJuminNo2 = detail.presJuminNo2 || '';
+        const presJuminNo1 = srcData.presJuminNo1 || '';
+        const presJuminNo2 = srcData.presJuminNo2 || '';
         if (presJuminNo1 || presJuminNo2) {
             if (presJuminNo1.length !== 6 || presJuminNo2.length !== 7) {
                 Swal.fire('', '법인번호를 입력해주세요.', 'warning');
@@ -209,23 +170,23 @@ const SignUpMain = () => {
             }
         } 
       
-        if (!detail.capital || detail.capital === 0) {
+        if (!srcData.capital || srcData.capital === 0) {
             Swal.fire('', '자본금을 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.foundYear) {
+        if (!srcData.foundYear) {
             Swal.fire('', '설립년도를 입력해주세요.', 'warning');
             return;
         }
-        if (detail.foundYear.length !== 4) {
+        if (srcData.foundYear.length !== 4) {
             Swal.fire('', '설립년도를 정확히 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.tel) {
+        if (!srcData.tel) {
             Swal.fire('', '대표전화를 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.addrDetail) {
+        if (!srcData.addrDetail) {
             Swal.fire('', '회사주소를 입력해주세요.', 'warning');
             return;
         }
@@ -233,62 +194,62 @@ const SignUpMain = () => {
             Swal.fire('', '사업자등록증을 선택해주세요.', 'warning');
             return;
         }
-        if (!detail.userName) {
+        if (!srcData.userName) {
             Swal.fire('', '이름을 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.userEmail) {
+        if (!srcData.userEmail) {
             Swal.fire('', '이메일을 입력해주세요.', 'warning');
             return;
         } else {
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(detail.userEmail)) {
+            if (!emailRegex.test(srcData.userEmail)) {
                 Swal.fire('', '입력한 이메일 형식이 올바르지 않습니다.', 'warning');
                 return;
             }
         }
       
-        if (!detail.userId) {
+        if (!srcData.userId) {
             Swal.fire('', '아이디를 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.idcheck) {
+        if (!srcData.idcheck) {
             Swal.fire('', '아이디 중복확인을 확인해주세요.', 'warning');
             return;
         }
-        if (!detail.userPwd) {
+        if (!srcData.userPwd) {
             Swal.fire('', '비밀번호를 입력해주세요.', 'warning');
             return;
         }
-        if (!detail.userPwdConfirm) {
+        if (!srcData.userPwdConfirm) {
             Swal.fire('', '비밀번호 확인을 입력해주세요.', 'warning');
             return;
         }
-        if (detail.userPwd !== detail.userPwdConfirm) {
+        if (srcData.userPwd !== srcData.userPwdConfirm) {
             Swal.fire('', '비밀번호를 정확히 입력해주세요.', 'warning');
             return;
         }
           // 비밀번호 유효성 검사를 위한 함수 호출 (예시)
-        if (!fnPwdvaildation(detail.userPwd)) {
+        if (!fnPwdvaildation(srcData.userPwd)) {
             return;
         }
-      
-        if (!detail.userHp) {
+
+        if (!srcData.userHp) {
             Swal.fire('', '휴대폰번호를 입력해주세요.', 'warning');
             return;
         } else {
             const phoneNumberRegex = /^\d{3}-\d{3,4}-\d{4}$/;
-            if (!phoneNumberRegex.test(detail.userHp)) {
+            if (!phoneNumberRegex.test(CommonUtils.onAddDashTel(srcData.userHp))) {
                 Swal.fire('', '휴대폰번호 형식에 맞게 입력해주세요.', 'warning');
                 return;
             }
         }
-        if (!detail.userTel) {
+        if (!srcData.userTel) {
             Swal.fire('', '유선전화를 입력해주세요.', 'warning');
             return;
         } else {
             const telNumberRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
-            if (!telNumberRegex.test(detail.userTel)) {
+            if (!telNumberRegex.test(CommonUtils.onAddDashTel(srcData.userTel))) {
                 Swal.fire('', '유선전화 형식에 맞게 입력해주세요.', 'warning');
                 return;
             }
@@ -296,23 +257,23 @@ const SignUpMain = () => {
         setShowConfirm(true);
     };
 
-    const fnPwdvaildation = (userPwd) => {
+    const fnPwdvaildation = (userPwd:string) => {
         const password = userPwd;
-			const hasUpperCase = /[A-Z]/.test(password);//대문자
-			const hasLowerCase = /[a-z]/.test(password);//소문자
-			const hasDigit = /\d/.test(password);//숫자
-			const hasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>]/.test(password);//특수문자
+        const hasUpperCase = /[A-Z]/.test(password);//대문자
+        const hasLowerCase = /[a-z]/.test(password);//소문자
+        const hasDigit = /\d/.test(password);//숫자
+        const hasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>]/.test(password);//특수문자
 
-			var isValidPassword = (hasUpperCase && hasLowerCase && hasDigit) || (hasUpperCase && hasLowerCase && hasSpecialChar) || (hasDigit && hasSpecialChar);
-			var isValidLength = password.length >= 8 && password.length <= 16;
+        var isValidPassword = (hasUpperCase && hasLowerCase && hasDigit) || (hasUpperCase && hasLowerCase && hasSpecialChar) || (hasDigit && hasSpecialChar);
+        var isValidLength = password.length >= 8 && password.length <= 16;
 
-			if (!isValidPassword) {
-                Swal.fire('', '비밀번호는 대/소문자, 숫자, 특수문자중에서 2가지 이상 조합되어야 합니다.', 'warning');
-				return;
-			} else if (!isValidLength) {
-                Swal.fire('', '비밀번호는 8자 이상 16자 이하로 작성해주세요.', 'warning');
-				return;
-			}
+        if (!isValidPassword) {
+            Swal.fire('', '비밀번호는 대/소문자, 숫자, 특수문자중에서 2가지 이상 조합되어야 합니다.', 'warning');
+            return;
+        } else if (!isValidLength) {
+            Swal.fire('', '비밀번호는 8자 이상 16자 이하로 작성해주세요.', 'warning');
+            return;
+        }
 		return true;
     };
 
@@ -320,9 +281,13 @@ const SignUpMain = () => {
         
         var formData = new FormData();
 
-        formData.append('regnumFile', regnumFile);
-        formData.append('bFile', bFile);
-        formData.append('data', new Blob([JSON.stringify(detail)], { type: 'application/json' }));
+        if(regnumFile) {
+            formData.append('regnumFile', regnumFile);
+        }
+        if(bFile) {
+            formData.append('bFile', bFile);
+        }
+        formData.append('data', new Blob([JSON.stringify(srcData)], { type: 'application/json' }));
 
         axios.post("/login/custSave", formData).then((response) => {
             const result = response.data;
@@ -338,113 +303,6 @@ const SignUpMain = () => {
         });
     }
 
-    useEffect(() => {
-        init();
-    }, []);
-
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            idcheck: false,
-            userId: prevDetail.userId.replace(/[^a-zA-Z0-9]/g, ''),
-        }));
-    }, [detail.userId]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            tel: CommonUtils.onAddDashTel(prevDetail.tel),
-        }));
-    }, [detail.tel]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            fax: CommonUtils.onAddDashTel(prevDetail.fax),
-        }));
-    }, [detail.fax]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            userTel: CommonUtils.onAddDashTel(prevDetail.userTel),
-        }));
-    }, [detail.userTel]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            userHp: CommonUtils.onAddDashTel(prevDetail.userHp),
-        }));
-    }, [detail.userHp]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            capital: CommonUtils.onComma(prevDetail.capital),
-        }));
-    }, [detail.capital]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            regnum1: prevDetail.regnum1.replace(/[^0-9]/g, '').trim(),
-        }));
-    }, [detail.regnum1]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            regnum2: prevDetail.regnum2.replace(/[^0-9]/g, '').trim(),
-        }));
-    }, [detail.regnum2]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            regnum3: prevDetail.regnum3.replace(/[^0-9]/g, '').trim(),
-        }));
-    }, [detail.regnum3]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            presJuminNo1: prevDetail.presJuminNo1.replace(/[^0-9]/g, '').trim(),
-        }));
-    }, [detail.presJuminNo1]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            presJuminNo2: prevDetail.presJuminNo2.replace(/[^0-9]/g, '').trim(),
-        }));
-    }, [detail.presJuminNo2]);
-    
-    useEffect(() => {
-        setDetail((prevDetail) => ({
-            ...prevDetail,
-            foundYear: prevDetail.foundYear.replace(/[^0-9]/g, ''),
-        }));
-    }, [detail.foundYear]);
-    
-    useEffect(() => {
-        if (detail.userPwd) {
-            setDetail((prevDetail) => ({
-                ...prevDetail,
-                userPwd: prevDetail.userPwd.trim(),
-            }));
-        }
-    }, [detail.userPwd]);
-    
-    useEffect(() => {
-        if (detail.userPwdConfirm) {
-            setDetail((prevDetail) => ({
-                ...prevDetail,
-                userPwdConfirm: prevDetail.userPwdConfirm.trim(),
-            }));
-        }
-    }, [detail.userPwdConfirm]);
-    
     return (
         <div>
             <div className="joinWrap">
@@ -468,115 +326,100 @@ const SignUpMain = () => {
                         <div className="flex align-items-center">
                             <div className="formTit flex-shrink0 width170px">가입희망 계열사 <span className="star">*</span></div>
                             <div className="width100">
-                                <select name="interrelatedCustCode" value={detail.interrelatedCustCode} onChange={handleInputChange} className="selectStyle">
-                                    <option value="">계열사를 선택해 주세요</option>
-                                    {interrelatedList.map((val, idx) => (
-                                    <option key={idx} value={val.interrelatedCustCode}>
-                                        {val.interrelatedNm}
-                                    </option>
-                                    ))}
-                                </select>
+                                <SrcSelectBox name='interrelatedCustCode' optionList={interrelatedList} valueKey='interrelatedCustCode' nameKey='interrelatedNm' onSearch={ validate } srcData={ srcData } setSrcData={ setSrcData }/>
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">업체유형 1 <span className="star">*</span></div>
                             <div className="flex align-items-center width100">
-                                <input type="text" name="custTypeNm1" value={detail.custTypeNm1} onChange={handleInputChange} className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
+                                <SrcInput name="custTypeNm1" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  value={srcData.custTypeNm1} className="readonly" placeholder='우측 검색 보튼을 클릭해 주세요.' readOnly />
                                 <a onClick={() => openItemPop('type1')} className="btnStyle btnSecondary ml10" title="조회">조회</a>
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">업체유형 2 <span className="star">*</span></div>
                             <div className="flex align-items-center width100">
-                                <input type="text" name="custTypeNm2" value={detail.custTypeNm2} onChange={handleInputChange} className="inputStyle readonly" placeholder="우측 검색 버튼을 클릭해 주세요" readOnly />
+                                <SrcInput name="custTypeNm2" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  value={srcData.custTypeNm2} className="readonly" placeholder='우측 검색 보튼을 클릭해 주세요.' readOnly />
                                 <a onClick={() => openItemPop('type2')} className="btnStyle btnSecondary ml10" title="조회">조회</a>
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">회사명 <span className="star">*</span></div>
-                            <div className="width100"><input name="custName" type="text" value={detail.custName} onChange={handleInputChange} className="inputStyle" maxLength="100" /></div>
+                            <div className="width100">
+                                <SrcInput name="custName" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={100} />
+                            </div>
                         </div>
                        <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">대표자명 <span className="star">*</span></div>
-                            <div className="width100"><input name="presName" type="text" value={detail.presName} onChange={handleInputChange} className="inputStyle" maxLength="50" /></div>
+                            <div className="width100">
+                                <SrcInput name="presName" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={50} />
+                            </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">사업자등록번호 <span className="star">*</span></div>
                             <div className="flex align-items-center width100">
-                                <input name="regnum1" type="text" value={detail.regnum1} maxLength="3" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="regnum1" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={3} value={ CommonUtils.onNumber(srcData.regnum1) || ''} />
                                 <span style={{margin:"0 10px"}}>-</span>
-                                <input name="regnum2" type="text" value={detail.regnum2} maxLength="2" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="regnum2" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={2} value={ CommonUtils.onNumber(srcData.regnum2) || ''} />
                                 <span style={{margin:"0 10px"}}>-</span>
-                                <input name="regnum3" type="text" value={detail.regnum3} maxLength="5" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="regnum3" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={5} value={ CommonUtils.onNumber(srcData.regnum3) || ''} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">법인번호</div>
                             <div className="flex align-items-center width100">
-                                <input name="presJuminNo1" type="text" value={detail.presJuminNo1} maxLength="6" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="presJuminNo1" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={6} value={ CommonUtils.onNumber(srcData.presJuminNo1) || ''} />
                                 <span style={{margin:"0 10px"}}>-</span>
-                                <input name="presJuminNo2" type="text" value={detail.presJuminNo2} maxLength="7" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="presJuminNo2" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={7} value={ CommonUtils.onNumber(srcData.presJuminNo2) || ''} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">자본금 <span className="star">*</span></div>
                             <div className="flex align-items-center width100">
-                                <input name="capital" type="text" value={detail.capital} maxLength="15" onChange={handleInputChange} className="inputStyle" placeholder="ex) 10,000,000" />
+                                <SrcInput name="capital" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  placeholder='ex) 10,000,000' value={ CommonUtils.onComma(srcData.capital) || ''} />
                                 <div className="ml10">원</div>
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">설립년도 <span className="star">*</span></div>
                             <div className="flex align-items-center width100">
-                                <input name="foundYear" type="text" value={detail.foundYear} maxLength="4" onChange={handleInputChange} className="inputStyle" placeholder="ex) 2021" />
+                                <SrcInput name="foundYear" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate }  maxLength={4} placeholder='ex) 2021' value={ CommonUtils.onNumber(srcData.foundYear) || ''} />
                                 <div className="ml10">년</div>
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">대표전화 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="tel" type="text" value={detail.tel} maxLength="13" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="tel" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={13} value={ CommonUtils.onAddDashTel(srcData.tel) || ''} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">팩스</div>
                             <div className="width100">
-                                <input name="fax" type="text" value={detail.fax} maxLength="13" onChange={handleInputChange} className="inputStyle" />
+                                <SrcInput name="fax" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={13} value={ CommonUtils.onAddDashTel(srcData.fax) || ''} />
                             </div>
                         </div>
                         <div className="flex mt10">
                             <div className="formTit flex-shrink0 width170px">회사주소 <span className="star">*</span></div>
                             <div className="width100">
                                 <div className="flex align-items-center width100">
-                                    <input name="zipcode" type="text" value={detail.zipcode} className="inputStyle readonly" placeholder="주소 조회 클릭" readOnly />
+                                    <SrcInput name="zipcode" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } placeholder="주소 조회 클릭" value={srcData.zipcode} readOnly />
                                     <a onClick={openAddrPop} data-toggle="modal" data-target="#addrPop" className="btnStyle btnSecondary flex-shrink0 ml10" title="주소 조회">주소 조회</a>
                                 </div>
-                                <div className="mt5"><input name="addr" type="text" value={detail.addr} maxLength="100" onChange={handleInputChange} className="inputStyle readonly" readOnly /></div>
-                                <div className="mt5"><input name="addrDetail" type="text" value={detail.addrDetail} maxLength="100" onChange={handleInputChange} className="inputStyle" placeholder="상세 주소 입력" /></div>
+                                <div className="mt5">
+                                    <SrcInput name="addr" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } className="readonly" value={srcData.addr} readOnly />
+                                </div>
+                                <div className="mt5">
+                                    <SrcInput name="addrDetail" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={100} placeholder="상세 주소 입력" value={srcData.addrDetail} />
+                                </div>
                             </div>
                         </div>
                         <div className="flex mt10">
                             <div className="formTit flex-shrink0 width170px">사업자등록증 <span className="star">*</span></div>
                             <div className="width100">
-                                <div className="upload-boxWrap">
-                                    {!regnumFileName && (
-                                        <div className="upload-box">
-                                            <input type="file" ref={regnumFileInputRef} id="file-input" onChange={changeRegnumFile} />
-                                            <div className="uploadTxt">
-                                                <i className="fa-regular fa-upload"></i>
-                                                <div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
-                                            </div>
-                                        </div>
-                                    )}
-                                     {regnumFileName && (
-                                        <div className="uploadPreview">
-                                            <p>
-                                                { regnumFileName }
-                                                <button className='file-remove' onClick={() => fnRemoveAttachFile("reg")}>삭제</button>
-                                            </p>
-                                        </div> 
-                                    )} 
-                                </div>
+                                {/* 사업자등록증 업로드 */}
+                                <EditInputFileBox name='regnumFileName' fileName={ srcData.regnumFileName } setUploadFile={ setRegnumFile } editData={ srcData } setEditData={ setSrcData }/>
+                                {/* 사업자등록증 업로드 */}
                             </div>
                         </div>
                         <div className="flex mt10">
@@ -592,26 +435,9 @@ const SignUpMain = () => {
                                 </i>
                             </div>
                             <div className="width100">
-                                <div className="upload-boxWrap">
-                                    {!bFileName && (
-                                        <div className="upload-box">
-                                            <input type="file" ref={bFileInputRef} id="file-input" onChange={changeBFile} />
-                                            <div className="uploadTxt">
-                                                <i className="fa-regular fa-upload"></i>
-                                                <div>클릭 혹은 파일을 이곳에 드롭하세요.(암호화 해제)<br />파일 최대 10MB (등록 파일 개수 최대 1개)</div>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {bFileName && (
-                                        <div className="uploadPreview">
-                                            <p>
-                                                { bFileName }
-                                                <button className='file-remove' onClick={() => fnRemoveAttachFile("bfile")}>삭제</button>
-                                            </p>
-                                        </div> 
-                                    )}
-
-                                </div>
+                                {/* 회사소개 및 기타자료 업로드 */}
+                                <EditInputFileBox name='bFileName' fileName={ srcData.bFileName } setUploadFile={ setBFile } editData={ srcData } setEditData={ setSrcData }/>
+                                {/* 회사소개 및 기타자료 업로드 */}
                             </div>
                         </div>
                     </div>
@@ -621,61 +447,62 @@ const SignUpMain = () => {
                         <div className="flex align-items-center">
                             <div className="formTit flex-shrink0 width170px">이름 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="userName" type="text" value={detail.userName} className="inputStyle" onChange={handleInputChange} maxLength="50" />
+                                <SrcInput name="userName" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={50} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">이메일 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="userEmail" type="text" value={detail.userEmail} onChange={handleInputChange} maxLength="100" className="inputStyle" placeholder="ex) sample@iljin.co.kr" />
+                                <SrcInput name="userEmail" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={100} placeholder="ex) sample@iljin.co.kr" />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">아이디 <span className="star">*</span></div>
                             <div className="flex align-items-center width100">
-                                <input name="userId" type="text" value={detail.userId} onChange={handleInputChange} maxLength="10" className="inputStyle" placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" />
-                                <a href="#" onClick={idcheck} className="btnStyle btnSecondary flex-shrink0 ml10" title="중복 확인">중복 확인</a>
+                                <SrcInput name="userId" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={100} placeholder="영문, 숫자 입력(10자 이내) 후 중복확인" value={CommonUtils.onEngNumber(srcData.userId) || ''} />
+                                <a onClick={(e) => fnIdcheck(e)} className="btnStyle btnSecondary flex-shrink0 ml10" title="중복 확인">중복 확인</a>
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">비밀번호 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="userPwd" style={{WebkitTextSecurity:"disc"}} value={detail.userPwd} onChange={handleInputChange} maxLength="100" className="inputStyle" placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" />
+                                <SrcInput name="userPwd" type="password" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={100} placeholder="대/소문자, 숫자, 특수문자 2 이상 조합(길이 8~16자리)" />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">비밀번호 확인 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="userPwdConfirm" style={{WebkitTextSecurity:"disc"}} value={detail.userPwdConfirm} onChange={handleInputChange} maxLength="100" className="inputStyle" placeholder="비밀번호와 동일해야 합니다." />
+                            {/* style={{WebkitTextSecurity:"disc"}}  */}
+                                <SrcInput name="userPwdConfirm" type="password" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={100} placeholder="비밀번호와 동일해야 합니다" />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">휴대폰 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="userHp" type="text" value={detail.userHp} onChange={handleInputChange} maxLength="13" className="inputStyle" />
+                                <SrcInput name="userHp" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={13} value={ CommonUtils.onAddDashTel(srcData.userHp) || ''} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">유선전화 <span className="star">*</span></div>
                             <div className="width100">
-                                <input name="userTel" type="text" value={detail.userTel} onChange={handleInputChange}  maxLength="13" className="inputStyle" />
+                                <SrcInput name="userTel" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={13} value={ CommonUtils.onAddDashTel(srcData.userTel) || ''} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">직급</div>
                             <div className="width100">
-                                <input name="userPosition" type="text" value={detail.userPosition} onChange={handleInputChange}  maxLength="50" className="inputStyle" />
+                                <SrcInput name="userPosition" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={50} />
                             </div>
                         </div>
                         <div className="flex align-items-center mt10">
                             <div className="formTit flex-shrink0 width170px">부서</div>
                             <div className="width100">
-                                <input name="userBuseo" type="text" value={detail.userBuseo} onChange={handleInputChange}  maxLength="50" className="inputStyle" />
+                                <SrcInput name="userBuseo" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={50} />
                             </div>
                         </div>
                         
                         <div className="text-center mt50">
-                            <a href="#" onClick={validate} className="btnStyle btnPrimary btnMd" title="회원가입 신청">회원가입 신청</a>
+                            <a onClick={(e) => validate(e)} className="btnStyle btnPrimary btnMd" title="회원가입 신청">회원가입 신청</a>
                         </div>
 
                     </div>

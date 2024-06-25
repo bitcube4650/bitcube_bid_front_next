@@ -1,10 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { MapType } from '../../../components/types';
 import Pagination from '../../../components/Pagination';
+import SrcInput from '../../../components/input/SrcInput';
+import SrcSelectBox from '../../../components/input/SrcSelectBox';
 
-const ItemPop = ({itemPop, setItemPop, popClick}) => {
+interface ItemPopProps {
+    itemPop : boolean;
+    setItemPop : React.Dispatch<React.SetStateAction<boolean>>;
+    popClick: (val: any) => void;
+}
+
+interface ListPage {
+    content?: Array<{ itemCode: string; itemName: string }>;
+}
+
+const ItemPop: React.FC<ItemPopProps> = ({itemPop, setItemPop, popClick}) => {
 
     const initSearchParams = {
         size: 5,
@@ -14,17 +27,24 @@ const ItemPop = ({itemPop, setItemPop, popClick}) => {
         page : 0
     };
 
-    const [searchParams, setSearchParams] = useState(initSearchParams);
-    const [itemGrpList, setItemGrpList] = useState([]); 
-    const [checkInput, setCheckInput] = useState(false); 
-    const [listPage, setListPage] = useState({});
+    const [srcData, setSrcData] = useState<MapType>({
+        size: 5,
+		itemGrp: '',
+		useYn : 'Y',
+		itemName : '',
+        page : 0
+    });
+
+    const [itemGrpList, setItemGrpList] = useState<MapType[]>([]); 
+    const [listPage, setListPage] = useState<ListPage>({});
 
     const init = () => {
+        setSrcData(initSearchParams);
         axios.post("/login/itemGrpList", initSearchParams).then((response) => {
             const result = response.data;
             if(response.status === 200) {
                 setItemGrpList(result);
-                search(0);
+                onSearch();
             } else {
                 Swal.fire('', '품목 불러오기에 실패하였습니다.', 'error');
             }
@@ -33,73 +53,27 @@ const ItemPop = ({itemPop, setItemPop, popClick}) => {
 
     useEffect(() => {
         if(itemPop) {
-            setSearchParams(initSearchParams);
-            setCheckInput(false);
             init();
         }
-    }, []);
+    }, [itemPop]);
 
     useEffect(() => {
-        // input에서 파라미터가 세팅되는경우 자동검색이 되어 checkInput 으로 케이스 처리함
-        if(!checkInput) {
-            retrieve();
-        }
-    }, [searchParams]);
+        onSearch();
+    },[srcData.size, srcData.page]);
 
-    const selectData = (val) => {
+    const selectData = (val: any) => {
         popClick(val);
         setItemPop(false);
     }  
 
-    const itemGrpChange = (e) => {
-        const { name, value } = e.target;
-        setSearchParams((prevState) => ({
-            ...prevState,
-            [name]: value,
-            page : 0
-        }));
-    };
-
-    const onChangeSrcData = (e) => {
-        setSearchParams((prevState) => ({
-            ...prevState,
-            [e.target.name]: e.target.value
-        }));
-    }
-
-    const onChangeInput = (e) => {
-        setSearchParams((prevState) => ({
-            ...prevState,
-            [e.target.name]: e.target.value
-        }));
-        setCheckInput(true);
-    }
-
-    const search = (page) => {
-        setCheckInput(false);
-        setSearchParams((prevState) => ({
-            ...prevState,
-            page : page
-        }));
-    }
-
-    const retrieve = () => {
-        const params = searchParams;
-        axios.post("/login/itemList", params).then((response) => {
-            const result = response.data;
-            if(response.status === 200) {
-                setListPage(result.data);
-            } else {
-                Swal.fire('', '품목 불러오기에 실패하였습니다.', 'error');
-            }
-        });
-    };
-    const handleKeyDown = (e) => {
-        if(e.key === "Enter") {
-            e.preventDefault();
-            search(0);
+    const onSearch = useCallback(async () => {
+        try {
+          const response = await axios.post('/login/itemList', srcData);
+          setListPage(response.data.data);
+        } catch (error) {
+            Swal.fire('', '품목 불러오기에 실패하였습니다.', 'error');
         }
-    }
+      }, [srcData]);
 
     return (
         <div>
@@ -117,18 +91,10 @@ const ItemPop = ({itemPop, setItemPop, popClick}) => {
                     <div className="modalSearchBox mt20">						
 						<div className="flex align-items-center">
 							<div style={{ width:'calc(100% - 120px)'}}>
-                                <select name="itemGrp" value={searchParams.itemGrp} onChange={itemGrpChange} className="selectStyle">
-									<option value="">품목그룹 전체</option>
-
-                                    {itemGrpList.map((val, idx) => (
-                                    <option key={idx} value={val.itemGrpCd}>
-                                        {val.grpNm}
-                                    </option>
-                                    ))}
-								</select>
-								<input name="itemName" type="text" value={searchParams.itemName} onChange={onChangeInput} onKeyDown={handleKeyDown} className="inputStyle mt10" placeholder="품목명 또는 품목코드 입력 조회" />
+                                <SrcSelectBox name='itemGrp' optionList={itemGrpList} valueKey='value' nameKey='name' onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData }/>
+                                <SrcInput name="itemName" srcData={ srcData } setSrcData={ setSrcData } onSearch={ onSearch } className="mt10" />
 							</div>
-							<a onClick={() => search(0)} className="btnStyle btnSearch">검색</a>
+							<a onClick={onSearch} className="btnStyle btnSearch">검색</a>
 						</div>
 					</div>
 
@@ -159,7 +125,8 @@ const ItemPop = ({itemPop, setItemPop, popClick}) => {
                     {/* pagination */}
                     <div className="row mt30">
                         <div className="col-xs-12">
-                            <Pagination onChangeSrcData={onChangeSrcData} list={listPage} />
+                            <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ listPage } />
+                            {/* <Pagination srcData={onChangeSrcData} list={listPage} /> */}
                         </div>
                     </div>
                     {/* //pagination */}

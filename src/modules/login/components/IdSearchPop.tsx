@@ -2,6 +2,9 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { MapType } from '../../../components/types';
+import * as CommonUtils from 'components/CommonUtils';
+import SrcInput from '../../../components/input/SrcInput';
 
 interface IdSearchPopProps {
     idSearchPop : boolean;
@@ -10,34 +13,26 @@ interface IdSearchPopProps {
 
 const IdSearchPop: React.FC<IdSearchPopProps> = ({idSearchPop, setIdSearchPop}) => {
     const initIdSearch = {regnum1 : '', regnum2 : '', regnum3 : '', userName : '', userEmail : ''};
-    const [idSearch, setIdSearch] = useState(initIdSearch);
+    const [srcData, setSrcData] = useState<MapType>(initIdSearch);
     const [showAlert, setShowAlert] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         if(idSearchPop) {
-            setIdSearch(initIdSearch);
+            setSrcData(initIdSearch);
         }
     }, [idSearchPop]);
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setIdSearch((prevState) => ({
-          ...prevState,
-          [name]: value.replace(/[^0-9]/g, '').trim()
-        }));
-    };
-
     const validate = () => {
-        if (!idSearch.regnum1 || !idSearch.regnum2 || !idSearch.regnum3 || !idSearch.userName || !idSearch.userEmail) {
+        if (!srcData.regnum1 || !srcData.regnum2 || !srcData.regnum3 || !srcData.userName || !srcData.userEmail) {
           setShowAlert(true);
         } else {
           setShowConfirm(true);
         }
     };
 
-    const send = () => {
-        const params = idSearch;
+    const onSearch = () => {
+        const params = srcData;
         axios.post("/login/idSearch", params).then((response) => {
             const result = response.data;
             if (result.status === 200) {
@@ -79,23 +74,23 @@ const IdSearchPop: React.FC<IdSearchPopProps> = ({idSearchPop, setIdSearchPop}) 
                     <div className="flex align-items-center mt30">
                         <div className="formTit flex-shrink0 width150px">사업자등록번호 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="regnum1" value={idSearch.regnum1} onChange={handleInputChange} maxLength={3} className="inputStyle" />
+                            <SrcInput name="regnum1" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={3} value={ CommonUtils.onNumber(srcData.regnum1) || ''} />
                             <span style={{ margin: '0 10px' }}>-</span>
-                            <Form.Control type="text" name="regnum2" value={idSearch.regnum2} onChange={handleInputChange} maxLength={2} className="inputStyle" />
+                            <SrcInput name="regnum2" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={2} value={ CommonUtils.onNumber(srcData.regnum2) || ''} />
                             <span style={{ margin: '0 10px' }}>-</span>
-                            <Form.Control type="text" name="regnum3" value={idSearch.regnum3} onChange={handleInputChange} maxLength={5} className="inputStyle" />
+                            <SrcInput name="regnum3" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={5} value={ CommonUtils.onNumber(srcData.regnum3) || ''} />
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width150px">로그인 사용자명 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="userName" value={idSearch.userName} onChange={(e) => setIdSearch({ ...idSearch, userName: e.target.value })} className="inputStyle" />
+                            <SrcInput name="userName" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } />
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width150px">등록된 이메일 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="userEmail" value={idSearch.userEmail} onChange={(e) => setIdSearch({ ...idSearch, userEmail: e.target.value.trim() })} className="inputStyle" placeholder="ex) sample@iljin.co.kr" />
+                            <SrcInput name="userEmail" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } />
                         </div>
                     </div>
                     <div className="modalFooter">
@@ -128,7 +123,7 @@ const IdSearchPop: React.FC<IdSearchPopProps> = ({idSearchPop, setIdSearchPop}) 
                     <div className="alertText2">입력하신 사용자에게 문자와 이메일로 e-bidding 시스템에 접속하실 아이디를 전송합니다.<br />아이디를 전송하시겠습니까?</div>
                     <div className="modalFooter">
                     <Button variant="secondary" onClick={() => setShowConfirm(false)} style={{ marginRight: '10px'}}>취소</Button>
-                    <Button variant="primary" onClick={send}>전송</Button>
+                    <Button variant="primary" onClick={onSearch}>전송</Button>
                     </div>
                 </Modal.Body>
             </Modal>

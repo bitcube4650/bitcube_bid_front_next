@@ -4,6 +4,15 @@ export const onComma = (val: number | string | null | undefined): string => {
 	return val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+export const onNumber = (val: number | string | null | undefined): string => {
+	if(!val) return '';
+	return val.toString().replace(/^0*(\d+)/, '$1').replace(/[^0-9]/g, '');
+}
+
+export const onEngNumber = (val: number | string | null | undefined): string => {
+	if(!val) return '';
+	return val.toString().replace(/[^a-zA-Z0-9]/g, '');
+}
 /**************************문자열 관련 Utils**************************/
 export const isEmpty = (str: string | null | undefined): boolean => {
 	if( str == "" || str == null || str == undefined || ( str != null && typeof str == "object" && !Object.keys(str).length)) return true;

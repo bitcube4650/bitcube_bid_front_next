@@ -2,6 +2,9 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { MapType } from '../../../components/types';
+import * as CommonUtils from '../../../components/CommonUtils';
+import SrcInput from '../../../components/input/SrcInput';
 
 interface PwSearchPopProps {
     pwSearchPop : boolean;
@@ -10,26 +13,18 @@ interface PwSearchPopProps {
 
 const PwSearchPop: React.FC<PwSearchPopProps> = ({pwSearchPop, setPwSearchPop}) => {
     const initPwSearch = {regnum1 : '', regnum2 : '', regnum3 : '', userName : '', userId : '', userEmail : ''};
-    const [pwSearch, setPwSearch] = useState(initPwSearch);
+    const [srcData, setSrcData] = useState<MapType>(initPwSearch);
     const [showAlert, setShowAlert] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         if(pwSearchPop) {
-            setPwSearch(initPwSearch);
+            setSrcData(initPwSearch);
         }
     }, [pwSearchPop]);
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setPwSearch((prevState) => ({
-          ...prevState,
-          [name]: value.replace(/[^0-9]/g, '').trim()
-        }));
-    };
-
     const validate = () => {
-        if (!pwSearch.regnum1 || !pwSearch.regnum2 || !pwSearch.regnum3 || !pwSearch.userName || !pwSearch.userId || !pwSearch.userEmail) {
+        if (!srcData.regnum1 || !srcData.regnum2 || !srcData.regnum3 || !srcData.userName || !srcData.userId || !srcData.userEmail) {
           setShowAlert(true);
         } else {
           setShowConfirm(true);
@@ -37,7 +32,7 @@ const PwSearchPop: React.FC<PwSearchPopProps> = ({pwSearchPop, setPwSearchPop}) 
     };
 
     const send = () => {
-        const params = pwSearch;
+        const params = srcData;
         axios.post("/login/pwSearch", params).then((response) => {
             const result = response.data;
             if (result.status === 200) {
@@ -56,10 +51,8 @@ const PwSearchPop: React.FC<PwSearchPopProps> = ({pwSearchPop, setPwSearchPop}) 
         });
     };
 
-
     return (
         <div>
-            {/* <Modal show={idSearchPop} onHide={() => {setIdSearchPop(false)}}></Modal> */}
             <Modal show={pwSearchPop} onHide={() => {setPwSearchPop(false)}} className="modalStyle" size="lg">
                 <Modal.Body>
                     <a onClick={() => {setPwSearchPop(false)}} className="ModalClose" data-bs-dismiss="modal" title="닫기"><i className="fa-solid fa-xmark"></i></a>
@@ -74,64 +67,63 @@ const PwSearchPop: React.FC<PwSearchPopProps> = ({pwSearchPop, setPwSearchPop}) 
                     <div className="flex align-items-center mt30">
                         <div className="formTit flex-shrink0 width150px">사업자등록번호 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="regnum1" value={pwSearch.regnum1} onChange={handleInputChange} maxLength={3} className="inputStyle" />
+                            <SrcInput name="regnum1" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={3} value={ CommonUtils.onNumber(srcData.regnum1) || ''} />
                             <span style={{ margin: '0 10px' }}>-</span>
-                            <Form.Control type="text" name="regnum2" value={pwSearch.regnum2} onChange={handleInputChange} maxLength={2} className="inputStyle" />
+                            <SrcInput name="regnum2" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={2} value={ CommonUtils.onNumber(srcData.regnum2) || ''} />
                             <span style={{ margin: '0 10px' }}>-</span>
-                            <Form.Control type="text" name="regnum3" value={pwSearch.regnum3} onChange={handleInputChange} maxLength={5} className="inputStyle" />
+                            <SrcInput name="regnum3" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } maxLength={5} value={ CommonUtils.onNumber(srcData.regnum3) || ''} />
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width150px">로그인 사용자명 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="userName" value={pwSearch.userName} onChange={(e) => setPwSearch({ ...pwSearch, userName: e.target.value })} className="inputStyle" />
+                            <SrcInput name="userName" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } />
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width150px">로그인 아이디 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="userName" value={pwSearch.userId} onChange={(e) => setPwSearch({ ...pwSearch, userId: e.target.value })} className="inputStyle" />
+                            <SrcInput name="userId" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } />
                         </div>
                     </div>
                     <div className="flex align-items-center mt10">
                         <div className="formTit flex-shrink0 width150px">등록된 이메일 <span className="star">*</span></div>
                         <div className="flex align-items-center width100">
-                            <Form.Control type="text" name="userEmail" value={pwSearch.userEmail} onChange={(e) => setPwSearch({ ...pwSearch, userEmail: e.target.value.trim() })} className="inputStyle" placeholder="ex) sample@iljin.co.kr" />
+                            <SrcInput name="userEmail" srcData={ srcData } setSrcData={ setSrcData } onSearch={ validate } />
                         </div>
                     </div>
                     <div className="modalFooter">
                         <Button variant="secondary" onClick={() => {setPwSearchPop(false)}} style={{ marginRight: '10px'}}>닫기</Button>
                         <Button variant="primary" onClick={validate}>비밀번호 이메일 발송</Button>
                     </div>
-
                 </Modal.Body>
             </Modal>
 
-        {/* 비밀번호 이메일 발송 얼럿 */}
-        <Modal show={showAlert} onHide={() => setShowAlert(false)} className="modalStyle" size="sm">
-            <Modal.Body>
-            <Button variant="close" className="ModalClose" onClick={() => setShowAlert(false)}>&times;</Button>
-            <div className="alertText2">비밀번호를 찾기 위해서는 필수 정보[<span className="star">*</span>]를 입력해야 합니다.</div>
-            <div className="modalFooter">
-                <Button variant="secondary" onClick={() => setShowAlert(false)}>닫기</Button>
-            </div>
-            </Modal.Body>
-        </Modal>
+            {/* 비밀번호 이메일 발송 얼럿 */}
+            <Modal show={showAlert} onHide={() => setShowAlert(false)} className="modalStyle" size="sm">
+                <Modal.Body>
+                <Button variant="close" className="ModalClose" onClick={() => setShowAlert(false)}>&times;</Button>
+                <div className="alertText2">비밀번호를 찾기 위해서는 필수 정보[<span className="star">*</span>]를 입력해야 합니다.</div>
+                <div className="modalFooter">
+                    <Button variant="secondary" onClick={() => setShowAlert(false)}>닫기</Button>
+                </div>
+                </Modal.Body>
+            </Modal>
 
-        {/* 비밀번호 이메일 발송 컨펌 */}
-        <Modal show={showConfirm} onHide={() => setShowConfirm(false)} className="modalStyle" size="sm">
-            <Modal.Body>
-            <Button variant="close" className="ModalClose" onClick={() => setShowConfirm(false)}>&times;</Button>
-            <div className="alertText2">
-                입력하신 사용자에게 문자와 이메일로 e-bidding 시스템에 접속하실 비밀번호를 전송합니다.
-                비밀번호는 초기화 되어 새로 생성됩니다. 비밀번호를 전송하시겠습니까?
-            </div>
-            <div className="modalFooter">
-                <Button variant="secondary" onClick={() => setShowConfirm(false)} style={{ marginRight: '10px'}}>취소</Button>
-                <Button variant="primary" onClick={() => send()}>전송</Button>
-            </div>
-            </Modal.Body>
-        </Modal>
+            {/* 비밀번호 이메일 발송 컨펌 */}
+            <Modal show={showConfirm} onHide={() => setShowConfirm(false)} className="modalStyle" size="sm">
+                <Modal.Body>
+                <Button variant="close" className="ModalClose" onClick={() => setShowConfirm(false)}>&times;</Button>
+                <div className="alertText2">
+                    입력하신 사용자에게 문자와 이메일로 e-bidding 시스템에 접속하실 비밀번호를 전송합니다.
+                    비밀번호는 초기화 되어 새로 생성됩니다. 비밀번호를 전송하시겠습니까?
+                </div>
+                <div className="modalFooter">
+                    <Button variant="secondary" onClick={() => setShowConfirm(false)} style={{ marginRight: '10px'}}>취소</Button>
+                    <Button variant="primary" onClick={() => send()}>전송</Button>
+                </div>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 } 
