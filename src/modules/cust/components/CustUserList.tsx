@@ -1,7 +1,14 @@
-import {React} from 'react';
+import React from 'react';
 import * as CommonUtils from 'components/CommonUtils';
+import { MapType } from 'components/types'
 
-function GroupUserListJS(props) {
+interface CustUserListProps {
+    CustUser: MapType;
+    isMain?: boolean;
+    onUserDetailPop : any
+}
+
+function CustUserListJs(props : CustUserListProps) {
 
     return (
         <tr>
@@ -25,4 +32,4 @@ function GroupUserListJS(props) {
     );
 };
 
-export default GroupUserListJS;
+export default CustUserListJs;
