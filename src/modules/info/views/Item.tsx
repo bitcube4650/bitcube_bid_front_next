@@ -1,9 +1,18 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react'
 import axios from 'axios';
-import Pagination from 'components/Pagination';
+import Pagination from '../../../../src/components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import ItemList from '../components/ItemList';
 import ItemPop from '../components/ItemPop';
+import { MapType } from '../../../../src/components/types'
+import SrcInput from '../../../../src/components/input/SrcInput'
+import SelectListSize from '../../../../src/components/SelectListSize'
+import SrcSelectBox from '../../../../src/components/input/SrcSelectBox'
+import { Button } from 'react-bootstrap';
+
+interface PopUpRef {
+    onOpenPop: (props: any) => void;
+}
 
 const Item = () => {
 
@@ -11,13 +20,16 @@ const Item = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     //품목그룹
-    const [itemGrpList, setItemGrpList] = useState([]);
+    const [itemGrpList, setItemGrpList] = useState([{} as MapType]);
 
     //조회 결과
-    const [itemList, setItemList] = useState({});
+    const [itemList, setItemList] = useState({
+        totalElements   : 0,
+        content         : [{}]
+    });
 
     //조회조건
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         itemCode: '',
         itemName: '',
         itemGrp: '',
@@ -27,20 +39,13 @@ const Item = () => {
         page    : 0
     });
 
-    const onChangeSrcData = useCallback((e) => {
-        
-        setSrcData({
-            ...srcData,
-            [e.target.name]: e.target.value
-        });
-        
-    },[srcData]);
+    const [useYnOptionList, setUseYnOptionList] = useState([{"value" : "Y", "name" : "사용"}, {"value" : "N", "name" : "미사용"}])
 
     //품목그룹 조회
     const onSelectItemGrpList = async() => {
         try {
             const response = await axios.post("/api/v1/item/itemGrpList", {});
-            if (response.data.code == 'OK') {
+            if (response.data.code === 'OK') {
                 setItemGrpList(response.data.data);
             }else{
                 Swal.fire('', '품목그룹 조회에 실패하였습니다.', 'error');
@@ -58,7 +63,7 @@ const Item = () => {
         try {
             const response = await axios.post("/api/v1/item/itemList", srcData);
 
-            if (response.data.code == 'OK') {
+            if (response.data.code === 'OK') {
                 setItemList(response.data.data);
             }else{
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
@@ -71,17 +76,16 @@ const Item = () => {
         }
     }, [srcData]);
 
-    const itemPopRef = useRef();
+    const itemPopRef = useRef<PopUpRef | null>(null);
 
     //팝업창 띄우기
-    const onCallPopMethod = useCallback((props) => {
-
+    const onCallPopMethod = useCallback((props: any) => {
         setIsModalOpen(true);
         if (itemPopRef.current) {
             itemPopRef.current.onOpenPop(props);
         }
-
     }, []);
+
 
     //팝업창 닫기
     const onCloseModal = useCallback(() => {
@@ -113,45 +117,33 @@ const Item = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit width100px">품목그룹</div>
                         <div className="flex align-items-center width250px">
-                            <select onChange={onChangeSrcData} name="itemGrp" className="selectStyle">
-                                <option value="">전체</option>
-                                { itemGrpList?.map((itemGrp) => <option key={itemGrp.itemGrpCd} value={itemGrp.itemGrpCd}>{itemGrp.grpNm}</option>) }
-                            </select>
+                            <SrcSelectBox   name={"itemGrp"} optionList={itemGrpList} valueKey="itemCode" nameKey="itemName" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                         </div>
                         <div className="sbTit width100px ml50">사용여부</div>
                         <div className="flex align-items-center width250px">
-                            <select onChange={onChangeSrcData} name="useYn" className="selectStyle">
-                                <option value="">전체</option>
-                                <option value="Y">사용</option>
-                                <option value="N">미사용</option>
-                            </select>
+                            <SrcSelectBox   name={"useYn"} optionList={useYnOptionList} valueKey="value" nameKey="name" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                         </div>
                     </div>
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit width100px">품목코드</div>
                         <div className="flex align-items-center width250px">
-                            <input type="text" onChange={onChangeSrcData} name="itemCode" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter'){ srcData.page = 0; onSearch()}}}/>
+                            <SrcInput name="itemCode" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
                         </div>
                         <div className="sbTit width100px ml50">품목명</div>
                         <div className="width250px">
-                            <input type="text" onChange={onChangeSrcData} name="itemName" className="inputStyle" placeholder="" maxLength="300" onKeyDown={(e) => { if(e.key === 'Enter'){ srcData.page = 0; onSearch()}}}/>
+                            <SrcInput name="itemName" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
                         </div>
-                        <a onClick={(e)=>{ srcData.page = 0; onSearch();}}  className="btnStyle btnSearch">검색</a>
+                        <Button onClick={(e)=>{ srcData.page = 0; onSearch();}}  className="btnStyle btnSearch">검색</Button>
                     </div>
                 </div>
 
                 <div className="flex align-items-center justify-space-between mt40">
                     <div className="width100">
                         전체 : <span className="textMainColor"><strong>{ itemList.totalElements ? itemList.totalElements.toLocaleString() : 0 }</strong></span>건
-                        <select onChange={onChangeSrcData} name="size"  className="selectStyle maxWidth140px ml20">
-                            <option value="10">10개씩 보기</option>
-                            <option value="20">20개씩 보기</option>
-                            <option value="30">30개씩 보기</option>
-                            <option value="50">50개씩 보기</option>
-                        </select>
+                        <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                     </div>
                     <div className="flex-shrink0">
-                        <a onClick={()=>onCallPopMethod()} data-toggle="modal" data-target="#itemInfoPop" className="btnStyle btnPrimary" title="품목 등록">품목 등록</a>
+                        <Button onClick={()=>onCallPopMethod("")} data-toggle="modal" data-target="#itemInfoPop" className="btnStyle btnPrimary" title="품목 등록">품목 등록</Button>
                     </div>
                 </div>
 
@@ -175,16 +167,16 @@ const Item = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {itemList.content?.map((item) => <ItemList  key={item.itemCode} item={item} onCallPopMethod={onCallPopMethod}/>)}
+                        { itemList.content?.map((item, index) => <ItemList  key={index} item={item} onCallPopMethod={onCallPopMethod}/>)}
                         { itemList.totalElements == 0 &&
                             <tr>
-                                <td className="end" colSpan="6">조회된 데이터가 없습니다.</td>
+                                <td className="end" colSpan={6}>조회된 데이터가 없습니다.</td>
                             </tr> }
                     </tbody>
                 </table>
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={itemList}/>
+                        <Pagination srcData={ srcData } setSrcData={ setSrcData } list={itemList} />
                     </div>
                 </div>
             </div>
