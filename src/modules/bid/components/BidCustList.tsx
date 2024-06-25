@@ -90,6 +90,12 @@ const BidCustList : React.FC<BidCustListPropsType> = ({ isBidCustListModal, setI
       }
 
     }
+
+    useEffect(() => {
+      if (isBidCustListModal) {
+        onSearch();
+      }
+    }, [srcData.page]);
     
   return (
     <div>
@@ -115,7 +121,7 @@ const BidCustList : React.FC<BidCustListPropsType> = ({ isBidCustListModal, setI
                     name="custName"
                     srcData={ srcData } 
                     setSrcData={ setSrcData }
-                    onSearch={ onSearch }
+                    onSearch={()=>{ onSearch() }}
                     maxLength={50}
                   />
                   </div>
@@ -125,7 +131,7 @@ const BidCustList : React.FC<BidCustListPropsType> = ({ isBidCustListModal, setI
                     name="chairman"
                     srcData={ srcData } 
                     setSrcData={ setSrcData }
-                    onSearch={ onSearch }
+                    onSearch={()=>{ onSearch() }}
                     maxLength={25}
                   />
                   </div>

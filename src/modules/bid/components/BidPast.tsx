@@ -58,6 +58,10 @@ const BidPast : React.FC<BidPastPropsType> = ({ isBidPastModal, setIsBidPastModa
     }
   }, [isBidPastModal]);
 
+  useEffect(() => {
+      onSearch();
+  }, [srcData.page]);
+
   return (
     <Modal className="modalStyle" show={isBidPastModal} onHide={onBidPastModalHide} size="xl">
       <Modal.Body>
@@ -71,7 +75,7 @@ const BidPast : React.FC<BidPastPropsType> = ({ isBidPastModal, setIsBidPastModa
             <div className="width150px">
               <SrcInput
               name="biNo"
-              onSearch={ onSearch }
+              onSearch={ ()=>{onSearch() }}
               srcData={ srcData } 
               setSrcData={ setSrcData }
               maxLength={10}
@@ -81,7 +85,7 @@ const BidPast : React.FC<BidPastPropsType> = ({ isBidPastModal, setIsBidPastModa
             <div className="width150px">
             <SrcInput
               name="biName"
-              onSearch={ onSearch }
+              onSearch={ ()=>{onSearch() }}
               srcData={ srcData } 
               setSrcData={ setSrcData }
               maxLength={50}
@@ -112,7 +116,7 @@ const BidPast : React.FC<BidPastPropsType> = ({ isBidPastModal, setIsBidPastModa
             </tr>
           </thead>
           <tbody>
-            {bidPastList?.content?.length > 0 ? (
+          {bidPastList?.content && bidPastList?.content?.length > 0 ? (
               bidPastList.content.map((item : any) => (
                 <BidPastList key={item.biNo} bidPastList={item} onBidPastModalHide={onBidPastModalHide} />
               ))

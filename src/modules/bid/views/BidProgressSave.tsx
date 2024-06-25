@@ -24,21 +24,24 @@ const BidProgressSave = () => {
   
   useEffect(() => {
     if(!viewType){
-
-      if(sessionViewType === '수정'){
+      setViewType(sessionViewType)
+      console.log(loginInfo)
+      if(sessionViewType === '등록'){
+        setBidContent(
+          {
+            ...bidContent,
+            createUserName : loginInfo.userName, 
+            createUser : loginInfo.userId,
+            gongoId : loginInfo.userName, 
+            gongoIdCode : loginInfo.userId,
+            interrelatedCustCode : loginInfo.custCode
+          }        
+        )
+      }
+      else{
         navigate(`/bid/progress/detail`)
       }
-      setViewType(sessionViewType)
 
-      setBidContent({
-          ...bidContent,
-          createUserName : loginInfo.userName, 
-          createUser : loginInfo.userId,
-          gongoId : loginInfo.userName, 
-          gongoIdCode : loginInfo.userId,
-          interrelatedCustCode : loginInfo.custCode
-        }        
-      )
     }
 
     if (viewType === '등록') {
@@ -50,6 +53,11 @@ const BidProgressSave = () => {
 
       setBidContent({
         ...bidContent,
+        createUserName : loginInfo.userName, 
+        createUser : loginInfo.userId,
+        gongoId : loginInfo.userName, 
+        gongoIdCode : loginInfo.userId,
+        interrelatedCustCode : loginInfo.custCode,
         spotTime: hours,
         estStartTime: hours,
         estCloseTime: hours,

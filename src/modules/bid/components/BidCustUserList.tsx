@@ -182,6 +182,10 @@ const BidCustUserList : React.FC<BidCustUserListPropsType> = ({isBidCustUserList
 
     }
 
+    useEffect(() => {
+      onSearch();
+  },[srcData.page]);
+
   return (
     <div>
         <Modal className="modalStyle" show={isBidCustUserListModal} onHide={onBidCustUserListModalHide} size="xl">
@@ -197,7 +201,7 @@ const BidCustUserList : React.FC<BidCustUserListPropsType> = ({isBidCustUserList
                             name="userName"
                             srcData={ srcData } 
                             setSrcData={ setSrcData }
-                            onSearch={ onSearch }
+                            onSearch={ ()=>{onSearch() }}
                           />
                         </div>
                         <div className="sbTit mr30 ml50">로그인 ID</div>
@@ -206,7 +210,7 @@ const BidCustUserList : React.FC<BidCustUserListPropsType> = ({isBidCustUserList
                             name="userId"
                             srcData={ srcData } 
                             setSrcData={ setSrcData }
-                            onSearch={ onSearch }
+                            onSearch={ ()=>{onSearch() }}
                           />
                         </div>
                         <button className="btnStyle btnSearch"

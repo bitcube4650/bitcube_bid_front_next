@@ -34,6 +34,7 @@ export interface SrcDatePickerProps {
     srcData: MapType;
     setSrcData: Dispatch<SetStateAction<MapType>>;
     selected?: Date;
+    minDate?: Date
 }
 
 export interface EditDatePickerProps {

@@ -22,6 +22,12 @@ const BidProgress = () => {
     setViewType(type)
     localStorage.setItem("viewType", type);
 
+    const currentDate = new Date();
+    let currentHours : string | number= currentDate.getHours();
+    currentHours = currentHours < 10 ? '0' + currentHours : currentHours;
+
+    const hours = `${currentHours}:00`;
+
     //등록으로 이동 시 state 초기화
     setBidContent({
       ...bidContent,
@@ -39,7 +45,7 @@ const BidProgress = () => {
       bidJoinSpec : '', // 입찰참가자격 
       specialCond : '', // 특수조건
       spotDay : '', // 현장설명 일시
-      spotTime : '', // 현장설명 시간
+      spotTime : hours, // 현장설명 시간
       spotArea : '', // 현장설명장소
       succDeciMethCode : '', // 낙찰자결정방법
       amtBasis : '', // 금액기준
@@ -61,9 +67,9 @@ const BidProgress = () => {
       //BidSaveAddRegist에서 사용
 
       estStartDay : '', // 제출시작 일시
-      estStartTime : '', // 제출시작 시간
+      estStartTime : hours, // 제출시작 시간
       estCloseDay : '', // 제출시작 일시
-      estCloseTime : '', // 제출시작 시간
+      estCloseTime : hours, // 제출시작 시간
       estOpener : '', // 개찰자 이름
       estOpenerCode : '', // 개찰자ID
       estBidder : '', // 낙찰자 이름
@@ -113,8 +119,6 @@ const BidProgress = () => {
      useEffect(() => {
          onSearch();
      },[srcData.size, srcData.page]);
-
-
 
   return (
     <div className="conRight">

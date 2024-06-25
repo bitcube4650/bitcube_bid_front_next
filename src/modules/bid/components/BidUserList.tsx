@@ -70,7 +70,7 @@ const BidUserList : React.FC<BidUserListPropsType> = ({isBidUserListModal, setIs
             };
             fetchInitialData();
         }    
-    }, [isBidUserListModal,srcData.size, srcData.page]);
+    }, [isBidUserListModal]);
 
     const onUserSelect = (userData : any)=>{
         console.log(userData)
@@ -121,7 +121,11 @@ const BidUserList : React.FC<BidUserListPropsType> = ({isBidUserListModal, setIs
         }
         onBidUserListModalHide()
     }
-        
+
+    useEffect(() => {
+        onSearch();
+    },[srcData.page]);
+
   return (
     <div>
         <Modal className="modalStyle" show={isBidUserListModal} onHide={onBidUserListModalHide} size="lg">
@@ -168,7 +172,7 @@ const BidUserList : React.FC<BidUserListPropsType> = ({isBidUserListModal, setIs
                             name="userName"
                             srcData={ srcData } 
                             setSrcData={ setSrcData }
-                            onSearch={ onSearch }
+                            onSearch={()=>{onSearch() }}
                         />
                     </div>
                     <div className="sbTit mr30 ml50">부서명</div>
@@ -177,7 +181,7 @@ const BidUserList : React.FC<BidUserListPropsType> = ({isBidUserListModal, setIs
                             name="deptName"
                             srcData={ srcData } 
                             setSrcData={ setSrcData }
-                            onSearch={ onSearch }
+                            onSearch={()=>{onSearch() }}
                         />
                     </div>
                     <button className="btnStyle btnSearch" 

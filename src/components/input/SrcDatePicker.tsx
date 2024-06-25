@@ -23,7 +23,7 @@ const SrcDatePicker = (props: SrcDatePickerProps) => {
 
     return (
         <>
-            <DatePicker className="datepicker inputStyle" locale={ko} selected={props.selected} shouldCloseOnSelect onChange={onFormEventSrcData} dateFormat="yyyy-MM-dd"/>
+            <DatePicker className="datepicker inputStyle" locale={ko} selected={props.selected} shouldCloseOnSelect onChange={onFormEventSrcData} dateFormat="yyyy-MM-dd" minDate={props.minDate}/>
         </>
     )
 }

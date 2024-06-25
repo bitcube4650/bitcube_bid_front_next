@@ -14,6 +14,7 @@ import SrcInput from '../../../components/input/SrcInput';
 import { MapType } from 'components/types';
 import EditTextArea from 'components/input/EditTextArea';
 import * as CommonUtils from 'components/CommonUtils';
+import SrcDatePicker from 'components/input/SrcDatePicker';
 
 const BidSaveBasicInfo = () => {
 
@@ -55,7 +56,7 @@ const BidSaveBasicInfo = () => {
     }
   },[])
 
-  const onChangeBasicInfo = (e : React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChangeBasicInfo = (e : React.ChangeEvent<HTMLSelectElement>) => {
     setBidContent({
         ...bidContent,
         [e.target.name]: e.target.value
@@ -131,7 +132,7 @@ const BidSaveBasicInfo = () => {
     setIsBidCustUserListModal(true)
   }
 
-  const onUpdateSpotDay = useCallback((day: Date | null) => {
+  const onUpdateSpotDay = (day: Date | null) => {
     if (day) { 
       const formattedDate = format(day, 'yyyy-MM-dd');
       setBidContent({
@@ -139,7 +140,7 @@ const BidSaveBasicInfo = () => {
         spotDay: formattedDate,
       });
     }
-  },[bidContent.spotDay])
+  }
 
   const itemSelectCallback = (data : MapType)=>{
     setBidContent({
@@ -236,7 +237,8 @@ const BidSaveBasicInfo = () => {
               현장설명일시 <span className="star">*</span>
             </div>
             <div className="flex align-items-center width100">
-            <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.spotDay} onChange={(day) => onUpdateSpotDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/>
+            {/* <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.spotDay} onChange={(day) => onUpdateSpotDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/> */}
+            <SrcDatePicker name={"spotDay"} selected={bidContent.spotDay} srcData={bidContent} setSrcData={setBidContent} minDate={bidContent.minDate}/>
               <select
                 className="inputStyle ml10"
                 name="spotTime"

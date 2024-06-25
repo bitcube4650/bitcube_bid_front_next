@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from "date-fns/locale";
 import { format } from 'date-fns';
 import SrcInput from 'components/input/SrcInput';
+import SrcDatePicker from 'components/input/SrcDatePicker';
 
 const BidSaveAddRegist = () => { 
 
@@ -17,7 +18,7 @@ const BidSaveAddRegist = () => {
   const [userType, setUserType] = useState<string>('');
   const [isBidUserListModal, setIsBidUserListModal] = useState<boolean>(false);
 
-  const onChangeAddRegist = (e : React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChangeAddRegist = (e : React.ChangeEvent<HTMLSelectElement>) => {
     setBidContent({
         ...bidContent,
         [e.target.name]: e.target.value
@@ -201,7 +202,8 @@ const BidSaveAddRegist = () => {
                 제출시작일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-                <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estStartDay} onChange={(day) => onUpdateEstStartDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/>
+                {/* <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estStartDay} onChange={(day) => onUpdateEstStartDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/> */}
+                <SrcDatePicker name={"estStartDay"} selected={bidContent.estStartDay} srcData={bidContent} setSrcData={setBidContent} minDate={bidContent.minDate}/>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estStartTime" onChange={onChangeAddRegist} value={bidContent.estStartTime}>
                   <option value="">시간 선택</option>
@@ -236,7 +238,8 @@ const BidSaveAddRegist = () => {
                 제출마감일시 <span className="star">*</span>
               </div>
               <div className="flex align-items-center width100">
-              <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estCloseDay} onChange={(day) => onUpdateEstEstCloseDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/>
+              {/* <DatePicker className="datepicker inputStyle" locale={ko} shouldCloseOnSelect selected={bidContent.estCloseDay} onChange={(day) => onUpdateEstEstCloseDay(day)} dateFormat="yyyy-MM-dd" minDate={bidContent.minDate}/> */}
+              <SrcDatePicker name={"estCloseDay"} selected={bidContent.estCloseDay} srcData={bidContent} setSrcData={setBidContent} minDate={bidContent.minDate}/>
                 <select className="inputStyle ml10" style={{ background: "url('../../images/selectArw.png') no-repeat right 15px center", maxWidth: '110px' }}
                 name="estCloseTime" onChange={onChangeAddRegist} value={bidContent.estCloseTime}>
                   <option value="">시간 선택</option>
