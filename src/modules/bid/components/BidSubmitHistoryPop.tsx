@@ -21,10 +21,7 @@ const BidSubmitHistoryPop:React.FC<props> = ({biNo, custCode, custName, userName
     const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState<MapType>({
-        totalElements   : 0,
-        val         : [{}]
-    });
+    const [list, setList] = useState<MapType>({});
 
     //조회조건
     const [srcData, setSrcData] = useState<MapType>({
@@ -76,7 +73,7 @@ const BidSubmitHistoryPop:React.FC<props> = ({biNo, custCode, custName, userName
                         </tr>
                     </thead>
                     <tbody>
-                    { list?.map((val:MapType) =>
+                    { !Ft.isEmpty(list) && list?.map((val:MapType) =>
                         <tr>
                             <td>{val.biOrder}</td>
                             <td className="text-left">{custName}</td>

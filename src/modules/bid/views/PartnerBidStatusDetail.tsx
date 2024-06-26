@@ -6,11 +6,6 @@ import Ft from '../api/filters';
 import PartnerCmmnInfo from '../components/PartnerBidCommonInfo'
 import { MapType } from 'components/types'
 
-interface SubmitDataItem {
-    esmtUc: any;
-    [key: string]: any;
-}
-
 const PartnerBidStatusDetail = () => {
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
@@ -20,7 +15,7 @@ const PartnerBidStatusDetail = () => {
     const [data, setData] = useState<MapType>({});
 
     //업체 직접입력
-    const [submitData, setSubmitData] = useState([{} as SubmitDataItem]);
+    const [submitData, setSubmitData] = useState<any>([]);
 
     //총 견적금액 자동입력
     const [totalAmt, setTotalAmt] = useState<number>(0);
@@ -36,8 +31,8 @@ const PartnerBidStatusDetail = () => {
     }
 
     //첨부파일
-    const [detailFile, setDetailFile] = useState<any>("");
-    const [etcFile, setEtcFile] = useState<any>("");
+    const [detailFile, setDetailFile] = useState<any>(null);
+    const [etcFile, setEtcFile] = useState<any>(null);
 
     //견적금액 단위
     const [esmtCurr, setEsmtCurr] = useState<string>("");
@@ -75,7 +70,7 @@ const PartnerBidStatusDetail = () => {
     }, [navigate])
 
     //필수요소 값 확인
-    function validationCheck() {
+    const validationCheck = () => {
         //파일 등록
         if(data.insMode === '1'){
             if(esmtCurr === ''){
@@ -86,7 +81,7 @@ const PartnerBidStatusDetail = () => {
                 Swal.fire('', '견적금액을 입력해주세요.', 'warning');
                 return false;
             }
-            if(detailFile === ''){
+            if(detailFile === null){
                 Swal.fire('', '견적내역파일을 등록해주세요.', 'warning');
                 return false;
             }
@@ -152,13 +147,13 @@ const PartnerBidStatusDetail = () => {
                 signData();
             }
         });
-    }, [esmtCurr, amt, totalAmt, data])
+    }, [esmtCurr, amt, totalAmt, data, detailFile, etcFile])
 
     //직접입력 총 금액 견적
     const onTotalAmt = useCallback((e:React.FormEvent<HTMLInputElement>, idx:number) => {
         let total = 0;
         
-        let letSubmitData: SubmitDataItem[] = [...submitData];
+        let letSubmitData = [...submitData];
         letSubmitData[idx].esmtUc = e.currentTarget.value;
 
         for(let i = 0 ; i < letSubmitData.length ; i++){
@@ -206,21 +201,23 @@ const PartnerBidStatusDetail = () => {
 
     const signData = useCallback(() =>{//인증서 서명
         var formData = new FormData();
-
-        let letSubmitData: SubmitDataItem[] = [...submitData];
         var itemData = '';
-        for(let i = 0 ; i < letSubmitData.length ; i++){
-            let esmtUc = letSubmitData[i].esmtUc.toString();
-            if(esmtUc !== undefined && esmtUc !== null){
-                if(i > 0 && itemData.length > 0){
-                    itemData += '$';
-                }
-                itemData += i + '=' + esmtUc.replace(/[^-0-9]/g, '');
-                letSubmitData[i].esmtUc = esmtUc.replace(/[^-0-9]/g, '');
-            }
-        }
 
-        setSubmitData([...letSubmitData]);
+        if(!Ft.isEmpty(submitData)){
+            let letSubmitData = [...submitData];
+            for(let i = 0 ; i < letSubmitData.length ; i++){
+                let esmtUc = letSubmitData[i].esmtUc.toString();
+                if(esmtUc !== undefined && esmtUc !== null){
+                    if(i > 0 && itemData.length > 0){
+                        itemData += '$';
+                    }
+                    itemData += i + '=' + esmtUc.replace(/[^-0-9]/g, '');
+                    letSubmitData[i].esmtUc = esmtUc.replace(/[^-0-9]/g, '');
+                }
+            }
+
+            setSubmitData([...letSubmitData]);
+        }
 
         var totalPrice = '';
         if(data.insMode === '2'){//직접입력
@@ -280,7 +277,7 @@ const PartnerBidStatusDetail = () => {
 
         let params = {
             biNo : biNo
-        ,   submitData : submitData
+        ,   submitData : Ft.isEmpty(submitData) ? "" : submitData
         ,   amt : totalPrice
         ,   certInfo : ''
         ,   esmtCurr : esmtCurr 
@@ -439,7 +436,7 @@ const PartnerBidStatusDetail = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                { submitData?.map((spec, idx) => 
+                                { submitData?.map((spec:MapType, idx:string) => 
                                     <tr key={idx}>
                                         <td className="text-left">{ spec.name }</td>
                                         <td className="text-right">{ spec.ssize }</td>
@@ -449,7 +446,7 @@ const PartnerBidStatusDetail = () => {
                                             <div className="inputStyle readonly"><span>{ Ft.ftCalcOrderUc(spec.esmtUc, spec.orderQty) }</span></div>
                                         </td>
                                         <td className="text-right end">
-                                            <input type="text" className="inputStyle inputSm text-right" defaultValue={ spec.esmtUc } onKeyUp={(e)=>onTotalAmt(e, idx)} /> 
+                                            <input type="text" className="inputStyle inputSm text-right" defaultValue={ spec.esmtUc } onKeyUp={(e)=>onTotalAmt(e, Number(idx))} /> 
                                         </td>
                                     </tr>
                                 )}
@@ -502,7 +499,7 @@ const PartnerBidStatusDetail = () => {
                                 <div className="width100">
                                     {/* 다중파일 업로드 */}
                                     <div className="upload-boxWrap">
-                                        { detailFile === '' &&
+                                        { detailFile === null &&
                                         <div className="upload-box">
                                             <input type="file" id="file-input" onChange={fileInputChange} />
                                             <div className="uploadTxt">
@@ -511,9 +508,9 @@ const PartnerBidStatusDetail = () => {
                                             </div>
                                         </div>
                                         }
-                                        { detailFile !== '' &&
+                                        { detailFile !== null &&
                                         <div className="uploadPreview" id="preview">
-                                            <p style={{lineHeight:"80px"}}>{ detailFile.name }<button id="removeBtn" className="file-remove" onClick={()=>{setDetailFile("")}}>삭제</button></p>
+                                            <p style={{lineHeight:"80px"}}>{ detailFile.name }<button id="removeBtn" className="file-remove" onClick={()=>{setDetailFile(null)}}>삭제</button></p>
                                         </div>
                                         }
                                     </div>
@@ -527,7 +524,7 @@ const PartnerBidStatusDetail = () => {
                                 <div className="width100">
                                     {/* 다중파일 업로드 */}
                                     <div className="upload-boxWrap">
-                                        { etcFile === '' &&
+                                        { etcFile === null &&
                                         <div className="upload-box">
                                             <input type="file" id="file-input2" onChange={fileInput2Change} />
                                             <div className="uploadTxt">
@@ -536,9 +533,9 @@ const PartnerBidStatusDetail = () => {
                                             </div>
                                         </div>
                                         }
-                                        { etcFile !== '' &&
+                                        { etcFile !== null &&
                                         <div className="uploadPreview" id="preview2">
-                                            <p style={{lineHeight:"80px"}}>{ etcFile.name }<button id="removeBtn" className="file-remove" onClick={()=>{setEtcFile("")}}>삭제</button></p>
+                                            <p style={{lineHeight:"80px"}}>{ etcFile.name }<button id="removeBtn" className="file-remove" onClick={()=>{setEtcFile(null)}}>삭제</button></p>
                                         </div>
                                         }
                                     </div>
