@@ -2,6 +2,8 @@ import React, { useCallback, useState, useEffect } from 'react'
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import Modal from 'react-bootstrap/Modal';
+import { affiliateProps } from 'components/types'
+import { MapType } from 'components/types'
 
 /*
 계열사 선택 modal
@@ -25,16 +27,19 @@ affiliateSelectData.isChange = true
 로 변경된다.
 */
 
-const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => {
+const AffiliateSelectModal = (props: affiliateProps) => {
+    const affiliateSelectData = props.affiliateSelectData;
+    const setAffiliateSelectData = props.setAffiliateSelectData;
+
     const onCloseAffiliateSelectModal = useCallback(() => {
         setAffiliateSelectData({...affiliateSelectData, ["show"]: false});
-    })
+    }, [])
 
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
 
-    const [allAffiliateList, setAllAffiliateList] = useState([]);
-    const [affiliateList, setAffiliateList] = useState([]);
-    const [selectAffiliateList, setSelectAffiliateList] = useState([]);
+    const [allAffiliateList, setAllAffiliateList] = useState<MapType>([]);
+    const [affiliateList, setAffiliateList] = useState<MapType>([]);
+    const [selectAffiliateList, setSelectAffiliateList] = useState<Array<String>>([]);
 
     async function onSelecAffiliate() {
         if(loginInfo.custType == 'inter' && loginInfo.userAuth == '1') {    //시스템관리자인 경우
@@ -54,7 +59,7 @@ const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => 
             if(response.status == 200) {
                 setAllAffiliateList(response.data);
 
-                let interrelatedCodes = "";
+                let interrelatedCodes = [''];
                 if(affiliateSelectData && affiliateSelectData.interrelatedCodes) {
                     interrelatedCodes = affiliateSelectData.interrelatedCodes;
                     setSelectAffiliateList(interrelatedCodes);
@@ -106,11 +111,27 @@ const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => 
         });
     }
 
-    const onChangeAffiliate = (e) => {
-        setSelectAffiliateList([
-            ...selectAffiliateList,
-            e.target.value
-        ]);
+    const onChangeAffiliate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if(e.target.checked) {
+            let check = true;
+
+            for(let i = 0; i < selectAffiliateList.length; i++) {
+                if(selectAffiliateList[i] == e.target.value) {
+                    check = false;
+                }
+            }
+    
+            if(check) {
+                setSelectAffiliateList([
+                    ...selectAffiliateList,
+                    e.target.value
+                ]);
+            }
+        } else {
+            setSelectAffiliateList(
+                selectAffiliateList.filter(item => item !== e.target.value)
+            );
+        }
     }
 
     return (
@@ -135,14 +156,14 @@ const AffiliateSelectModal = ({affiliateSelectData, setAffiliateSelectData}) => 
                             </tr>
                         </thead>
                         <tbody>
-                            { affiliateList?.map((affiliate, index) => (
+                            { affiliateList?.map((affiliate: MapType, index: number) => (
                                 <tr key={ index }>
                                     <td>
                                         <input onChange={ onChangeAffiliate } type="checkbox" id={ 'ck' + index } value={ affiliate.interrelatedCustCode } className="checkStyle" defaultChecked={ affiliate.checked } disabled={ loginInfo.custType == 'inter' && loginInfo.userAuth == '2' } />
-                                        <label for={ 'ck' + index }></label>
+                                        <label htmlFor={ 'ck' + index }></label>
                                     </td>
                                     <td className="text-left end">
-                                        <label for={ 'ck' + index } className="fontweight-400">{ affiliate.interrelatedNm }</label>
+                                        <label htmlFor={ 'ck' + index } className="fontweight-400">{ affiliate.interrelatedNm }</label>
                                     </td>
                                 </tr>
                             )) }

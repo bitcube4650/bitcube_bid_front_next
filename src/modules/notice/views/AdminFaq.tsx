@@ -4,14 +4,16 @@ import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import FaqList from '../components/faqList';
 import FaqPop from '../components/faqPop';
+import SrcInput from 'components/input/SrcInput'
+import SrcSelectBox from 'components/input/SrcSelectBox';
+import { MapType } from 'components/types'
 
 const AdminFaq = () => {
-    
     //모달창 띄우기
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
     //조회 결과
-    const [faqList, setFaqList] = useState({
+    const [faqList, setFaqList] = useState<MapType>({
         content: [],
         totalElements: 0,
         number: 0,
@@ -19,7 +21,7 @@ const AdminFaq = () => {
     });
 
     //조회조건
-    const [srcData, setSrcData] = useState({
+    const [srcData, setSrcData] = useState<MapType>({
         title: '',
         faqType: '',
         admin: 'Y',
@@ -27,15 +29,6 @@ const AdminFaq = () => {
         size    : 10,
         page    : 0
     });
-
-    const onChangeSrcData = useCallback((e) => {
-        
-        setSrcData({
-            ...srcData,
-            [e.target.name]: e.target.value
-        });
-
-    },[srcData]);
 
     //faq 조회
     const onSearch = useCallback(async() => {
@@ -54,16 +47,14 @@ const AdminFaq = () => {
         }
     }, [srcData]);
 
-    const faqPopRef = useRef();
+    const faqPopRef = useRef<any>(null);
 
     //팝업창 띄우기
-    const onCallPopMethod = useCallback((props) => {
-
+    const onCallPopMethod = useCallback((props: any) => {
         setIsModalOpen(true);
         if (faqPopRef.current) {
             faqPopRef.current.onOpenPop(props);
         }
-
     }, []);
 
     //팝업창 닫기
@@ -75,9 +66,7 @@ const AdminFaq = () => {
         onSearch();
     },[srcData.size, srcData.page]);
 
-    
     return (
-
         <div className="conRight">
             <div className="conHeader">
                 <ul className="conHeaderCate">
@@ -91,28 +80,11 @@ const AdminFaq = () => {
                     <div className="flex align-items-center">
                         <div className="sbTit mr30">제목</div>
                         <div className="width200px">
-                            <input
-                                type="text"
-                                onChange={onChangeSrcData}
-                                name="title"
-                                className="inputStyle"
-                                placeholder=""
-                                maxLength="300"
-                                onKeyDown={(e) => { if(e.key === 'Enter'){ srcData.page = 0; onSearch()}}}
-                            />
+                            <SrcInput name="title" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
                         </div>
                         <div className="sbTit mr30 ml50">구분</div>
                         <div className="width200px">
-                            <select
-                                onChange={onChangeSrcData}
-                                name="faqType"
-                                className="selectStyle"
-                            >
-                                <option value="">전체</option>
-                                <option value="1">가입관련</option>
-                                <option value="2">입찰관련</option>
-                                <option value="3">인증서관련</option>
-                            </select>
+                            <SrcSelectBox name="faqType" optionList={[{"value":"1", "name":"가입관련"},{"value":"2", "name":"입찰관련"},{"value":"3", "name":"인증서관련"}]} onSearch={onSearch} srcData={srcData} setSrcData={setSrcData} totalText="전체"/>
                         </div>
                         <a onClick={(e)=>{ srcData.page = 0; onSearch();}} className="btnStyle btnSearch">검색</a>
                     </div>
@@ -132,7 +104,7 @@ const AdminFaq = () => {
                         </select>
                     </div>
                     <div className="flex-shrink0" >
-                        <a onClick={()=>onCallPopMethod()} data-toggle="modal" data-target="#faqReg" className="btnStyle btnPrimary" title="FAQ 등록">FAQ 등록</a>
+                        <a onClick={()=>onCallPopMethod('')} data-toggle="modal" data-target="#faqReg" className="btnStyle btnPrimary" title="FAQ 등록">FAQ 등록</a>
                     </div>
                 </div>
 
@@ -152,17 +124,17 @@ const AdminFaq = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {faqList.content?.map((faq) => <FaqList key={faq.faqId} faq={faq} onCallPopMethod={onCallPopMethod}/>)}
+                        {faqList.content?.map((faq: MapType) => <FaqList key={faq.faqId} content={faq} onCallPopMethod={onCallPopMethod}/>)}
                         { faqList.totalElements == 0 &&
                             <tr>
-                                <td className="end" colSpan="4">조회된 데이터가 없습니다.</td>
+                                <td className="end" colSpan={4}>조회된 데이터가 없습니다.</td>
                             </tr> }
                     </tbody>
                 </table>
 
                 <div className="row mt40">
                     <div className="col-xs-12">
-                        <Pagination onChangeSrcData={onChangeSrcData} list={faqList}/>
+                    <Pagination srcData={ srcData } setSrcData={ setSrcData } list={ faqList } />
                     </div>
                 </div>
             </div>

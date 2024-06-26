@@ -2,13 +2,14 @@ import React, { useEffect, useState }from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
+import { MapType } from 'components/types'
 
 const NoticeDetail = () => {
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
     const navigate = useNavigate();
     const { bno } = useParams();
-    const [dataFromList, setDataFromList] = useState({});
+    const [dataFromList, setDataFromList] = useState<MapType>({});
 
     async function onSelectDetail() {
         try {
@@ -70,7 +71,7 @@ const NoticeDetail = () => {
     }
 
     async function onDownloadFile() {
-        const response = axios.post('/api/v1/notice/downloadFile',
+        const response = await axios.post('/api/v1/notice/downloadFile',
             { fileId: dataFromList.bfilePath },
             { responseType : 'blob' });
         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -100,10 +101,10 @@ const NoticeDetail = () => {
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">공지대상</div>
                         <div className="flex width100">
-                            <input type="radio" name="bm2" value="ALL" id="bm2_1" className="radioStyle" checked={ dataFromList.bco == "ALL" } disabled={ dataFromList.bco != 'ALL'?'disabled':'' } />
+                            <input type="radio" name="bm2" value="ALL" id="bm2_1" className="radioStyle" checked={ dataFromList.bco == "ALL" } disabled={ dataFromList.bco != 'ALL'?true:false } />
                             <label htmlFor="bm2_1" className={ dataFromList.bco != 'ALL'?'dimmed':'' }>공통</label>
                             <div>
-                                <input type="radio" name= "bm2" value="CUST" id="bm2_2" className="radioStyle" checked={ dataFromList.bco == "CUST" } disabled={ dataFromList.bco != 'CUST'?'disabled':'' } />
+                                <input type="radio" name= "bm2" value="CUST" id="bm2_2" className="radioStyle" checked={ dataFromList.bco == "CUST" } disabled={ dataFromList.bco != 'CUST'?true:false } />
                                 <label htmlFor="bm2_2" className={ dataFromList.bco != 'CUST'?'dimmed':'' }>계열사</label>
                                 { dataFromList.bco == 'CUST' &&
                                     <p className="mt5 ml30">{ dataFromList.interrelatedNms }</p>
@@ -143,7 +144,6 @@ const NoticeDetail = () => {
 
                 <div className="text-center mt50">
                     <Link to="/notice" className="btnStyle btnOutline" title="목록">목록</Link>
-                    {/* todo: 수정/삭제 */}
                     { ((loginInfo.custType == 'inter' && loginInfo.userAuth == '1') || dataFromList.buserId == loginInfo.userId) &&
                         <a onClick={ onNoticeEdit } className="btnStyle btnOutline" title="수정 이동">수정</a>
                     }

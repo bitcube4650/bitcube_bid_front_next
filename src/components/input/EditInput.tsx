@@ -25,7 +25,7 @@ const EditInput = (props: EditInputProps) => {
 
     return (
         <input type={ props.type?props.type:"text" } className={ "inputStyle " + (props.className?props.className:"") }
-            value={ props.value } placeholder={ props.placeholder }
+            value={ props.value || '' } placeholder={ props.placeholder }
             name={ props.name } maxLength={ props.maxLength }
             readOnly={ props.readOnly } disabled={ props.disabled }
             onChange={ onFormEventSrcData }

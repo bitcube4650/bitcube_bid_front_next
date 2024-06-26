@@ -99,4 +99,16 @@ export interface PageProps {
 export interface ListProps {
     content: MapType;
     isMain?: boolean;
+    onCallPopMethod?: Function;
+}
+
+export interface affiliateProps {
+    affiliateSelectData: MapType;
+    setAffiliateSelectData: Dispatch<SetStateAction<MapType>>;
+}
+
+export interface FaqPopProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSearch: () => void;
 }
