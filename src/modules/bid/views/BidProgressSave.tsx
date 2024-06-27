@@ -5,6 +5,7 @@ import BidSaveAddRegist from '../components/BidSaveAddRegist';
 import { BidContext } from '../context/BidContext'; 
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { MapType } from 'components/types';
 
 const BidProgressSave = () => {
   const loginInfo: any = JSON.parse(localStorage.getItem("loginInfo") || "{}");
@@ -25,7 +26,6 @@ const BidProgressSave = () => {
   useEffect(() => {
     if(!viewType){
       setViewType(sessionViewType)
-      console.log(loginInfo)
       if(sessionViewType === '등록'){
         setBidContent(
           {
@@ -398,9 +398,14 @@ const BidProgressSave = () => {
       
       
       try {
-        await axios.post(`/api/v1/bid/${type}Bid`, fd);
-        Swal.fire('입찰계획이 저장되었습니다.', '', 'success');
-        onMoveBidProgress()
+        const response : MapType = await axios.post(`/api/v1/bid/${type}Bid`, fd);
+        if(response.code === 'fail'){
+          Swal.fire('입찰계획이 저장되었습니다.', '', 'success');
+          onMoveBidProgress()
+        }else{
+          Swal.fire(response.msg, '', 'error');
+          console.log(response.msg);
+        }
         
       } catch (error) {
           Swal.fire('입찰계획 저장을 실패하였습니다.', '', 'error');

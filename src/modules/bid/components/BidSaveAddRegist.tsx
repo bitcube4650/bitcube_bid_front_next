@@ -371,7 +371,7 @@ const BidSaveAddRegist = () => {
             <div className="flex align-items-center width100 ml80">
               <div className="formTit flex-shrink0 width170px">납품조건 <span className="star">*</span></div>
               <div className="width100">
-              <SrcInput name="supplyCond" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.supplyCond} disabled/>
+              <SrcInput name="supplyCond" srcData={ bidContent } setSrcData={ setBidContent } value={bidContent.supplyCond}/>
               </div>
             </div>
           </div>
