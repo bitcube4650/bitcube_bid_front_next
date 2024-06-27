@@ -399,7 +399,7 @@ const BidProgressSave = () => {
       
       try {
         const response : MapType = await axios.post(`/api/v1/bid/${type}Bid`, fd);
-        if(response.code === 'fail'){
+        if(response.data.code === 'OK'){
           Swal.fire('입찰계획이 저장되었습니다.', '', 'success');
           onMoveBidProgress()
         }else{
