@@ -43,6 +43,17 @@ const OtherCustListPop = ({otherCustModal, setOtherCustModal, setSelCustCode}:Ot
 		onSearch();
 	}, [srcData.size, srcData.page])
 
+	const onPageInit = () => {
+		if(srcData.page === 0){
+			onSearch()
+		} else {
+			setSrcData({
+				...srcData,
+				page : 0
+			})
+		}
+    }
+
   return (
 	<Modal className={`modalStyle ${itemPop ? 'modal-cover' : ''}`} id="otherCustPop" show={otherCustModal} onHide={() => setOtherCustModal(false)} dialogClassName="modal-xl">
 		<Modal.Body>
@@ -65,9 +76,9 @@ const OtherCustListPop = ({otherCustModal, setOtherCustModal, setSelCustCode}:Ot
 					<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : `${!CommonUtils.isEmpty(srcData.custType) ? "inline-flex" : "none"}`}} onClick={() => {setSrcData({...srcData, custType : '', custTypeNm : ''})}}>삭제</button>
 					<div className="sbTit mr30 ml50">업체명</div>
 					<div className="width150px">
-						<SrcInput name="custName" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 30 } />
+						<SrcInput name="custName" onSearch={ onPageInit } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 30 } />
 					</div>
-					<button className="btnStyle btnSearch" onClick={onSearch}>검색</button>
+					<button className="btnStyle btnSearch" onClick={onPageInit}>검색</button>
 				</div>
 			</div>
 			<table className="tblSkin1 mt30">

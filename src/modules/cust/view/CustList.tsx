@@ -74,7 +74,18 @@ const CustList = () => {
 	useEffect(() => {
 		onSearch();
 	}, [srcData.size, srcData.page])
-	
+
+	const onPageInit = () => {
+		if(srcData.page === 0){
+			onSearch()
+		} else {
+			setSrcData({
+				...srcData,
+				page : 0
+			})
+		}
+    }
+
 	return (
 		<div className="conRight">
 			<div className="conHeader">
@@ -122,14 +133,14 @@ const CustList = () => {
 					<div className="flex align-items-center">
 						<div className="sbTit mr30">업체명</div>
 						<div className="width150px">
-							<SrcInput name="custName" onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
+							<SrcInput name="custName" onSearch={ onPageInit } srcData={ srcData } setSrcData={ setSrcData } maxLength={ 300 } />
 						</div>
 						{/* 업체 승인 화면에서는 조회조건 '상태' 미 조회 */}
 						{!isApproval &&
 							<>
 							<div className="sbTit mr30 ml50">상태</div>
 							<div className="width120px">
-								<SrcSelectBox name='certYn' optionList={srcCertYn} valueKey='value' nameKey='name' onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData }/>
+								<SrcSelectBox name='certYn' optionList={srcCertYn} valueKey='value' nameKey='name' onSearch={ onPageInit } srcData={ srcData } setSrcData={ setSrcData }/>
 							</div>
 							</>
 						}
@@ -140,13 +151,13 @@ const CustList = () => {
 							<button type="button"  title="조회" className="btnStyle btnSecondary ml10" onClick={() => {setItemPop(true)}}>조회</button>
 							<button type="button" title="삭제" className="btnStyle btnOutline" style={{display : `${!CommonUtils.isEmpty(srcData.custType) ? "inline-flex" : "none"}`}} onClick={() => {setSrcData({...srcData, custType : '', custTypeNm : ''})}}>삭제</button>
 						</div>
-						<a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+						<button className="btnStyle btnSearch" onClick={onPageInit}>검색</button>
 					</div>
 				</div>
 				<div className="flex align-items-center justify-space-between mt40">
 					<div className="width100">
 						전체 : <span className="textMainColor"><strong>{ custList.totalElements ? custList.totalElements.toLocaleString() : 0 }</strong></span>건
-						<SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
+						<SelectListSize onSearch={ onPageInit } srcData={ srcData } setSrcData={ setSrcData } />
 					</div>
 
 					{/* 감사 사용자 / 각사 관리자만 업체 등록 가능 */}
