@@ -49,6 +49,17 @@ const BidStatus = () => {
         }
     },[srcData.size, srcData.page]);
 
+    const onPageInit = () => {
+		if(srcData.page === 0){
+			onSearch()
+		} else {
+			setSrcData({
+				...srcData,
+				page : 0
+			})
+		}
+    }
+
     return (
         <div>
              {/* 본문  */}
@@ -88,11 +99,11 @@ const BidStatus = () => {
                         <div className="flex align-items-center">
                             <div className="sbTit mr30">입찰번호</div>
                             <div className="width250px">
-                                <SrcInput onSearch={onSearch} name="bidNo" srcData={ srcData } setSrcData={ setSrcData } maxLength={ 10 } />
+                                <SrcInput onSearch={onPageInit} name="bidNo" srcData={ srcData } setSrcData={ setSrcData } maxLength={ 10 } />
                             </div>
                             <div className="sbTit mr30 ml50">입찰명</div>
                             <div className="width250px">
-                                <SrcInput onSearch={onSearch} name="bidName" srcData={ srcData } setSrcData={ setSrcData } maxLength={ 50 }/>
+                                <SrcInput onSearch={onPageInit} name="bidName" srcData={ srcData } setSrcData={ setSrcData } maxLength={ 50 }/>
                             </div>
                         </div>
                         <div className="flex align-items-center height50px mt10">
@@ -102,7 +113,7 @@ const BidStatus = () => {
                                 <SrcCheck id="progress1-2" name="dateOverYn" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.dateOverYn} text="입찰공고(개찰대상)" />
                                 <SrcCheck id="progress1-3" name="openBidYn" srcData={ srcData } setSrcData={ setSrcData } defaultChecked={srcData.openBidYn} text="개찰(업체선정대상)" />
                             </div>
-                            <a className="btnStyle btnSearch" onClick={onSearch}>검색</a>
+                            <a className="btnStyle btnSearch" onClick={onPageInit}>검색</a>
                         </div>
                     </div>
                     {/* searchBox  */}
@@ -110,7 +121,7 @@ const BidStatus = () => {
                     <div className="flex align-items-center justify-space-between mt40">
                         <div className="width100">
                             전체 : <span className="textMainColor"><strong>{ list.totalElements ? list.totalElements.toLocaleString() : 0 }</strong></span>건
-                            <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
+                            <SelectListSize onSearch={ onPageInit } srcData={ srcData } setSrcData={ setSrcData } />
                         </div>
                     </div>
                     

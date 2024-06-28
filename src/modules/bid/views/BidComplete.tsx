@@ -72,6 +72,17 @@ const BidComplete = () => {
         }
     },[srcData.size, srcData.page]);
     
+    const onPageInit = () => {
+		if(srcData.page === 0){
+			onSearch()
+		} else {
+			setSrcData({
+				...srcData,
+				page : 0
+			})
+		}
+    }
+
     return (
         <div className="conRight">
             {/* conHeader */}
@@ -109,13 +120,13 @@ const BidComplete = () => {
                     <div className="flex align-items-center height50px mt10">
                         <div className="sbTit mr30 width100px">입찰번호</div>
                         <div style={{ width:'320px'}}>
-                            <SrcInput onSearch={onSearch} name="biNo" srcData={ srcData } setSrcData={ setSrcData }/>
+                            <SrcInput onSearch={onPageInit} name="biNo" srcData={ srcData } setSrcData={ setSrcData }/>
                         </div>
                         <div className="sbTit mr30 ml50">입찰명</div>
                         <div style={{ width:'320px'}}>
-                            <SrcInput onSearch={onSearch} name="biName" srcData={ srcData } setSrcData={ setSrcData }/>
+                            <SrcInput onSearch={onPageInit} name="biName" srcData={ srcData } setSrcData={ setSrcData }/>
                         </div>
-                        <a onClick={onSearch} className="btnStyle btnSearch">검색</a>
+                        <a onClick={onPageInit} className="btnStyle btnSearch">검색</a>
                     </div>
                 </div>
                 {/* //searchBox */}
