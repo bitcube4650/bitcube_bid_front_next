@@ -28,9 +28,9 @@ interface PartnerInfo {
 }
 
 interface MainProps {
-    noticeListData: NoticeResponse;
-    bidInfoData: BidInfo;
-    partnerCntData: PartnerInfo;
+    noticeListData?: NoticeResponse;
+    bidInfoData?: BidInfo;
+    partnerCntData?: PartnerInfo;
     //pwInitData: boolean;
 }
 

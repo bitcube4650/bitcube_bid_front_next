@@ -8,7 +8,7 @@ import Main from '../../modules/main/views/Main';
 import PartnerMain from '../../modules/main/views/PartnerMain';
 
 interface LayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 interface Notice {
