@@ -20,8 +20,16 @@ const CheckPwdPop: React.FC<CheckPwdPopProps> = ({checkPwdPop, setCheckPwdPop, m
     const [modPwd, setModPwd] = useState(false);
     const [infoInter, setInfoInter] = useState(false);
     const [infoCust, setInfoCust] = useState(false);
-    const loginInfoString = localStorage.getItem("loginInfo"); 
-    const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
+    
+    let loginInfo = null;
+    try {
+      const loginInfoString = localStorage.getItem('loginInfo');
+      if (loginInfoString) {
+        loginInfo = JSON.parse(loginInfoString);
+      }
+    } catch (error) {
+      console.error('Error parsing loginInfo from localStorage:', error);
+    }
 
     useEffect(() => {
         if(checkPwdPop) {

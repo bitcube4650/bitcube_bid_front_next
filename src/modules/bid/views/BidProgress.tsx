@@ -8,6 +8,7 @@ import { BidContext } from '../context/BidContext';
 import { MapType } from '../../../components/types';
 import SelectListSize from '../../../components/SelectListSize';
 import SrcInput from '../../../components/input/SrcInput';
+import { useRouter } from 'next/router';
 
 const BidProgress = () => {
 
@@ -15,7 +16,8 @@ const BidProgress = () => {
   const loginInfoString = localStorage.getItem("loginInfo");
   const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
 
-  const navigate = useNavigate();
+  const router = useRouter();
+  //const navigate = useNavigate();
   const {setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
 
   const onMoveSave = (type : string)=>{
@@ -92,7 +94,7 @@ const BidProgress = () => {
     setInnerFiles([]) // 첨부파일 (대내용)
     setOuterFiles([]) // 첨부파일 (대외용)
   
-    navigate('/bid/progress/save');
+    router.push('/bid/progress/save');
   }
 
 

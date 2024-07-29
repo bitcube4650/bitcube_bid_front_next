@@ -1,12 +1,14 @@
-import { MapType } from 'components/types';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
+import { MapType } from '../../../components/types';
+import { useRouter } from 'next/router';
 
 const BidProgressList = (props : MapType) => {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    const router = useRouter();
     const data = props.progressList
     const onBidProgressDetail = () =>{
-        navigate(`/bid/progress/detail`);
+        router.push(`/bid/progress/detail`);
         localStorage.setItem('biNo',data.biNo)
     }
 

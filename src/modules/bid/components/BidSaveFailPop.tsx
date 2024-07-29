@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
+import { useRouter } from 'next/router';
 
 interface props {
     biNo : string;
@@ -13,8 +14,8 @@ interface props {
 
 const BidSaveFailPop:React.FC<props> = ({ biNo, biName, bidSaveFailPop, setBidSaveFailPop }) => {
 
-    const navigate = useNavigate();
-
+    //const navigate = useNavigate();
+    const router = useRouter()
     //유찰사유
     const [reason, setReason] = useState("");
 
@@ -25,7 +26,7 @@ const BidSaveFailPop:React.FC<props> = ({ biNo, biName, bidSaveFailPop, setBidSa
     };
 
     const onMovePage = ()=>{
-        navigate('/bid/status');
+        router.push('/bid/status');
     }
 
     //유찰 처리

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import LoginFailPop from "../components/LoginFailPop";
 import LoginNotAppPop from "../components/LoginNotAppPop";
@@ -8,6 +8,7 @@ import IdSearchPop from "../components/IdSearchPop";
 import PwSearchPop from "../components/PwSearchPop";
 import Swal from 'sweetalert2';
 import axios from "axios"
+import { useRouter } from 'next/router'
 
 function LoginWrap(props: {logoUrl: string}) {
     const [loginInfo, setLoginInfo] = useState({
@@ -31,7 +32,8 @@ function LoginWrap(props: {logoUrl: string}) {
     // 비밀번호 찾기 팝업
     const [pwSearchPop, setPwSearchPop] = useState<boolean>(false);
 
-    const navigate = useNavigate();
+    //    const navigate = useNavigate();
+    const router = useRouter();
 
     
     useEffect(() => {
@@ -66,10 +68,12 @@ function LoginWrap(props: {logoUrl: string}) {
                     removeCookie('rememberUserId');
                 }
                 axios.defaults.headers['x-auth-token'] = loginData.token;
-                navigate("/");
+                //navigate("/");
+                router.push('/')
             }
 
         } catch (err) {
+            console.log(err)
             // 기존 로그인 로직 interface처리하는부분의 로직이 사라져서 case처리 부분 삭제
             if (axios.isAxiosError(err) && err.response) {
                 if(err.response.status === 403) {
@@ -84,7 +88,7 @@ function LoginWrap(props: {logoUrl: string}) {
     };
 
     const onSignUp = () => {
-        navigate("/SignUp");
+        router.push('/signUp')
     };
 
     const onIdSearch = () => {
@@ -140,8 +144,8 @@ function LoginWrap(props: {logoUrl: string}) {
                     </ul>
                 </div>
                 <div className="loginBtnWrap">
-                    <a onClick={onLogin} className="btnLoginPrimary" title="로그인">로그인</a>
-                    <a onClick={onSignUp} className="btnLoginOutline mt10" title="회원가입">회원가입</a>
+                    <a onClick={()=>{onLogin()}} className="btnLoginPrimary" title="로그인">로그인</a>
+                    <a onClick={()=>{onSignUp()}} className="btnLoginOutline mt10" title="회원가입">회원가입</a>
                 </div>
             </div>
             <div className="loginRight">

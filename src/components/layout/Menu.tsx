@@ -1,17 +1,19 @@
 import React from 'react';
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import LogoutPop from './Logout'
 import CheckPwdPop from '../modal/CheckPwd'
 import { MapType } from '../../../src/components/types'
+import { useRouter } from 'next/router';
 
 //todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
 const Menu = () => {
     // 현재 경로 /~~~
     const path : string = window.location.pathname;
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    const router = useRouter();
     // 선택한 메뉴
     const [targetId, setTargetId] = useState<string>("")
     // 메뉴 선택 여부
@@ -90,17 +92,17 @@ const Menu = () => {
     const onMoveBiddingPage = (type : string) => {
         if( type === 'completed')
             {//계열사 낙찰이력으로 이동
-            navigate('/bid/history?flag='+type)
+            router.push('/bid/history?flag='+type)
         } 
         else if( type === 'awarded'){
             //협력사 입찰완료로 이동
-            navigate('/bid/partnerComplete?flag='+type)
+            router.push('/bid/partnerComplete?flag='+type)
         } else {
             //입찰진행으로 이동
             if( userCustType === 'inter' ){
-                navigate('/bid/status')
+                router.push('/bid/status')
             } else {
-                navigate('/bid/partnerStatus?flag='+type)
+                router.push('/bid/partnerStatus?flag='+type)
             }
         }
     }
@@ -131,7 +133,7 @@ const Menu = () => {
                 </div>
             }
             <ul className="conLeft">
-                <li className={(path === '/main'? 'active' : '')}><a href="/main"><span><i className="fa-light fa-desktop"></i></span>메인</a></li>
+                <li className={(path === '/'? 'active' : '')}><a href="/"><span><i className="fa-light fa-desktop"></i></span>메인</a></li>
                 <li className={(path === ('/bid/progress') || path === ('/bid/status') || path === ('/bid/partnerStatus') || path === ('/bid/complete') || path === ('/bid/partnerComplete') || path === ('/bid/history')? 'active' : '')}>
                     <a id="ebid" onClick={onClickMenu} ><span><i className="fa-light fa-file-contract"></i></span>전자입찰</a>
                     <div className={(targetId === "ebid" && menuClickBoolean) ? 'depth2Lnb_active' : 'depth2Lnb'} >

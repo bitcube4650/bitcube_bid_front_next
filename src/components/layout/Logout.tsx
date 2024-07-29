@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useRouter } from 'next/router';
 
 interface LogoutProps {
     logoutPop : boolean;
@@ -13,8 +14,9 @@ interface LogoutProps {
 const Logout: React.FC<LogoutProps> = ({setLogoutPop, logoutPop}) => {
     const [cookies, setCookie, removeCookie] = useCookies(['loginInfo']);
 
-    const navigate = useNavigate();
-
+    //const router = useNavigate();
+    const router = useRouter();
+    
     const logoutCheck = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault();
         axios.post("/logout", {}).then((response) => {
@@ -22,7 +24,7 @@ const Logout: React.FC<LogoutProps> = ({setLogoutPop, logoutPop}) => {
             if(status == 200) {
                 removeCookie('loginInfo');
                 localStorage.clear();
-                navigate('/');
+                router.push('/');
             } else {
                 Swal.fire('', '로그아웃 처리에 실패하였습니다.', 'error');
             }

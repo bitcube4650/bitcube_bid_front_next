@@ -1,15 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import { MapType } from '../../../components/types';
 import ft from '../api/filters';
+import { useRouter } from 'next/router';
 
 const BidStatusList = (props:MapType) => {
 
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    const router = useRouter();
 
     const onClickBidDetail = (biNo:string) => {
         localStorage.setItem("biNo", biNo);
-        navigate('/bid/status/detail');
+        router.push('/bid/status/detail');
     };
 
     function fnIsPastDate(dateString:Date) {

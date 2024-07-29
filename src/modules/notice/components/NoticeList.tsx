@@ -3,13 +3,15 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as CommonUtils from 'components/CommonUtils';
 import { ListProps } from 'components/types'
+import { useRouter } from 'next/router';
 
 function NoticeList(props: ListProps) {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    const router = useRouter();
 
     function onNoticeDetail() {
         axios.post("/api/v1/notice/updateClickNum", {'bno': props.content.bno}); //클릭 시 조회수 +1
-        navigate('/noticeDetail/' + props.content.bno);
+        router.push('/noticeDetail/' + props.content.bno);
     }
 
     if(!props.isMain) {

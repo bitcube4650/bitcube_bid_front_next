@@ -2,10 +2,11 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
+//import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import { MapType } from '../../../components/types';
+import { useRouter } from 'next/router';
 import EditTextArea from '../../../components/input/EditTextArea';
-import { MapType } from 'components/types'
 
 interface BidProgressDelPropsType {
     isBidProgressDelModal: boolean;
@@ -22,7 +23,8 @@ interface BidProgressDelPropsType {
 }
 
 const BidProgressDel: React.FC<BidProgressDelPropsType> = ({ isBidProgressDelModal, setIsBidProgressDelModal, data, interNm }) => {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
+    const router = useRouter()
     const [delReason, setDelReason] = useState<MapType>(
       {delReasonContent : '' }
     )
@@ -57,7 +59,7 @@ const BidProgressDel: React.FC<BidProgressDelPropsType> = ({ isBidProgressDelMod
         try {
             await axios.post(`/api/v1/bid/delete`, params)
             Swal.fire('입찰계획이 삭제되었습니다.', '', 'success');
-            navigate('/bid/progress');
+            router.push('/bid/progress');
             onBidProgressDelModalHide()
             setDelReason({
               delReasonContent : ''
