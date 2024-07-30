@@ -7,11 +7,18 @@ import CheckPwdPop from '../modal/CheckPwd'
 import { MapType } from '../../../src/components/types'
 import { useRouter } from 'next/router';
 
+interface LoginInfo {
+    custType: string;
+    userAuth: string;
+    custCode: string;
+}
+
 //todo: 화면 대충 복붙해서 오류나는 부분 수정만 해서 다시 복붙해서 한줄씩 수정 필요...
 
 const Menu = () => {
     // 현재 경로 /~~~
-    const path : string = window.location.pathname;
+    const [path, setPath] = useState<string>("");
+    // const [path, setPath]: string = typeof window !== "undefined" ? window.location.pathname : "";
     //const navigate = useNavigate();
     const router = useRouter();
     // 선택한 메뉴
@@ -27,11 +34,18 @@ const Menu = () => {
         awarded : 0,
     })
     //세션 로그인 정보
-    const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string) ;
+    const [loginInfo, setLoginInfo] = useState<LoginInfo>({
+        custType: ''
+    ,   userAuth: ''
+    ,   custCode: ''
+    });
+    // const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string) ;
     // 운영사 / 협력사 구분
-    const userCustType = loginInfo.custType;
+    const [userCustType, setUserCustType] = useState<string>("");
+    // const userCustType = loginInfo.custType;
     // 사용자 권한 1, 2, 3, 4
-    const userAuth = loginInfo.userAuth;
+    const [userAuth, setUserAuth] = useState<string>("");
+    // const userAuth = loginInfo.userAuth;
     // 비밀번호확인 팝업 
     const [checkPwdPop, setCheckPwdPop] = useState<boolean>(false);
     // 수정팝업창
@@ -48,6 +62,10 @@ const Menu = () => {
     }
 
     useEffect(() => {
+        setPath(window.location.pathname);
+        setLoginInfo(JSON.parse(localStorage.getItem("loginInfo") as string));
+        setUserCustType(JSON.parse(localStorage.getItem("loginInfo") as string).custType);
+        setUserAuth(JSON.parse(localStorage.getItem("loginInfo") as string).userAuth);
         const fetchData = async () => {
             try {
                 let url = ""

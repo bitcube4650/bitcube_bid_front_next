@@ -45,17 +45,20 @@ const Layout = ({ children }: LayoutProps) => {
   const router = useRouter();
   const { pathname } = router;
 
-  const loginInfoString = typeof window !== 'undefined' ? localStorage.getItem('loginInfo') : null;
-  const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
+  // const loginInfoString = typeof window !== 'undefined' ? localStorage.getItem('loginInfo') : null;
+  // const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
+  const [loginInfo, setLoginInfo] = useState<any>(null);
 
   useEffect(() => {
+    let letLoginInfo = JSON.parse(localStorage.getItem('loginInfo') as string);
+    setLoginInfo(JSON.parse(localStorage.getItem('loginInfo') as string));
     const publicPaths = ['/', '/signUp', '/signUp/signUpMain'];
-    if (loginInfo == null && !publicPaths.includes(pathname)) {
+    if (letLoginInfo == null && !publicPaths.includes(pathname)) {
       router.push('/');
-    } else if (loginInfo != null && (pathname === '/signUp' || pathname === '/signUp/signUpMain')) {
+    } else if (letLoginInfo != null && (pathname === '/signUp' || pathname === '/signUp/signUpMain')) {
       router.push('/');
     }
-  }, [pathname, loginInfo, router]);
+  }, [pathname, router]);
 
   const [mainProps, setMainProps] = useState<MainProps>({
     noticeListData: { content: [] },
@@ -239,7 +242,7 @@ const Layout = ({ children }: LayoutProps) => {
     }
   }
 
-  return null;
+  // return null;
 };
 
 export default Layout;
