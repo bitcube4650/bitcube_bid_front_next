@@ -71,12 +71,15 @@ const Main: React.FC<MainProps> = ({noticeListData, bidInfoData, partnerCntData}
     
 
     const moveBiddingPage = (keyword: string) => {
+        let params = {
+            'keyword' : keyword
+        }
         if (keyword === 'planning') {
             router.push('/bid/progress');
         } else if (keyword === 'completed' || keyword === 'unsuccessful') {
-            router.push('/bid/complete/' + keyword);
+            router.push({pathname : '/bid/complete/', query : params}, '/bid/complete/');
         } else {
-            router.push('/bid/status/' + keyword);
+            router.push({pathname : '/bid/status/', query : params}, '/bid/status/');
         }
     };
 
