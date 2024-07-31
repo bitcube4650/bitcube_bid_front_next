@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import NoticeList from '../../notice/components/NoticeList';
 import PwInitPop from '../components/PwInitPop';
+import { useRouter } from 'next/router';
 
 interface Notice {
     bno: number;
@@ -15,10 +16,9 @@ interface NoticeResponse {
 }
 
 const PartnerMain: React.FC = () => {
+    const router = useRouter();
     const loginInfoString = localStorage.getItem("loginInfo"); 
     const loginInfo = loginInfoString ? JSON.parse(loginInfoString) : null;
-
-    const navigate = useNavigate();
 
     const [noticeList, setNoticeList] = useState<NoticeResponse['data']>({ content: [] });
     const [bidInfo, setBidInfo] = useState({noticing: "", submitted: "", awarded: "", unsuccessful: ""});
@@ -34,10 +34,14 @@ const PartnerMain: React.FC = () => {
 
 
     const moveBiddingPage = (keyword: string) => {
+        let params = {
+            'keyword' : keyword
+        }
+
         if(keyword == 'awarded' || keyword == 'awardedAll' || keyword == 'unsuccessful'){//입찰완료로 이동
-            navigate('/bid/partnerComplete/'+keyword);
+            router.push({pathname : '/bid/partnerComplete/', query : params}, '/bid/partnerComplete/');
         }else{//입찰진행 이동
-            navigate('/bid/partnerStatus/'+keyword);
+            router.push({pathname : '/bid/partnerStatus/', query : params}, '/bid/partnerStatus/');
         }
     }
 
