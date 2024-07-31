@@ -2,39 +2,44 @@ import React, { useEffect, useState }from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import { MapType } from 'components/types'
+import { MapType } from '../../../components/types';
+import { useRouter } from 'next/router';
 
 const NoticeDetail = () => {
     //세션 로그인 정보
     const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
-    const navigate = useNavigate();
-    const { bno } = useParams();
+    //const navigate = useNavigate();
+    const router = useRouter()
+    const { bno } = router.query
+    console.log(bno)
     const [dataFromList, setDataFromList] = useState<MapType>({});
 
     async function onSelectDetail() {
         try {
             const srcData = {bno: bno};
+            console.log(srcData)
+            console.log('탐')
             const response = await axios.post('/api/v1/notice/noticeList', srcData);
-            
+            console.log(response)
             if(response.data.status == 200) {
                 setDataFromList(response.data.data.content[0]);
             } else {
                 Swal.fire('', '조회에 실패하였습니다.', 'error');
-                navigate("/notice");
+                router.push("/notice");
             }
         } catch (error) {
             Swal.fire('', '조회에 실패하였습니다.', 'error');
             console.log(error);
-            navigate("/notice");
+            router.push("/notice");
         }
     };
 
     useEffect(() => {
         onSelectDetail();
-    }, [bno]);
+    }, []);
 
     function onNoticeEdit() {
-        navigate('/noticeEdit/' + bno, {state: {updateInsert: "update"}});
+        router.push('/noticeEdit', {query: {updateInsert: "update"}});
     }
 
     function onNoticeDelConfirm() {
@@ -60,7 +65,7 @@ const NoticeDetail = () => {
             const response = await axios.post('/api/v1/notice/deleteNotice', { 'bno': bno });
             if(response.data.status == 200) {
                 Swal.fire('', '삭제되었습니다.', 'success');
-                navigate("/notice");
+                router.push("/notice");
             } else {
                 Swal.fire('', response.data.msg, 'error');
             }
@@ -96,7 +101,7 @@ const NoticeDetail = () => {
                 <div className="boxSt mt20">
                     <div className="flex align-items-center">
                         <div className="formTit flex-shrink0 width170px">제목</div>
-                        <div className="width100">{ dataFromList.btitle }</div>
+                        <div className="width100">{ dataFromList ? dataFromList.btitle : ''}</div>
                     </div>
                     <div className="flex align-items-center mt20">
                         <div className="formTit flex-shrink0 width170px">공지대상</div>

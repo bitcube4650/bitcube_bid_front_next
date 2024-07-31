@@ -7,9 +7,10 @@ import { MapType } from '../../../src/components/types';
 import SrcInput from '../../../src/components/input/SrcInput';
 import SelectListSize from '../../../src/components/SelectListSize';
 import BidProgressList from '../../../src/modules/bid/components/BidProgressList';
+import { useRouter } from 'next/router';
 
 const Index = ({ initialProgressList }: { initialProgressList: MapType }) => {
-  console.log(initialProgressList)
+  console.log('initialProgressList',initialProgressList)
   const [loginInfo, setLoginInfo] = useState(null);
   const [progressList, setProgressList] = useState<MapType>(initialProgressList);
   const [srcData, setSrcData] = useState<MapType>({
@@ -27,6 +28,8 @@ const Index = ({ initialProgressList }: { initialProgressList: MapType }) => {
     setLoginInfo(parsedLoginInfo);
   }, []);
 
+  const router = useRouter()
+  
   const onMoveSave = (type: string) => {
     setViewType(type);
     localStorage.setItem("viewType", type);
@@ -82,12 +85,13 @@ const Index = ({ initialProgressList }: { initialProgressList: MapType }) => {
     setInsFile(null);
     setInnerFiles([]);
     setOuterFiles([]);
+
+    router.push('/bid/progress/save');
   };
 
   const onSearch = useCallback(async () => {
     try {
       const response = await axios.post(`/api/v1/bid/progressList`, srcData);
-      console.log('onSearch',response)
       setProgressList(response.data.data);
     } catch (error) {
       Swal.fire('조회에 실패하였습니다.', '', 'error');
@@ -214,7 +218,7 @@ const Index = ({ initialProgressList }: { initialProgressList: MapType }) => {
 export async function getServerSideProps() {
   console.log('gre121')
   try {
-    const response = await axios.post("http://localhost:3000/api/v1/bid/progressList", {
+    const response = await axios.post("https://localhost:3000/api/v1/bid/progressList", {
       biNo: "",
       biName: "",
       size: 10,

@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import * as CommonUtils from 'components/CommonUtils';
 import { ListProps } from 'components/types'
 import { useRouter } from 'next/router';
@@ -11,7 +11,11 @@ function NoticeList(props: ListProps) {
 
     function onNoticeDetail() {
         axios.post("/api/v1/notice/updateClickNum", {'bno': props.content.bno}); //클릭 시 조회수 +1
-        router.push('/noticeDetail/' + props.content.bno);
+
+        router.push({
+            pathname: '/notice/noticeDetail',
+            query: { bno : props.content.bno }
+        });
     }
 
     if(!props.isMain) {
