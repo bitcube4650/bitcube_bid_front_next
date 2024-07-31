@@ -16,7 +16,7 @@ const SrcCheckBox = (props: SrcCheckProps) => {
 
     return (
         <>
-            <input type="checkbox" id={props.id} className="checkStyle" onChange={onFormEventSrcData} name={props.name} defaultChecked={props.defaultChecked} />
+            <input type="checkbox" id={props.id} className="checkStyle" onChange={onFormEventSrcData} name={props.name} checked={props.defaultChecked} />
             <label htmlFor={props.id} className="mr30">{props.text}</label>
         </>
     )
