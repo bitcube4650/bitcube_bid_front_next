@@ -1,16 +1,17 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import CmmnInfo from '../components/BidCommonInfo'
-import Ft from '../api/filters';
-import Api from '../api/api';
+import CmmnInfo from '../../../src/modules/bid/components/BidCommonInfo'
+import Ft from '../../../src/modules/bid/api/filters';
+import Api from '../../../src/modules/bid/api/api';
 import Modal from 'react-bootstrap/Modal';
-import BidSubmitHistoryPop from '../components/BidSubmitHistoryPop';
-import BidResultReport from '../components/BidResultReport';
-import { MapType } from 'components/types';
+import BidSubmitHistoryPop from '../../../src/modules/bid/components/BidSubmitHistoryPop';
+import BidResultReport from '../../../src/modules/bid/components/BidResultReport';
+import { MapType } from '../../../src/components/types'
+import { useRouter } from 'next/router';
 
 const BidCompleteDetail = () => {
+    const router = useRouter();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef<boolean>(true);
@@ -87,9 +88,8 @@ const BidCompleteDetail = () => {
     }, [data.insMode, data.estOpenDate])
 
     //페이지 이동
-    const navigate = useNavigate();
     const onMovePage = () => {
-        navigate('/bid/complete');
+        router.push('/bid/complete');
     }
 
     //업체 제출 이력

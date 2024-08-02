@@ -6,18 +6,17 @@ import SrcInput from '../../../src/components/input/SrcInput';
 import SrcCheck from '../../../src/components/input/SrcCheckBox'
 import SelectListSize from '../../../src/components/SelectListSize';
 import Pagination from '../../../src/components/Pagination';
-import List from '../../../src/modules/bid/components/BidStatusList';
+import Ft from '../../../src/modules/bid/api/filters';
+import { useRouter } from 'next/router';
 
-const Index = () => {
+const Index = ({ initList }: { initList: MapType }) => {
+    const router = useRouter();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef<Boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState<MapType>({
-        totalElements   : 0,
-        val         : [{}]
-    });
+    const [list, setList] = useState<MapType>(initList);
 
     //조회조건
     const [srcData, setSrcData] = useState<MapType>({
@@ -39,6 +38,17 @@ const Index = () => {
             }
         })
     }, [srcData]);
+
+    const onClickBidDetail = (biNo:string) => {
+        localStorage.setItem("biNo", biNo);
+        router.push('/bid/status/detail');
+    };
+
+    function fnIsPastDate(dateString:Date) {
+        const currentDate = new Date();
+        const targetDate = new Date(dateString);
+        return targetDate < currentDate;
+    }
 
     //마운트 완료 후 검색
     useEffect(() => {
@@ -149,7 +159,30 @@ const Index = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            { list.content?.map((data: MapType) => <List key={data.biNo} val={data} />) }
+                            { list.content?.map((data: MapType, idx: string) => 
+                                <tr key={idx}>
+                                    <td className="textUnderline">
+                                        <a href="#" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(data.biNo)}>{ data.biNo }</a>
+                                    </td>
+                                    <td className="textUnderline text-left">
+                                        <a href="#" style={{cursor: "pointer"}} onClick={() => onClickBidDetail(data.biNo)} >{ data.biName }</a>
+                                    </td>
+                                    <td className={fnIsPastDate(data.estCloseDate) ? 'textHighlight' : ''}>
+                                        <i className="fa-regular fa-timer"></i>{ data.estCloseDate }
+                                    </td>
+                                    <td>{ Ft.ftBiMode(data.biMode) }</td>
+                                    <td className={fnIsPastDate(data.estCloseDate) && data.ingTag !== '개찰' ? 'textHighlight' : (data.ingTag === '개찰' ? 'blueHighlight' : '')}>{ data.ingTag }</td>
+                                    <td>{ Ft.ftInsMode(data.insMode) }</td>
+                                    <td>
+                                        <i className="fa-light fa-paper-plane-top"></i>
+                                        <a href={'mailto:' + data.cuserEmail} className="textUnderline" title="담당자 메일" >{ data.cuser }</a>
+                                    </td>
+                                    <td className="end">
+                                        <i className="fa-light fa-paper-plane-top"></i>
+                                        <a href={'mailto:' + data.openerEmail} className="textUnderline" title="개찰자 메일">{ data.openerId }</a>
+                                    </td>
+                                </tr>
+                            )}
                             { (list.content === undefined || list.content === null || list.content.length === 0)&&
                                 <tr>
                                     <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
@@ -170,6 +203,37 @@ const Index = () => {
              {/* 본문  */}
         </div>
     )
+}
+
+
+export const getServerSideProps = async (context) => {
+    let params = {
+        bidNo : ''
+    ,   bidName : ''
+    ,   rebidYn: true
+    ,   dateOverYn: true
+    ,   openBidYn: true
+    ,	size : 10
+    ,	page : 0
+    }
+
+    const cookies = context.req.headers.cookie || '';
+    try {
+        axios.defaults.headers.cookie = cookies;
+        const response = await axios.post("http://localhost:3000/api/v1/bidstatus/statuslist", params);
+        return {
+            props: {
+                initList: response.data.data
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching initial progress list:', error);
+        return {
+            props: {
+                initList: { content: [], totalElements: 0 }
+            }
+        };
+    }
 }
 
 export default Index
