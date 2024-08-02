@@ -8,8 +8,12 @@ const BidProgressList = (props : MapType) => {
     const router = useRouter();
     const data = props.progressList
     const onBidProgressDetail = () =>{
-        router.push(`/bid/progress/detail`);
-        localStorage.setItem('biNo',data.biNo)
+
+      router.push({
+        pathname: '/bid/progress/detail',
+        query: {  biNo : data.biNo }
+    });
+
     }
 
     return (

@@ -32,6 +32,7 @@ const Index = ({ initList }: { initList: MapType }) => {
     });
 
     const onSearch = async() => {
+        console.log('22')
         await axios.post("/api/v1/bidComplete/list", srcData).then((response) =>{
             if (response.data.code === "OK") {
                 setList(response.data.data);

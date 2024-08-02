@@ -18,7 +18,6 @@ const NoticeDetail = () => {
         try {
             const srcData = {bno: bno};
             console.log(srcData)
-            console.log('탐')
             const response = await axios.post('/api/v1/notice/noticeList', srcData);
             console.log(response)
             if(response.data.status == 200) {

@@ -83,6 +83,10 @@ const Main: React.FC<MainProps> = ({noticeListData, bidInfoData, partnerCntData}
         }
     };
 
+    const onMoveNotice = ()=>{
+        router.push("/notice" )
+    }
+
     return (
         <div className="conRight">
             <div className="conHeader" style={{ padding: '23px 30px 20px 30px' }}>
@@ -143,7 +147,7 @@ const Main: React.FC<MainProps> = ({noticeListData, bidInfoData, partnerCntData}
                             </div>
                         </div>
                         <div className="mainConBox" style={{ height: '381.41px' }}>
-                            <h2 className="h2Tit">공지사항<a href="/notice" title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
+                            <h2 className="h2Tit">공지사항<a onClick={()=>{onMoveNotice()}} title="공지사항 페이지로 이동" className="mainConBoxMore">더보기<i className="fa-solid fa-circle-plus"></i></a></h2>
                             <div className="notiList">
                                 {noticeList?.content?.map((notice: Notice) => <NoticeList key={notice.bno} content={notice} isMain={true} />)}
                             </div>

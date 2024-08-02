@@ -7,23 +7,27 @@ import { useRouter } from 'next/router';
 import BidCommonInfo from '../../../src/modules/bid/components/BidCommonInfo';
 import BidBiddingPreview from '../../../src/modules/bid/components/BidBiddingPreview';
 import BidProgressDel from '../../../src/modules/bid/components/BidProgressDel';
+import { MapType } from '../../../src/components/types';
 
-const Detail = () => {
-
+const Detail = ({ initDetailList }: { initDetailList: MapType }) => {
+  console.log(initDetailList)
   const loginInfo :any = JSON.parse(localStorage.getItem("loginInfo") || '{}')
 
   const loginId = loginInfo.userId
   const interNm = loginInfo.custName
-  const [data, setData] = useState<any>({})
-  const [isEditUser,setIsEditUser] = useState<boolean>(false)
+  const [data, setData] = useState<any>(initDetailList)
+  const [isEditUser,setIsEditUser] = useState<boolean>(loginId === initDetailList.createUser)
   const [isBidProgressDelModal, setIsBidProgressDelModal] = useState<boolean>(false)
   const [isBidBiddingPreviewModal,setIsBidBiddingPreviewModal] = useState<boolean>(false)
   //const navigate = useNavigate();
   const router = useRouter();
 
   const {setViewType, bidContent, setBidContent, setCustContent, setCustUserName, setCustUserInfo, setTableContent, setInsFile, setInnerFiles, setOuterFiles} = useContext(BidContext);
-
+  const biNo = data.biNo
+   /*
   const biNo = localStorage.getItem('biNo')
+
+ 
   const onBidDetail = async()=>{
 
     const params = {
@@ -45,6 +49,8 @@ const Detail = () => {
   useEffect(() => {
     onBidDetail()
   }, [])
+
+  */
   
   const onMoveBidProgress =()=>{
     router.push('/bid/progress');
@@ -325,5 +331,32 @@ const Detail = () => {
     </div>
   )
 }
+
+
+export const getServerSideProps = async(context) =>{
+
+  const {biNo} = context.query
+
+  const params = { biNo }
+  const cookies = context.req.headers.cookie || '';
+  try {
+    axios.defaults.headers.cookie = cookies;
+    const response = await axios.post('http://localhost:3000/api/v1/bidstatus/statusDetail', params);
+    return {
+      props: {
+        initDetailList: response.data.data
+      }
+    };
+  } catch (error) {
+      console.error('Error fetching initial statusDetail:', error);
+      return {
+        props: {
+          initDetailList: { content: [], totalElements: 0 }
+        }
+      };
+  }
+
+}
+
 
 export default Detail;

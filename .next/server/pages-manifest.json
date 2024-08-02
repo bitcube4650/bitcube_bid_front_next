@@ -2,6 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/bid/progress": "pages/bid/progress.js",
   "/": "pages/index.js",
-  "/bid/progress": "pages/bid/progress.js"
+  "/notice": "pages/notice.js"
 }

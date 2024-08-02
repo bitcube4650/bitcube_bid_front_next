@@ -99,9 +99,11 @@ const Index = ({ initialProgressList }: { initialProgressList: MapType }) => {
     }
   }, [srcData]);
 
+  /*
   useEffect(() => {
     onSearch();
   }, [srcData.size, srcData.page, onSearch]);
+  */
 
   return (
     <div className="conRight">
@@ -215,15 +217,18 @@ const Index = ({ initialProgressList }: { initialProgressList: MapType }) => {
   );
 };
 
-export async function getServerSideProps() {
-  console.log('gre121')
+export const getServerSideProps = async(context) =>{
+  let params = {
+    biNo: "",
+    biName: "",
+    size: 10,
+    page: 0
+  }
+
+  const cookies = context.req.headers.cookie || '';
   try {
-    const response = await axios.post("https://localhost:3000/api/v1/bid/progressList", {
-      biNo: "",
-      biName: "",
-      size: 10,
-      page: 0
-    });
+    axios.defaults.headers.cookie = cookies;
+    const response = await axios.post("http://localhost:3000/api/v1/bid/progressList", params);
     return {
       props: {
         initialProgressList: response.data.data

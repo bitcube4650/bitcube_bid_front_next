@@ -11,17 +11,14 @@ import NoticeList from '../../src/modules/notice/components/NoticeList';
 import { useRouter } from 'next/router';
 
 
-const Index = () => {
+const Index = ({ initNoticeList }: { initNoticeList: MapType }) => {
     //const navigate = useNavigate();
     const router = useRouter()
 
     //세션 로그인 정보
     const loginInfo = JSON.parse(localStorage.getItem("loginInfo") as string);
     //조회 결과
-    const [noticeList, setNoticeList] = useState<MapType>({
-        totalElements   : 0,
-        content         : [{bno: 0}]
-    });
+    const [noticeList, setNoticeList] = useState<MapType>(initNoticeList);
     //조회조건
     const [srcData, setSrcData] = useState<MapType>({
         title   : "",
@@ -41,9 +38,11 @@ const Index = () => {
         }
     };
 
+    /*
     useEffect(() => {
         onSearch();
     },[srcData.size, srcData.page]);
+    */
 
     const onNoticeEdit = ()=> {
         if (typeof window === 'undefined') {
@@ -86,7 +85,7 @@ const Index = () => {
                 </div>
                 <div className="flex align-items-center justify-space-between mt40">
                 <div className="width100">
-                        전체 : <span className="textMainColor"><strong>{ noticeList.totalElements ? noticeList.totalElements.toLocaleString() : 0 }</strong></span>건
+                        전체 : <span className="textMainColor"><strong>{ noticeList?.totalElements ? noticeList.totalElements.toLocaleString() : 0 }</strong></span>건
                         <SelectListSize onSearch={ onSearch } srcData={ srcData } setSrcData={ setSrcData } />
                     </div>
                     { (loginInfo.userAuth == '1' || loginInfo.userAuth == '2') &&
@@ -114,8 +113,8 @@ const Index = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { noticeList.content?.map((notice: MapType) => <NoticeList key={notice.bno} content={notice} />) }
-                        { noticeList.content == null &&
+                        { noticeList?.content?.map((notice: MapType) => <NoticeList key={notice.bno} content={notice} />) }
+                        { noticeList?.content == null &&
                             <tr>
                                 <td className="end" colSpan={6}>조회된 데이터가 없습니다.</td>
                             </tr> }
@@ -130,5 +129,34 @@ const Index = () => {
         </div>
     );
 };
+
+
+export const getServerSideProps = async(context) =>{
+
+    const cookies = context.req.headers.cookie || '';
+    try {
+        axios.defaults.headers.cookie = cookies;
+        const response = await axios.post('http://localhost:3000/api/v1/notice/noticeList', {
+            title   : "",
+            content : "",
+            userName: "",
+            size    : 10,
+            page    : 0
+        });
+        return {
+            props: {
+                initNoticeList: response.data.data
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching initial noticeList:', error);
+        return {
+            props: {
+                initNoticeList: { content: [], totalElements: 0 }
+            }
+        };
+    }
+
+}
 
 export default Index;

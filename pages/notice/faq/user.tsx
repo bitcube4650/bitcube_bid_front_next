@@ -3,11 +3,12 @@ import axios from 'axios';
 import Swal from 'sweetalert2'; // 공통 팝업창
 import { MapType } from '../../../src/components/types';
 
-const User = () => {
+const User = ({ initFaqList }: { initFaqList: MapType }) => {
 
+  console.log(initFaqList)
   const [activeTab, setActiveTab] = useState('faq1');
   const [activeFaq, setActiveFaq] = useState('');
-  const [faqList, setFaqList] = useState<MapType[]>([]);
+  const [faqList, setFaqList] = useState<MapType>(initFaqList);
 
   const onTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -19,6 +20,8 @@ const User = () => {
   }
 
   //faq 조회
+  
+  /*
   const onSearch = useCallback(async() => {
     try {
         const response = await axios.post("/api/v1/faq/faqList", {});
@@ -41,6 +44,7 @@ const User = () => {
     onSearch();
   }, [onSearch]);
 
+  */
   return (
     <div className="conRight">
       <div className="conHeader">
@@ -81,6 +85,28 @@ const User = () => {
       </div>
     </div>
   )
+}
+
+export const getServerSideProps = async(context) =>{
+
+  const cookies = context.req.headers.cookie || '';
+  try {
+      axios.defaults.headers.cookie = cookies;
+      const response = await axios.post('http://localhost:3000/api/v1/faq/faqList', {});
+      return {
+          props: {
+              initFaqList: response.data.data.content
+          }
+      };
+  } catch (error) {
+      console.error('Error fetching initial faqList:', error);
+      return {
+          props: {
+              initFaqList: { content: [], totalElements: 0 }
+          }
+      };
+  }
+
 }
 
 export default User;

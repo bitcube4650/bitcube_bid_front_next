@@ -9,17 +9,12 @@ import FaqList from '../../../src/modules/notice/components/faqList';
 import FaqPop from '../../../src/modules/notice/components//faqPop';
 
 
-const Admin = () => {
+const Admin = ({ initFaqList }: { initFaqList: MapType }) => {
     //모달창 띄우기
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
     //조회 결과
-    const [faqList, setFaqList] = useState<MapType>({
-        content: [],
-        totalElements: 0,
-        number: 0,
-        totalPages: 0
-    });
+    const [faqList, setFaqList] = useState<MapType>(initFaqList);
 
     //조회조건
     const [srcData, setSrcData] = useState<MapType>({
@@ -63,9 +58,11 @@ const Admin = () => {
         setIsModalOpen(false);
     }, []);
 
+    /*
     useEffect(() => {
         onSearch();
     },[srcData.size, srcData.page]);
+    */
 
     return (
         <div className="conRight">
@@ -93,7 +90,7 @@ const Admin = () => {
 
                 <div className="flex align-items-center justify-space-between mt40">
                     <div className="width100">
-                        전체 : <span className="textMainColor"><strong>{ faqList.totalElements ? faqList.totalElements.toLocaleString() : 0 }</strong></span>건
+                        전체 : <span className="textMainColor"><strong>{ faqList?.totalElements ? faqList.totalElements.toLocaleString() : 0 }</strong></span>건
                         <select
                         name="size"
                         className="selectStyle maxWidth140px ml20"
@@ -142,6 +139,35 @@ const Admin = () => {
             <FaqPop ref={faqPopRef} isOpen={isModalOpen} onClose={onCloseModal} onSearch={onSearch} />
         </div>
     );
+}
+
+export const getServerSideProps = async(context) =>{
+
+    const cookies = context.req.headers.cookie || '';
+    try {
+        axios.defaults.headers.cookie = cookies;
+        const response = await axios.post('http://localhost:3000/api/v1/faq/faqList', {
+            title: '',
+            faqType: '',
+            admin: 'Y',
+            useYn: 'Y',
+            size    : 10,
+            page    : 0
+        });
+        return {
+            props: {
+                initFaqList: response.data.data
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching initial faqList:', error);
+        return {
+            props: {
+                initFaqList: { content: [], totalElements: 0 }
+            }
+        };
+    }
+
 }
 
 export default Admin;
