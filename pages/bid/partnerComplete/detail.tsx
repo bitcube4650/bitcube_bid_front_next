@@ -2,11 +2,11 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Ft from '../api/filters';
-import Api from '../api/api';
-import PartnerCmmnInfo from '../components/PartnerBidCommonInfo'
+import Ft from '../../../src/modules/bid/api/filters';
+import Api from '../../../src/modules/bid/api/api';
+import PartnerCmmnInfo from '../../../src/modules/bid/components/PartnerBidCommonInfo'
 import Modal from 'react-bootstrap/Modal';
-import { MapType } from 'components/types'
+import { MapType } from '../../../src/components/types'
 
 const PartnerBidCompleteDetail = () => {
 

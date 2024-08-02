@@ -1,12 +1,13 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import Ft from '../api/filters';
-import PartnerCmmnInfo from '../components/PartnerBidCommonInfo'
-import { MapType } from 'components/types'
+import Ft from '../../../src/modules/bid/api/filters';
+import PartnerCmmnInfo from '../../../src/modules/bid/components/PartnerBidCommonInfo'
+import { MapType } from '../../../src/components/types'
+import { useRouter } from 'next/router';
 
 const PartnerBidStatusDetail = () => {
+    const router = useRouter();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef<boolean>(true);
@@ -64,10 +65,9 @@ const PartnerBidStatusDetail = () => {
     };
 
     //페이지 이동
-    const navigate = useNavigate();
-    const onMovePage = useCallback(() => {
-        navigate('/bid/partnerStatus');
-    }, [navigate])
+    const onMovePage = () => {
+        router.push('/bid/partnerStatus');
+    }
 
     //필수요소 값 확인
     const validationCheck = () => {

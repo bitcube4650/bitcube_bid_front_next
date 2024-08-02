@@ -1,26 +1,23 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams } from "react-router-dom";
-import List from '../components/PartnerBidStatusList'
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import Pagination from 'components/Pagination';
+import Pagination from '../../../src/components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import { MapType } from 'components/types'
-import SrcInput from 'components/input/SrcInput'
-import SrcCheck from 'components/input/SrcCheckBox'
-import DatePicker from 'components/input/SrcDatePicker'
-import SelectListSize from 'components/SelectListSize'
+import { MapType } from '../../../src/components/types'
+import SrcInput from '../../../src/components/input/SrcInput'
+import SrcCheck from '../../../src/components/input/SrcCheckBox'
+import SelectListSize from '../../../src/components/SelectListSize'
+import Ft from '../../../src/modules/bid/api/filters';
+import { useRouter } from 'next/router';
 
-const PartnerBidStatus = () => {
-    const { keyword } = useParams();
+
+const Index = ({ initList }: { initList: MapType }) => {
+    const router = useRouter();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState<MapType>({
-        totalElements   : 0,
-        val         : [{}]
-    });
+    const [list, setList] = useState<MapType>(initList);
 
     //조회조건
     const [srcData, setSrcData] = useState<MapType>({
@@ -44,16 +41,41 @@ const PartnerBidStatus = () => {
         })
     };
 
+    const clickBidDetail = (biNo:string) => {
+        localStorage.setItem("biNo", biNo);
+        router.push('/bid/partnerStatus/detail');
+    };
+
+    function fnIsPastDate(dateString:string) {
+        const currentDate = new Date();
+        const targetDate = new Date(dateString);
+        return targetDate < currentDate;
+    }
+
+    function fnIngTag(data:MapType) {
+        let ingTag = data.ingTag;
+        let esmtYn = data.esmtYn;
+
+        if(ingTag === 'A3' && (esmtYn === '0' || esmtYn === '1')){
+            return '미투찰(재입찰)'
+        }else if(esmtYn === undefined || esmtYn === null || esmtYn === '' || esmtYn === '0' || esmtYn === '1'){
+            return '미투찰'
+        }else if(esmtYn === '2'){
+            return '투찰'
+        }
+        return '';
+    }
+
     //메인화면에서 진입시 파라미터 분기처리
     useEffect(() => {
-        if(keyword) {
-            if(keyword == 'noticing'){
+        if(!Ft.isEmpty(router.query)) {
+            if(router.query.keyword == 'noticing'){
                 setSrcData((prevState) => ({
                     ...prevState,
                     esmtYnN : true,
                     esmtYnY : false
                 }));
-            }else if(keyword == 'submitted'){
+            }else if(router.query.keyword == 'submitted'){
                 setSrcData((prevState) => ({
                     ...prevState,
                     esmtYnN : false,
@@ -61,7 +83,7 @@ const PartnerBidStatus = () => {
                 }));
             }
         }
-    }, [keyword]);
+    }, [router.query.keyword]);
 
     useEffect(() => {
         if (isMounted.current) {
@@ -149,7 +171,29 @@ const PartnerBidStatus = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { list.content?.map((data:MapType) => <List key={data.biNo} data={data} />) }
+                        { list.content?.map((data:MapType) => 
+                            <tr>
+                                <td className="textUnderline">
+                                    <a style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)}>{ data.biNo }</a>
+                                </td>
+                                <td className="textUnderline text-left">
+                                    <a style={{cursor: "pointer"}} className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''} onClick={() => clickBidDetail(data.biNo)} >{ data.biName }</a>
+                                </td>
+                                <td className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''}>
+                                    <i className="fa-regular fa-timer"></i>{ data.estStartDate }
+                                </td>
+                                <td className={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) && data.esmtYn !== '2' ? 'blueHighlight' : ''}>
+                                    <i className="fa-regular fa-timer"></i>{ data.estCloseDate }
+                                </td>
+                                <td>{ Ft.ftBiMode(data.biMode) }</td>
+                                <td><span className={data.esmtYn === '2' ? 'blueHighlight' : ''} style={!(data.ingTag === 'A3' && data.rebidAtt === 'N') && data.esmtYn !== '2' && fnIsPastDate(data.estStartDate) && !fnIsPastDate(data.estCloseDate) ? {color:'red'} : {} }>{fnIngTag(data)}</span></td>
+                                <td>{ Ft.ftInsMode(data.insMode) }</td>
+                                <td className="end">
+                                    <i className="fa-light fa-paper-plane-top"></i>
+                                    <a href={'mailto:' + data.damdangEmail} className="textUnderline" title="담당자 메일" >{ data.damdangName }</a>
+                                </td>
+                            </tr>
+                        )}
                         { (list.content === undefined || list.content === null || list.content.length === 0)&&
                         <tr>
                             <td className="end" colSpan={8}>조회된 데이터가 없습니다.</td>
@@ -171,4 +215,44 @@ const PartnerBidStatus = () => {
     )
 }
 
-export default PartnerBidStatus
+export const getServerSideProps = async (context) => {
+    let params = {
+        bidNo : ''
+    ,   bidName : ''
+    ,   bidModeA : true
+    ,   bidModeB : true
+    ,   esmtYnN : true
+    ,   esmtYnY : true
+    ,	size : 10						//10개씩 보기
+    ,	page : 0						//클릭한 페이지번호
+    }
+
+    let query = context.query;
+    if(query.keyword == 'noticing'){
+        params.esmtYnN = true;
+        params.esmtYnY = false;
+    }else if(query.keyword == 'submitted'){
+        params.esmtYnN = false;
+        params.esmtYnY = true;
+    }
+
+    const cookies = context.req.headers.cookie || '';
+    try {
+        axios.defaults.headers.cookie = cookies;
+        const response = await axios.post("http://localhost:3000/api/v1/bidPtStatus/statuslist", params);
+        return {
+            props: {
+                initList: response.data.data
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching initial progress list:', error);
+        return {
+            props: {
+                initList: { content: [], totalElements: 0 }
+            }
+        };
+    }
+}
+
+export default Index

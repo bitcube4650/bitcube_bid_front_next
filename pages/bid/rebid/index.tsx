@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import axios from 'axios';
-import Ft from '../api/filters';
-import { useNavigate } from 'react-router-dom';
+import Ft from '../../../src/modules/bid/api/filters';
 import Swal from 'sweetalert2';
 import Modal from 'react-bootstrap/Modal';
-import { MapType } from 'components/types';
-import DatePicker from 'components/input/EditDatePicker'
+import { MapType } from '../../../src/components/types'
+import DatePicker from '../../../src/components/input/EditDatePicker'
+import { useRouter } from 'next/router';
 
 const Rebid = () => {
+    const router = useRouter();
 
     //마운트 여부
     const isMounted = useRef<boolean>(true);
 
-    const navigate = useNavigate();
 
     //재입찰 마감시간
     const [estCloseDay, setEstCloseDay] = useState<Date>();
@@ -134,7 +134,7 @@ const Rebid = () => {
 
     //페이지 이동
     const onMovePage = () => {
-        navigate('/bid/status');
+        router.push('/bid/status');
     }
 
     return (

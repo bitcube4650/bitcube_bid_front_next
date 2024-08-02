@@ -1,26 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import List from '../components/BidHistoryList'
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from '../../../src/components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import Ft from '../api/filters';
-import SrcInput from 'components/input/SrcInput'
-import DatePicker from 'components/input/SrcDatePicker'
-import SelectListSize from 'components/SelectListSize'
-import { MapType } from 'components/types'
-import BidJoinCustListPop from '../components/BidJoinCustListPop';
-import SrcSelectBox from 'components/input/SrcSelectBox';
+import Ft from '../../../src/modules/bid/api/filters';
+import SrcInput from '../../../src/components/input/SrcInput';
+import DatePicker from '../../../src/components/input/SrcDatePicker'
+import SelectListSize from '../../../src/components/SelectListSize'
+import { MapType } from '../../../src/components/types'
+import BidJoinCustListPop from '../../../src/modules/bid/components/BidJoinCustListPop';
+import SrcSelectBox from '../../../src/components/input/SrcSelectBox';
 
-const BidHistory = () => {
+const Index = ({ initList }: { initList: MapType }) => {
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef<Boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState<MapType>({
-        totalElements   : 0,
-        val         : [{}]
-    });
+    const [list, setList] = useState<MapType>(initList);
 
     //롯데에너지머트리얼즈
     const [lotteMat, setLotteMat] = useState(false);
@@ -215,7 +211,31 @@ const BidHistory = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { list.content?.map((data:MapType) => <List key={data.biNo} data={data} lotteMat={lotteMat} onSetPopData={onSetPopData}/>) }
+                        { list.content?.map((data:MapType, idx:string) => 
+                            <tr key={idx}>
+                                <td>{ data.biNo }</td>
+                                {lotteMat && 
+                                <>
+                                <td>{ data.matDept }</td>
+                                <td>{ data.matProc }</td>
+                                <td>{ data.matCls }</td>
+                                <td>{ data.matFactory }</td>
+                                <td>{ data.matFactoryLine }</td>
+                                <td>{ data.matFactoryCnt }</td>
+                                </>
+                                }
+                                <td className="text-left">{ data.biName }</td>
+                                <td className="text-right">{ Ft.numberWithCommas(data.bdAmt) }</td>
+                                <td className="text-right">{ Ft.numberWithCommas(data.succAmt) }</td>
+                                <td className="text-left">{ data.custName }</td>
+                                <td>
+                                    <a onClick={()=>onSetPopData(data.biNo)} className="textUnderline" title="투찰 정보 페이지가 열림" >{ data.joinCustCnt }</a>
+                                </td>
+                                <td>{ data.estStartDate }</td>
+                                <td>{ data.estCloseDate }</td>
+                                <td className="end">{ data.userName }</td>
+                            </tr>
+                        )}
                         { (list.content === undefined || list.content === null || list.content.length === 0) &&
                             <tr>
                                 <td className="end" colSpan={lotteMat ? 15 : 9}>조회된 데이터가 없습니다.</td>
@@ -241,4 +261,37 @@ const BidHistory = () => {
     )
 }
 
-export default BidHistory
+
+export const getServerSideProps = async (context) => {
+    let params = {
+        biNo : ''						//조회조건 : 입찰번호
+    ,	biName : ''						//조회조건 : 입찰명
+    ,   matDept: ""                     //조회조건 : 분류군 - 사업부
+    ,   matProc: ""                     //조회조건 : 분류군 - 공정
+    ,   matCls: ""                      //조회조건 : 분류군 - 분류
+    ,	size : 10						//10개씩 보기
+    ,	page : 0						//클릭한 페이지번호
+    ,   startDate : Ft.strDateAddDay(Ft.getCurretDate(), -365)                  //조회조건 : 입찰완료 - 시작일
+    ,   endDate : Ft.getCurretDate()                 //조회조건 : 입찰완료 - 종료일
+    }
+
+    const cookies = context.req.headers.cookie || '';
+    try {
+        axios.defaults.headers.cookie = cookies;
+        const response = await axios.post("http://localhost:3000/api/v1/bidComplete/history", params);
+        return {
+            props: {
+                initList: response.data.data
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching initial progress list:', error);
+        return {
+            props: {
+                initList: { content: [], totalElements: 0 }
+            }
+        };
+    }
+}
+
+export default Index

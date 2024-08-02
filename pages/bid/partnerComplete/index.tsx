@@ -1,27 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams } from "react-router-dom";
-import List from '../components/BidPtCompleteList'
 import axios from 'axios';
-import Pagination from '../../../components/Pagination';
+import Pagination from '../../../src/components/Pagination';
 import Swal from 'sweetalert2'; // 공통 팝업창
-import Ft from '../api/filters';
-import { MapType } from 'components/types'
-import SrcInput from 'components/input/SrcInput'
-import SrcCheck from 'components/input/SrcCheckBox'
-import DatePicker from 'components/input/SrcDatePicker'
-import SelectListSize from 'components/SelectListSize'
+import Ft from '../../../src/modules/bid/api/filters';
+import { MapType } from '../../../src/components/types'
+import SrcInput from '../../../src/components/input/SrcInput'
+import SrcCheck from '../../../src/components/input/SrcCheckBox'
+import DatePicker from '../../../src/components/input/SrcDatePicker'
+import SelectListSize from '../../../src/components/SelectListSize'
+import { useRouter } from 'next/router';
 
-const PartnerBidComplete = () => {
-    const { keyword } = useParams();
+const Index = ({ initList }: { initList: MapType }) => {
+    const router = useRouter();
 
     //useEffect 안에 onSearch 한번만 실행하게 하는 플래그
     const isMounted = useRef<boolean>(true);
 
     //조회 결과
-    const [list, setList] = useState<MapType>({
-        totalElements   : 0,
-        val         : [{}]
-    });
+    const [list, setList] = useState<MapType>(initList);
 
     //조회조건
     const [srcData, setSrcData] = useState<MapType>({
@@ -45,24 +41,34 @@ const PartnerBidComplete = () => {
         })
     };
 
+    const onClickBidDetail = (biNo:string) => {
+        localStorage.setItem("biNo", biNo);
+        router.push('/bid/partnerComplete/detail');
+    };
+
+    function fnSuccYn(val:string){
+        if(val === 'Y'){ return '선정(낙찰)'}
+        else if(val === undefined || val === null || val === 'N'){ return '비선정'}
+    }
+
     //메인화면에서 진입시 파라미터 분기처리
     useEffect(() => {
-        if(keyword) {
-            if(keyword == 'awarded'){
-                setSrcData({
-                    ...srcData,
+        if(!Ft.isEmpty(router.query)) {
+            if(router.query.keyword == 'awarded'){
+                setSrcData((prevState) => ({
+                    ...prevState,
                     succYn_Y : true,
                     succYn_N : false
-                });
-            }else if(keyword == 'unsuccessful'){
-                setSrcData({
-                    ...srcData,
+                }));
+            }else if(router.query.keyword == 'unsuccessful'){
+                setSrcData((prevState) => ({
+                    ...prevState,
                     succYn_Y : false,
                     succYn_N : true
-                });
+                }));
             }
         }
-    }, []);
+    }, [router.query.keyword]);
 
     useEffect(() => {
         if (isMounted.current) {
@@ -148,7 +154,17 @@ const PartnerBidComplete = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        { list.content?.map((data:MapType) => <List key={data.biNo} data={data} />) }
+                        { list.content?.map((data:MapType, idx:string) => 
+                             <tr key={idx}>
+                                <td><a onClick={()=>onClickBidDetail(data.biNo)} className="textUnderline" title="입찰번호">{ data.biNo }</a></td>
+                                <td className="text-left"><a onClick={()=>onClickBidDetail(data.biNo)} className="textUnderline" title="입찰명">{ data.biName }</a></td>
+                                <td>{ data.bidOpenDate }</td>
+                                <td>{ Ft.ftBiMode(data.biMode) }</td>
+                                <td style={data.succYn === 'Y' ? {color:'red'} : {}}>{ fnSuccYn(data.succYn) }</td>
+                                <td>{ Ft.ftInsMode(data.insMode) }</td>
+                                <td className="end"><i className="fa-light fa-paper-plane-top"></i> <a href={'mailto:' + data.userEmail} className="textUnderline" title="담당자">{ data.userName }</a></td>
+                            </tr>
+                        )}
                         { (list.content === undefined || list.content === null || list.content.length === 0)&&
                             <tr>
                                 <td className="end" colSpan={7}>조회된 데이터가 없습니다.</td>
@@ -171,4 +187,44 @@ const PartnerBidComplete = () => {
     )
 }
 
-export default PartnerBidComplete
+export const getServerSideProps = async (context) => {
+    let params = {
+        biNo : ''						//조회조건 : 입찰번호
+    ,	biName : ''						//조회조건 : 입찰명
+    ,	succYn_Y : true					//조회조건 : 선정
+    ,	succYn_N : true					//조회조건 : 비선정
+    ,	size : 10						//10개씩 보기
+    ,	page : 0						//클릭한 페이지번호
+    ,   startDate : Ft.strDateAddDay(Ft.getCurretDate(), -365)                  //조회조건 : 입찰완료 - 시작일
+    ,   endDate : Ft.getCurretDate()                 //조회조건 : 입찰완료 - 종료일
+    }
+
+    let query = context.query;
+    if(query.keyword == 'awarded'){
+        params.succYn_Y = true;
+        params.succYn_N = false;
+    }else if(query.keyword == 'unsuccessful'){
+        params.succYn_Y = false;
+        params.succYn_N = true;
+    }
+
+    const cookies = context.req.headers.cookie || '';
+    try {
+        axios.defaults.headers.cookie = cookies;
+        const response = await axios.post("http://localhost:3000/api/v1/bidComplete/partnerList", params);
+        return {
+            props: {
+                initList: response.data.data
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching initial progress list:', error);
+        return {
+            props: {
+                initList: { content: [], totalElements: 0 }
+            }
+        };
+    }
+}
+
+export default Index
