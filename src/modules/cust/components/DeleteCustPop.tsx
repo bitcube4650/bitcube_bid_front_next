@@ -2,12 +2,12 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import Swal from 'sweetalert2'
-import * as CommonUtils from 'components/CommonUtils';
+import * as CommonUtils from '../../../components/CommonUtils';
 import { useCookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
 import { DeleteCustListProps } from '../types/types';
-import EditTextArea from 'components/input/EditTextArea';
-import { MapType } from 'components/types'
+import { MapType } from '../../../components/types';
+import EditTextArea from '../../../components/input/EditTextArea';
+import { useRouter } from 'next/router';
 
 /**
  * 업체 반려 및 삭제, 탈퇴시 사유 작성 팝업
@@ -18,7 +18,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 	const [etcInfo, setEtcInfo]	= useState<MapType>({
 		etc : ''
 	})
-	const navigate = useNavigate();
+	const router = useRouter();
 	const [cookies, setCookie, removeCookie] = useCookies<string>(['username']);
 	const title = deleteType === "refuse" ? '반려' : (deleteType === "delete" ? "삭제" : "회원탈퇴")
 
@@ -139,7 +139,7 @@ const DeleteCustPop = ({deletePop, setDeletePop, deleteType, custCode, onMoveLis
 				if(status == 200) {
 					removeCookie("loginInfo");
 					localStorage.clear();
-					navigate('/');
+					router.push('/');
 				} else {
 					Swal.fire('', '로그아웃 처리에 실패하였습니다.', 'error');
 				}

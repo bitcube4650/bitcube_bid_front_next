@@ -124,7 +124,6 @@ const Menu = () => {
             }
         }
     }
-    
 
     return (
         <div className="conLeftWrap">
@@ -206,8 +205,8 @@ const Menu = () => {
                             <li className={(path === ('/company/partner/approval') ? 'active' : '')}><a href="/company/partner/approval">업체승인</a></li>
                             <li className={(path === ('/company/partner/management') ? 'active' : '')}><a href="/company/partner/management">업체관리</a></li>
                         </ul>
-                        <ul style={{ display: ((userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} > 
-                            <li className={(path === (`/company/partner/management/${loginInfo.custCode}`) ? 'active' : '')}><a href={`/company/partner/management/${loginInfo.custCode}`}>자사정보</a></li>
+                        <ul style={{ display: ((userCustType === 'cust' && userAuth === '1')) ? 'block' : 'none' }} >
+                            <li className={(path === ('/company/partner') ? 'active' : '')}><a href='/company/partner'>자사정보</a></li>
                             <li className={(path === ('/company/partner/user') ? 'active' : '')}><a href="/company/partner/user">사용자관리</a></li>
                         </ul>
                     </div>

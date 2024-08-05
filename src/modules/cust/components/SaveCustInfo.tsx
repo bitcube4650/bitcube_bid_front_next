@@ -97,7 +97,7 @@ const SaveCustInfo = ({isEdit, custInfo, setCustInfo, setSelCustCode, setUploadR
 	return (
 		<>
 			{/* 회사 정보 */}
-			<h3 className={(params?.custCode || '') == '' ? "h3Tit mt50" : "h3Tit" }>회사 정보</h3>
+			<h3 className={(params?.custCode || '') == '' ? "h3Tit" : "h3Tit mt50" }>회사 정보</h3>
 			<div className="formWidth">
 				<div className="boxSt mt20">
 				{loginInfo.custType === "inter"
